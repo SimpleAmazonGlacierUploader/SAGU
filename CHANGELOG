@@ -1,9 +1,16 @@
+2012/08/25 - Version 0.3.
+
+-Direct links to AWS Key Page, Glacier Vault Creation, Log file, SAGU Update site.
+-Enable right-click to copy/paste.
+
+
 2012/08/24 - Version 0.2.
 
 -Upload Logging! 
 -Logging is enabled by default. Saves to Glacier.log in program directory.
 -Log contains Archive ID, Filename, Vault Name, Upload Date
 -ArchiveID will be useful for deleting or retreiving individual archives.
+
 
 2012/08/23 - Version 0.1.
 

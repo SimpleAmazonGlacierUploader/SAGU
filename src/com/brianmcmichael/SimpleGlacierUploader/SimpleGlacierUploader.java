@@ -1,5 +1,9 @@
 //Copyright 2012 Brian L. McMichael 
 //               brianmcmichael.com
+//v0.1		Initial launch - basic upload functionality
+//v0.2		Added upload logging
+//v0.3		Right click context menus
+
 
 package com.brianmcmichael.SimpleGlacierUploader;
 
@@ -12,27 +16,37 @@ import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.URI;
 import java.util.Date;
+
+
 import javax.swing.JFileChooser;
 
+
 import com.amazonaws.auth.BasicAWSCredentials;
+
+//import com.amazonaws.services.glacier.*;
+
 import com.amazonaws.services.glacier.AmazonGlacierClient;
 import com.amazonaws.services.glacier.transfer.ArchiveTransferManager;
 import com.amazonaws.services.glacier.transfer.UploadResult;
 
 public class SimpleGlacierUploader extends Frame implements ActionListener
 {
-	/**
-	 * 
-	 */
+
 	private static final long serialVersionUID = 1L;
-	private static final String versionNumber = "0.2";
+	private static final String versionNumber = "0.3";
 	private static final String fileName = "Glacier.log";
+	
+	
 
 	DataOutputStream output;
 	
+	ContextMenuMouseListener rmb = new ContextMenuMouseListener();
+	
 	
 	Font f3= new Font("Helvetica",Font.BOLD,20);
+	Font f4= new Font("Helvetica",Font.PLAIN,10);
 	
 	
 	File uploadFile = null;
@@ -41,11 +55,13 @@ public class SimpleGlacierUploader extends Frame implements ActionListener
 		Label titleLabel = new Label("Simple Amazon Glacier Uploader "+versionNumber);
 	
 	Panel inputPanel = new Panel();
-		Label accessLabel = new Label("AWS Access Key: ");
+		//Label accessLabel = new Label("AWS Access Key: ");  //v0.2
+		JHyperlinkLabel accessLabel = new JHyperlinkLabel("AWS Access Key: ");  //v0.3
 		TextField accessField = new TextField(25);
 		Label secretLabel = new Label("AWS Secret Key: ");
 		TextField secretField = new TextField(50);
-		Label vaultName = new Label("Vault Name: ");
+		//Label vaultName = new Label("Vault Name: ");  //v0.2
+		JHyperlinkLabel vaultName = new JHyperlinkLabel("Vault Name: ");  //v0.3
 		TextField vaultField = new TextField(25);
 		Label locationName = new Label("Upload Location: ");
 		Choice locationChoice = new Choice();
@@ -54,30 +70,43 @@ public class SimpleGlacierUploader extends Frame implements ActionListener
 		Label selectedLabel = new Label("");
 		Button uploadButton = new Button("Upload");
 		Label blankLabel = new Label("");
-		JCheckBox logCheck = new JCheckBox("Log?");
+		
 		
 	JFileChooser fc = new JFileChooser();
 		
 	
 	Panel copyrightPanel = new Panel();
 		Label copyrightLabel = new Label("©2012 brian@brianmcmichael.com");
+		JHyperlinkLabel updateLink = new JHyperlinkLabel("\tCheck for Update");
+		
+	Panel logPanel = new Panel();
+		JCheckBox logCheck = new JCheckBox("Log?");
+		JHyperlinkLabel viewLog = new JHyperlinkLabel(" View Log");
 	
 	public SimpleGlacierUploader()
 	{
 		this.setLayout(new BorderLayout());
 			titlePanel.setLayout(new FlowLayout());
-			inputPanel.setLayout(new GridLayout(7,2,40,40));
+			inputPanel.setLayout(new GridLayout(7,2,20,20));
 			copyrightPanel.setLayout(new FlowLayout());
+			logPanel.setLayout(new FlowLayout());
 			
 		titlePanel.add(titleLabel);
-		titleLabel.setFont(f3);
+			titleLabel.setFont(f3);
+		
+		logPanel.add(logCheck);
+		logPanel.add(viewLog);
+			logCheck.setSelected(true);
 		
 		inputPanel.add(accessLabel);
 		inputPanel.add(accessField);
+			accessField.addMouseListener(new ContextMenuMouseListener()); 
 		inputPanel.add(secretLabel);
 		inputPanel.add(secretField);
+			secretField.addMouseListener(new ContextMenuMouseListener()); 
 		inputPanel.add(vaultName);
 		inputPanel.add(vaultField);
+			vaultField.addMouseListener(new ContextMenuMouseListener()); 
 		inputPanel.add(locationName);
 		inputPanel.add(locationChoice);
 			locationChoice.add("US East (Northern Virginia) Region");
@@ -87,17 +116,20 @@ public class SimpleGlacierUploader extends Frame implements ActionListener
 			locationChoice.add("Asia Pacific (Tokyo) Region");
 		inputPanel.add(fileLabel);
 		inputPanel.add(selectFile);
-		selectFile.addActionListener(this);
+			selectFile.addActionListener(this);
 		inputPanel.add(selectedLabel);
 		inputPanel.add(uploadButton);
-		uploadButton.addActionListener(this);
+			uploadButton.addActionListener(this);
 		inputPanel.add(blankLabel);
-		inputPanel.add(logCheck);
-		logCheck.setSelected(true);
+		inputPanel.add(logPanel);
+		
 		
 		fc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
 			
-		copyrightPanel.add(copyrightLabel);	
+		copyrightPanel.add(copyrightLabel);
+			copyrightLabel.setFont(f4);
+		copyrightPanel.add(updateLink);
+			updateLink.setFont(f4);
 			
 		//add panels to frame
 		add(titlePanel, BorderLayout.NORTH);
@@ -119,7 +151,7 @@ public class SimpleGlacierUploader extends Frame implements ActionListener
 	public static void main(String[] args) throws Exception
 	{
 		SimpleGlacierUploader g = new SimpleGlacierUploader();
-		g.setBounds(300,300,600,500);
+		g.setBounds(300,300,600,475);
 		g.setTitle("Simple Glacier Uploader");
 		g.setVisible(true);
 	} //end of main
@@ -130,6 +162,19 @@ public class SimpleGlacierUploader extends Frame implements ActionListener
         selectedLabel.setText("");
 	}
 
+	private static void open(URI uri) {
+	    if (Desktop.isDesktopSupported()) {
+	      try {
+	        Desktop.getDesktop().browse(uri);
+	      } catch (IOException e) { /* TODO: error handling */ }
+	    } else { /* TODO: error handling */ }
+	  }
+	
+	public static String getFilename()
+	{
+		return fileName;
+	}
+	
 	@Override
 	public void actionPerformed(ActionEvent e) 
 	{
