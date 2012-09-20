@@ -1,10 +1,14 @@
+2012/09/04 - Version 0.62
+
+-Select upload vault from existing. Selecting a server location populates a dropdown with existing vaults on that server.
+
+
 2012/09/02 - Version 0.61
 
 -Ability to export logs.
 -Improved file selection for download mode in OSX.
 -Choose log output (.log, .txt, .csv)
 -Save log output preferences and reload on restart.
-
 
 
 2012/08/31 - Version 0.6

@@ -4,7 +4,6 @@ The Simple Amazon Glacier Uploader aims to be an upload and download solution th
 
 SAGU is a single .jar file Glacier interface written in Java for cross-platform usability. 
 
-The use of Java is assures that you will have access to your files regardless of your operating system when 
-it is time to retrieve your data.
+The use of Java is assures that you will have access to your files regardless of your operating system when it is time to retrieve your data.
 
 http://simpleglacieruploader.brianmcmichael.com

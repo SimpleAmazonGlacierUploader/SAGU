@@ -48,6 +48,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.JFileChooser;
+import javax.swing.SwingWorker;
 
 
 import com.amazonaws.AmazonClientException;
@@ -210,6 +211,8 @@ class AmazonDownloadRequest extends JFrame implements ActionListener, WindowList
 	@Override
 	public void actionPerformed(ActionEvent e) 
 	{
+		
+		
 		if(e.getSource() == jbtDownload)
         {
 			String archiveId = jtfDownloadField.getText().trim();
