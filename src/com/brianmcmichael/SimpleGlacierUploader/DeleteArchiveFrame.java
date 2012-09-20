@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////////////
-//    Simple Amazon Glacier Uploader v0.4 - GUI upload and log for Amazon Glacier 
+//    Simple Amazon Glacier Uploader v0.51 - GUI upload and log for Amazon Glacier 
 //    Copyright (C) 2012 Brian L. McMichael <brian@brianmcmichael.com>
 //
 //    This program is free software: you can redistribute it and/or modify
@@ -20,6 +20,7 @@
 //		v0.3		Right click context menus
 //		v0.4		Delete button. Save Preferences.
 //		v0.5		Cleaned up logs. Multifile upload.
+//		v0.51		Better multifile upload. Better error handling.
 //////////////////////////////////////////////////////////////////////////////////
 
 package com.brianmcmichael.SimpleGlacierUploader;

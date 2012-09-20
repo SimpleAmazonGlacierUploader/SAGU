@@ -1,3 +1,9 @@
+2012/08/28 - Version 0.51
+
+-Better multi-file support. 
+-Better error handling.
+
+
 2012/08/27 - Version 0.5.
 
 -Added multiple file upload with drag and drop support. Be careful with this. Glacier is not a second hard drive, it works by uploading single files and downloading or deleting by ArchiveID. Amazon does not provide a method to retreive ArchiveID's right now, so your log files are your access to your files. I would recommend zipping large numbers of files together and uploading them as a single file. 

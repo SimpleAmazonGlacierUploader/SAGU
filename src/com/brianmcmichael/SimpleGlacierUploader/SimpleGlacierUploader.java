@@ -20,11 +20,11 @@
 //		v0.3		Right click context menus
 //		v0.4		Delete button. Save Preferences.
 //		v0.5		Cleaned up logs. Multifile upload.
+//		v0.51		Better multifile upload. Better error handling.
 //////////////////////////////////////////////////////////////////////////////////
 
 package com.brianmcmichael.SimpleGlacierUploader;
 
-//import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JFrame;
@@ -33,7 +33,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JTextField;
-
 
 import java.awt.*;
 import java.awt.event.*;
@@ -49,23 +48,18 @@ import java.io.IOException;
 
 import java.io.Writer;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.Properties;
-
-
 import javax.swing.JFileChooser;
 
 import com.amazonaws.auth.BasicAWSCredentials;
-
 
 import com.amazonaws.services.glacier.AmazonGlacierClient;
 import com.amazonaws.services.glacier.transfer.ArchiveTransferManager;
 import com.amazonaws.services.glacier.transfer.UploadResult;
 
 public class SimpleGlacierUploader extends Frame implements ActionListener
-{
-
+{	
 	Color wc = Color.WHITE;
 
 	int width = 200;
@@ -76,7 +70,7 @@ public class SimpleGlacierUploader extends Frame implements ActionListener
 	
 	//static identfiers
 	private static final long serialVersionUID = 1L;
-	private static final String versionNumber = "0.5";
+	private static final String versionNumber = "0.51";
 	private static final String logFileName = "Glacier.log";
 	private static final String fileProperties = "SAGU.properties";
 	
@@ -97,7 +91,6 @@ public class SimpleGlacierUploader extends Frame implements ActionListener
 	
 	//File array for multiupload
 	File[] multiFiles;
-	File[] appendedFiles;
 	
 	Font f3= new Font("Helvetica",Font.BOLD,20);
 	Font f4= new Font("Helvetica",Font.PLAIN,11);
@@ -303,6 +296,7 @@ public class SimpleGlacierUploader extends Frame implements ActionListener
 		g.setBounds(300,300,600,475);
 		g.setTitle("Simple Glacier Uploader");
 		g.setVisible(true);
+		g.setIconImage(Toolkit.getDefaultToolkit().getImage("img\\glaciericon.png"));
 		
 	} //end of main
 	
@@ -339,29 +333,61 @@ public class SimpleGlacierUploader extends Frame implements ActionListener
 		{
 			
             //File Drop for Multi Uploads	
-				    
+			
 			        new FileDrop( System.out, ddText, /*dragBorder,*/ new FileDrop.Listener()
 			        {   
+			        	
 			        	public void filesDropped( java.io.File[] files )
-			        	{   
-			        		ddText.setText("");
-			        		for( int i = 0; i < files.length; i++ )
-			                {   try
-			                    {   ddText.append( files[i].getCanonicalPath() + "\n" );
-			                    	
-			                    }   // end try
-			                    catch( java.io.IOException e ) {}
-			                }   // end for: through each dropped file
-			        	multiFiles = files;
+			        	{
+			        		boolean dirCheck = false;
+			        		
+			        		{	
+				        		//ddText.setText("");
+				        		for( int i = 0; i < files.length; i++ )
+				                {   
+				        			if (files[i].isDirectory() == true)
+				        			{
+				        				ddText.setText("");
+				        				clearFile();
+				        				multiFiles = null;
+				        				dirCheck = true;
+				        				JOptionPane.showMessageDialog(null, "Directories are not suppoted.","Error",JOptionPane.ERROR_MESSAGE);
+					                	break;
+				        			}
+				        			else
+				        			{
+				        				try
+					                    {   ddText.append( files[i].getCanonicalPath() + "\n" );
+					                    	
+					                    }   // end try
+					                    catch( java.io.IOException e ) {}
+				        			}
+				        			
+				                }   // end for: through each dropped file
+			        		}
+			            if (multiFiles != null)
+			            {
+			            	multiFiles = concatFileArray(multiFiles,files);
+			            }
+			            else
+			            {
+			            	multiFiles = files;
+			            }
+			        		
 			            
-			            if(multiFiles.length == 0)
+			            if (dirCheck == true)
+			            {
+			            	clearFile();
+			            	multiFiles = null;
+			            }
+			            else if (multiFiles.length == 0)
 			            {			  
 			            	selectedLabel.setText("");
 			            }
 			            else if(multiFiles.length == 1)
 			            {
 			            	try
-			            	{   	selectedLabel.setText(multiFiles[0].getCanonicalPath());
+			            	{   	selectedLabel.setText(files[0].getCanonicalPath());
 			            	}   // end try
 		                    catch( java.io.IOException e ) {}
 			            }
@@ -370,6 +396,7 @@ public class SimpleGlacierUploader extends Frame implements ActionListener
 			            	selectedLabel.setText("Multiple files selected");
 			            	uploadButton.setLabel("Upload Multiple");
 			            }
+			        		
 			            }   // end filesDropped
 			        }); // end FileDrop.Listener
 			        
@@ -426,7 +453,7 @@ public class SimpleGlacierUploader extends Frame implements ActionListener
 			    client.setEndpoint(endpointUrl);
 			    String locationUpped = ep.Location(locInt);
 
-
+			    
 			    if (multiFiles.length > 0)
 			    {
 			    	SaveCurrentProperties(accessString, secretString, vaultString, locationChoice.getSelectedIndex());
@@ -505,8 +532,7 @@ public class SimpleGlacierUploader extends Frame implements ActionListener
 				            else
 				            {
 				            	JOptionPane.showMessageDialog(null,"Upload Complete!\nArchive ID: " + result.getArchiveId()+"\nIt may take some time for Amazon to update the inventory.", "Uploaded", JOptionPane.INFORMATION_MESSAGE);
-				            	DummyProgress(false);
-					            
+					            multiFiles = null;
 				            }
 				            
 				            clearFile();
@@ -523,14 +549,15 @@ public class SimpleGlacierUploader extends Frame implements ActionListener
 			    	for( int j = 0; j < multiFiles.length; j++ ){
 			    		sb.append(uploadList.get(j));
 			    		}			    	
+			    	DummyProgress(false);
 			    	JOptionPane.showMessageDialog(null,"Upload Complete! \n" + sb,"Uploaded", JOptionPane.INFORMATION_MESSAGE);
 			        //Close the JProgressBar
-			    	DummyProgress(false);
+			    	multiFiles = null;
 			    	clearFile();
 			    }
 			    else
 			    {
-			    	JOptionPane.showMessageDialog(null,"This wasn't supposed to happen.", "Bug!", JOptionPane.ERROR_MESSAGE);
+			    	JOptionPane.showMessageDialog(null,"This wasn't supposed to happen.", "Bug!", JOptionPane.ERROR_MESSAGE);			        
 			    	DummyProgress(false);
 			    }
 			       
@@ -629,6 +656,7 @@ public class SimpleGlacierUploader extends Frame implements ActionListener
 	
 	public void clearFile()
 	{
+		
 		uploadFile = null;
         selectedLabel.setText("");
         uploadButton.setLabel("Upload File(s)");
@@ -670,12 +698,6 @@ public class SimpleGlacierUploader extends Frame implements ActionListener
 	    f.setLocation (lx,ly);
 	  } // centerFrame
 	
-	public static File[] concatArray(File[] first, File[] second) {
-		  File[] result = Arrays.copyOf(first, first.length + second.length);
-		  System.arraycopy(second, 0, result, first.length, second.length);
-		  return result;
-		}
-	
 	public void DummyProgress(Boolean b)
 	{   
 	    if(b == true)
@@ -688,6 +710,13 @@ public class SimpleGlacierUploader extends Frame implements ActionListener
 	    }
 	    
 	}
+	public File[] concatFileArray(File[] A, File[] B) {
+		   File[] C= new File[A.length+B.length];
+		   System.arraycopy(A, 0, C, 0, A.length);
+		   System.arraycopy(B, 0, C, A.length, B.length);
+
+		   return C;
+		}
 }
 
 
