@@ -66,7 +66,7 @@ public class JHyperlinkLabel extends JLabel {
     public void mouseClicked(MouseEvent e) {
       //System.out.println(getText());
     	
-    	if (getText().equals("AWS Access Key: "))
+    	if (getText().equals(SimpleGlacierUploader.ACCESS_LABEL))
     	{
     		OpenURI("https://portal.aws.amazon.com/gp/aws/securityCredentials");    		
     	}

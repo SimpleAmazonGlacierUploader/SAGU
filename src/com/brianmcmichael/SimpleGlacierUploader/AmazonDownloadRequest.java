@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////////////
-//    Simple Amazon Glacier Uploader v0.51 - GUI upload and log for Amazon Glacier 
+//    Simple Amazon Glacier Uploader - GUI upload and log for Amazon Glacier 
 //    Copyright (C) 2012 Brian L. McMichael <brian@brianmcmichael.com>
 //
 //    This program is free software: you can redistribute it and/or modify
@@ -79,6 +79,8 @@ class AmazonDownloadRequest extends JFrame implements ActionListener, WindowList
     JFileChooser fc = new JFileChooser();
     
     ContextMenuMouseListener rmb = new ContextMenuMouseListener();
+    
+    String archiveId;
     
     //Constructor
     public AmazonDownloadRequest(AmazonGlacierClient client, String vaultName, int region, BasicAWSCredentials credentials)
@@ -175,40 +177,37 @@ class AmazonDownloadRequest extends JFrame implements ActionListener, WindowList
     
 	@Override
 	public void windowActivated(WindowEvent arg0) {
-		// TODO Auto-generated method stub
 		
 	}
 	@Override
 	public void windowClosed(WindowEvent arg0) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 	@Override
 	public void windowClosing(WindowEvent arg0) {
-		// TODO Auto-generated method stub
 		
 	}
 	@Override
 	public void windowDeactivated(WindowEvent arg0) {
-		// TODO Auto-generated method stub
 		
 	}
 	@Override
 	public void windowDeiconified(WindowEvent arg0) {
-		// TODO Auto-generated method stub
 		
 	}
 	@Override
 	public void windowIconified(WindowEvent arg0) {
-		// TODO Auto-generated method stub
 		
 	}
 	@Override
 	public void windowOpened(WindowEvent arg0) {
 		jtfDownloadField.setText("");
 		jtfDownloadField.requestFocus();
-		
 	}
+	
+
+	
 	@Override
 	public void actionPerformed(ActionEvent e) 
 	{
@@ -216,7 +215,7 @@ class AmazonDownloadRequest extends JFrame implements ActionListener, WindowList
 		
 		if(e.getSource() == jbtDownload)
         {
-			String archiveId = jtfDownloadField.getText().trim();
+			archiveId = jtfDownloadField.getText().trim();
 			if ((archiveId.equals("")))
 			{
 				JOptionPane.showMessageDialog(null,"Enter the Archive ID of the file to be requested.", "Error", JOptionPane.ERROR_MESSAGE);				
@@ -226,9 +225,7 @@ class AmazonDownloadRequest extends JFrame implements ActionListener, WindowList
 				
 					SwingWorker downloadWorker = new SwingWorker() {
 		    		
-					String archiveId = jtfDownloadField.getText().trim();
-					
-					
+					private String archiveId = jtfDownloadField.getText().trim();
 							
 					@Override
 					protected Object doInBackground() throws Exception {
@@ -253,12 +250,9 @@ class AmazonDownloadRequest extends JFrame implements ActionListener, WindowList
 						    fd.setLocation(50, 50);
 						    fd.setVisible(true);
 						    
-						    
 						    String filePath = ""+fd.getDirectory()+System.getProperty("file.separator")+fd.getFile();
 						    		
-						    		
 							File outFile = new File(filePath);
-							//System.out.println(outFile.toString());
 							
 							if (outFile != null)
 							{
@@ -269,7 +263,7 @@ class AmazonDownloadRequest extends JFrame implements ActionListener, WindowList
 						           
 						        atm.download(vaultName, archiveId, outFile);
 						            
-						        JOptionPane.showMessageDialog(null, "Request successful.","Success",JOptionPane.INFORMATION_MESSAGE);
+						        JOptionPane.showMessageDialog(null, "Sucessfully downloaded " + outFile.toString(),"Success",JOptionPane.INFORMATION_MESSAGE);
 						        downloadFrame.setVisible(false);
 				            }
 				        } 
@@ -290,8 +284,7 @@ class AmazonDownloadRequest extends JFrame implements ActionListener, WindowList
 				        	downloadFrame.setVisible(false);
 				        }
 						return null;
-					}
-		    		
+					}		    		
 		    	};
 		    	downloadWorker.execute();
 		    	try {
@@ -303,8 +296,6 @@ class AmazonDownloadRequest extends JFrame implements ActionListener, WindowList
 			
 		    this.setVisible(false);
 		    dispose();
-			//jtfDownloadField.setText("");
-			//jtfDownloadField.requestFocus();
 			}
 	        
         }

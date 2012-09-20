@@ -1,3 +1,10 @@
+2012/09/09 - Version 0.71
+
+-Enhancements to upload bar. See what's uploading and what's done.
+-Program now regenerates tree-hashes more frequently. Should result in fewer timeouts. 
+-Bug-fixes, code cleaning.
+
+
 2012/09/06 - Version 0.7
 
 -The threaded update. UI no longer sticks during upload/download.
