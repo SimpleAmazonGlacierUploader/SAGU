@@ -1,3 +1,10 @@
+2012/08/27 - Version 0.5.
+
+-Added multiple file upload with drag and drop support. Be careful with this. Glacier is not a second hard drive, it works by uploading single files and downloading or deleting by ArchiveID. Amazon does not provide a method to retreive ArchiveID's right now, so your log files are your access to your files. I would recommend zipping large numbers of files together and uploading them as a single file. 
+-Even better logging! Switched from DataOutput UTF to Writer. Logs should now have standardized layouts and no machine characters. (I recommend saving your old log elsewhere and letting the program generate a new one. Your old log is fine, but some text viewers get confused by dataoutput.)
+-Added simple notification bar that appears when program is uploading. Progress bar and threading planned in near future.
+
+
 2012/08/26 - Version 0.4.
 
 -Added delete archive function. Set AWS Keys and Location/Vault, then insert Archive ID to delete.

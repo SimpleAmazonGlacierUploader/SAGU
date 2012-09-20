@@ -1,3 +1,27 @@
+///////////////////////////////////////////////////////////////////////////////////
+//    Simple Amazon Glacier Uploader v0.4 - GUI upload and log for Amazon Glacier 
+//    Copyright (C) 2012 Brian L. McMichael <brian@brianmcmichael.com>
+//
+//    This program is free software: you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation, either version 3 of the License, or
+//    (at your option) any later version.
+//
+//    This program is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+//////////////////////////////////////////////////////////////////////////////////
+//		v0.1		Initial launch - basic upload functionality
+//		v0.2		Added upload logging
+//		v0.3		Right click context menus
+//		v0.4		Delete button. Save Preferences.
+//		v0.5		Cleaned up logs. Multifile upload.
+//////////////////////////////////////////////////////////////////////////////////
+
 package com.brianmcmichael.SimpleGlacierUploader;
 
 import java.awt.Color;
@@ -51,7 +75,7 @@ public class JHyperlinkLabel extends JLabel {
     	}
     	else if (getText().equals(" View Log"))
     	{
-    		OpenURI(SimpleGlacierUploader.getFilename());    		
+    		OpenURI(SimpleGlacierUploader.getLogFilename());    		
     	}
     	else if (getText().equals("\tCheck for Update"))
     	{
