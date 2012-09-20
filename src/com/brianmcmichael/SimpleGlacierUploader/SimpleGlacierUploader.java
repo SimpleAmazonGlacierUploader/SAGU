@@ -15,19 +15,7 @@
 //    You should have received a copy of the GNU General Public License
 //    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //////////////////////////////////////////////////////////////////////////////////
-//		v0.1		Initial launch - basic upload functionality
-//		v0.2		Added upload logging
-//		v0.3		Right click context menus
-//		v0.4		Delete button. Save Preferences.
-//		v0.5		Cleaned up logs. Multifile upload.
-//		v0.51		Better multifile upload. Better error handling.
-//		v0.52		Bug fixes.
-//		v0.6		AWS SDK Updated, Redesign UI. Add Vault. Basic Download.
-//		v0.61		Export logs, file selection change for OSX users
-//		v0.62		Populate dropdown with existing vaults.
-//		v0.7		Basic upload threading/animation, UI tweaks/graphics
-//		v0.71		Bug fixes. Progress bar upgrade.
-//////////////////////////////////////////////////////////////////////////////////
+
 
 package com.brianmcmichael.SimpleGlacierUploader;
 
@@ -101,7 +89,7 @@ public class SimpleGlacierUploader extends Frame implements ActionListener
 	
 	//static identfiers
 	private static final long serialVersionUID = 1L;
-	private static final String versionNumber = "0.71";
+	private static final String versionNumber = "0.72";
 	private static final String logFileNamelog = "Glacier.log";
 	private static final String logFileNametxt = "Glacier.txt";
 	private static final String logFileNamecsv = "Glacier.csv";	
@@ -187,6 +175,8 @@ public class SimpleGlacierUploader extends Frame implements ActionListener
 	ImageIcon logViewIcon = new ImageIcon(Toolkit.getDefaultToolkit().getImage(logViewIconUrl));
 	URL updateIconUrl = getClass().getResource("/paper.png");
 	ImageIcon updateIcon = new ImageIcon(Toolkit.getDefaultToolkit().getImage(updateIconUrl));
+	URL userUrl = getClass().getResource("/littleguy.png");
+	ImageIcon userIcon = new ImageIcon(Toolkit.getDefaultToolkit().getImage(userUrl));
 	
 	
 	File uploadFile = null;
@@ -204,7 +194,7 @@ public class SimpleGlacierUploader extends Frame implements ActionListener
 			JMenuItem saveFileMnu = new JMenuItem("Export Log", saveIcon);
 			JMenuItem exitApplicationMnu = new JMenuItem("Exit", exitIcon);
 		JMenu retreiveMenu = new JMenu("Retreive");
-			JMenuItem getAWSCredentialsLinkMnu = new JMenuItem(AWS_SITE_STRING);
+			JMenuItem getAWSCredentialsLinkMnu = new JMenuItem(AWS_SITE_STRING, userIcon);
 			JMenuItem downloadFileMnu = new JMenuItem(DOWNLOAD_STRING, downIcon);
 		JMenu viewMenu = new JMenu("View");
 			JMenuItem viewLog = new JMenuItem("View Log", logViewIcon);
@@ -287,7 +277,8 @@ public class SimpleGlacierUploader extends Frame implements ActionListener
 	        				JOptionPane.showMessageDialog(null, NO_DIRECTORIES_ERROR,"Error",JOptionPane.ERROR_MESSAGE);
 		                	files[i] = null;
 	        			}
-	        			else if (files[i].length() > max_file_size == true)
+	        			/*    Removed filesize limitation with 0.72. Upgraded AWS SDK to 1.3.19
+						else if (files[i].length() > max_file_size == true)
 	        			{
 	        				try
 		                    {   
@@ -297,7 +288,8 @@ public class SimpleGlacierUploader extends Frame implements ActionListener
 		                    catch( java.io.IOException e ) {}
 	        				JOptionPane.showMessageDialog(null, FILE_TOO_BIG_ERROR,"Error",JOptionPane.ERROR_MESSAGE);
 		                	files[i] = null;
-	        			}	
+	        			}
+	        			*/	
 	        			else
 	        			{
 	        				try

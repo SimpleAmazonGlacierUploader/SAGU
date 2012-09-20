@@ -1,3 +1,9 @@
+2012/09/11 - Version 0.72
+
+-Updated AWS SDK to 1.3.19.
+-Removed 4GB file limit. The updated SDK should allow for files larger than 4GB. Please report errors.
+
+
 2012/09/09 - Version 0.71
 
 -Enhancements to upload bar. See what's uploading and what's done.
@@ -8,7 +14,7 @@
 2012/09/06 - Version 0.7
 
 -The threaded update. UI no longer sticks during upload/download.
--Indeterminite progressbar added. To be enhanced in upcoming releases.
+-Indeterminate progressbar added. To be enhanced in upcoming releases.
 -Batch multiple upload requests at once, even to different servers.
 -Have several download requests processing at once.
 -UI tweaks and graphical assets.
