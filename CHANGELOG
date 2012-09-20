@@ -1,3 +1,12 @@
+2012/08/26 - Version 0.4.
+
+-Added delete archive function. Set AWS Keys and Location/Vault, then insert Archive ID to delete.
+-Saves preferences to "SAGU.properties" in launch folder and reloads settings on launch.
+-Built with Java 1.6 libraries. Java 7 no longer required. 
+-Set executable bit for Linux/OSX.
+-Maintenance fix to logging. ArchiveID's logged under v0.2-0.3 contain an extra "Š" character at the beginning which was a rogue Java artifact. (SAGU will automatically handle this if entered, but users should remove the antecedent Š in early logs if using the archiveID with other utilities.)
+
+
 2012/08/25 - Version 0.3.
 
 -Direct links to AWS Key Page, Glacier Vault Creation, Log file, SAGU Update site.
