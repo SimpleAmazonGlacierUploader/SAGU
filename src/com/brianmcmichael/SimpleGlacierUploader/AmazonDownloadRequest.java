@@ -26,14 +26,12 @@ import java.awt.FileDialog;
 import java.awt.FlowLayout;
 import java.awt.Frame;
 
-
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.File;
-
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -45,15 +43,11 @@ import javax.swing.JTextField;
 import javax.swing.JFileChooser;
 import javax.swing.SwingWorker;
 
-
 import com.amazonaws.AmazonClientException;
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.auth.BasicAWSCredentials;
-//import com.amazonaws.auth.AWSCredentials;
-//import com.amazonaws.auth.PropertiesCredentials;
 import com.amazonaws.services.glacier.AmazonGlacierClient;
 import com.amazonaws.services.glacier.transfer.ArchiveTransferManager;
-import com.amazonaws.services.securitytoken.model.Credentials;
 
 
 class AmazonDownloadRequest extends JFrame implements ActionListener, WindowListener
@@ -61,7 +55,7 @@ class AmazonDownloadRequest extends JFrame implements ActionListener, WindowList
 
 	private static final long serialVersionUID = 1L;
 	
-	public static final String DOWNLOAD_NOTICE = "<html><body><br>Amazon stores your data as a stream of data by archive ID.<br>This information can be found in your log file.<br><br>˃> Verify that the server and vault on the previous page match the archive<br> you are attmpting to retreive and enter the archive ID.<br>>> You will then select the location and enter a filename to save the data.<br>>> Once you click the 'retreive' button it will take approximately 4 hours <br>for Amazon to process your request.<br>>> Once your files have been prepared your download will begin automatically.<br>>> You will be notified when your download has completed successfully.<br><br> WARNING: <br>Closing the program during a retreival request will cancel your download.</body><html>";
+	public static final String DOWNLOAD_NOTICE = "<html><body><br>Amazon stores your data as a stream of data by archive ID.<br>This information can be found in your log file.<br><br>˃> Verify that the server and vault on the previous page match the archive<br> you are attmpting to retrieve and enter the archive ID.<br>>> You will then be prompted to select the file name and the location where <br>you would like to save the data.<br>>> Once you click the 'retrieve' button it will take approximately 4 hours <br>for Amazon to process your request.<br>>> Once your files have been prepared your download will begin automatically.<br>>> You will be notified when your download has completed successfully.<br><br> WARNING: <br>Closing the program during a retrieval request will cancel your download.</body><html>";
 
 
 	//define instance variables
@@ -69,7 +63,6 @@ class AmazonDownloadRequest extends JFrame implements ActionListener, WindowList
 
     JTextField jtfDownloadField;
     JButton jbtDownload, jbtBack;
-    //JComboBox jcbStockList;
     
     AmazonGlacierClient dlClient;
     BasicAWSCredentials dlCredentials;
@@ -221,8 +214,7 @@ class AmazonDownloadRequest extends JFrame implements ActionListener, WindowList
 				JOptionPane.showMessageDialog(null,"Enter the Archive ID of the file to be requested.", "Error", JOptionPane.ERROR_MESSAGE);				
 			}
 			else
-			{
-				
+			{				
 					SwingWorker downloadWorker = new SwingWorker() {
 		    		
 					private String archiveId = jtfDownloadField.getText().trim();
@@ -234,7 +226,6 @@ class AmazonDownloadRequest extends JFrame implements ActionListener, WindowList
 					    JFrame downloadFrame = new JFrame("Downloading"); {
 					    downloadFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 					    final JProgressBar dumJProgressBar = new JProgressBar(JProgressBar.HORIZONTAL);
-					    //aJProgressBar.setStringPainted(true);
 					    dumJProgressBar.setIndeterminate(true);
 					    downloadFrame.add(dumJProgressBar, BorderLayout.NORTH);
 					    downloadFrame.setSize(300, 60);}
@@ -290,7 +281,6 @@ class AmazonDownloadRequest extends JFrame implements ActionListener, WindowList
 		    	try {
 					Thread.sleep(500);
 				} catch (InterruptedException e1) {
-					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
 			

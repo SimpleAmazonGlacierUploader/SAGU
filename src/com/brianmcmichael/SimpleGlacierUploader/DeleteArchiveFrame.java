@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////////////
-//    Simple Amazon Glacier Uploader v0.51 - GUI upload and log for Amazon Glacier 
+//    Simple Amazon Glacier Uploader - GUI upload and log for Amazon Glacier 
 //    Copyright (C) 2012 Brian L. McMichael <brian@brianmcmichael.com>
 //
 //    This program is free software: you can redistribute it and/or modify
@@ -14,13 +14,6 @@
 //
 //    You should have received a copy of the GNU General Public License
 //    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-//////////////////////////////////////////////////////////////////////////////////
-//		v0.1		Initial launch - basic upload functionality
-//		v0.2		Added upload logging
-//		v0.3		Right click context menus
-//		v0.4		Delete button. Save Preferences.
-//		v0.5		Cleaned up logs. Multifile upload.
-//		v0.51		Better multifile upload. Better error handling.
 //////////////////////////////////////////////////////////////////////////////////
 
 package com.brianmcmichael.SimpleGlacierUploader;
@@ -120,11 +113,7 @@ class DeleteArchiveFrame extends JFrame implements ActionListener, WindowListene
     		p4.add(p3, BorderLayout.SOUTH);
     	
     	setContentPane(p4);
-    	
-    	// Register listeners
-        //addWindowListener(this);
-
-	    
+   	    
 		// Prepare for display
 		pack();
 		if( width < getWidth())				// prevent setting width too small

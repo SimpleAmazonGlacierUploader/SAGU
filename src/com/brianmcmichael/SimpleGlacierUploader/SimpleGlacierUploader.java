@@ -16,9 +16,9 @@
 //    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //////////////////////////////////////////////////////////////////////////////////
 
-
 package com.brianmcmichael.SimpleGlacierUploader;
 
+import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
@@ -32,6 +32,7 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JPasswordField;
 import javax.swing.JProgressBar;
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JScrollPane;
@@ -39,10 +40,8 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingWorker;
 
-
 import java.awt.*;
 import java.awt.event.*;
-
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.DataOutputStream;
@@ -58,6 +57,9 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Properties;
+
+
+
 import javax.swing.JFileChooser;
 
 import com.amazonaws.auth.BasicAWSCredentials;
@@ -80,7 +82,7 @@ public class SimpleGlacierUploader extends Frame implements ActionListener
 	
 	//static identfiers
 	private static final long serialVersionUID = 1L;
-	private static final String versionNumber = "0.72";
+	private static final String versionNumber = "0.73";
 	private static final String logFileNamelog = "Glacier.log";
 	private static final String logFileNametxt = "Glacier.txt";
 	private static final String logFileNamecsv = "Glacier.csv";	
@@ -168,8 +170,9 @@ public class SimpleGlacierUploader extends Frame implements ActionListener
 	ImageIcon updateIcon = new ImageIcon(Toolkit.getDefaultToolkit().getImage(updateIconUrl));
 	URL userUrl = getClass().getResource("/littleguy.png");
 	ImageIcon userIcon = new ImageIcon(Toolkit.getDefaultToolkit().getImage(userUrl));
-	
-	
+	URL logoUrl = getClass().getResource("/SAGU.png");
+	JLabel logoLabel = new JLabel(new ImageIcon( Toolkit.getDefaultToolkit().getImage(logoUrl) ));
+		
 	File uploadFile = null;
 	
 	JPanel mainPanel = new JPanel();
@@ -208,11 +211,12 @@ public class SimpleGlacierUploader extends Frame implements ActionListener
 		JHyperlinkLabel accessLabel = new JHyperlinkLabel(ACCESS_LABEL);  //v0.3
 		JTextField accessField = new JTextField(21);
 		JLabel secretLabel = new JLabel("Secret Key: ");
-		JTextField secretField = new JTextField(41);
+		JPasswordField secretField = new JPasswordField(41);
 		
 	JPanel locationPanel = new JPanel();
 		JLabel locationName = new JLabel("Upload Location: ");
 		JComboBox locationChoice = new JComboBox();
+		JButton loginButton = new JButton("Refresh Vaults");
 		
 	
 	JPanel vaultPanel = new JPanel();
@@ -222,6 +226,7 @@ public class SimpleGlacierUploader extends Frame implements ActionListener
 		JTextField vaultField = new JTextField(15);
 		JButton newVaultButton = new JButton("Create Vault");
 		
+	JPanel logoPanel = new JPanel();
 				
 	JPanel logPanel = new JPanel();
 		JButton logButton = new JButton("View Log");
@@ -233,24 +238,17 @@ public class SimpleGlacierUploader extends Frame implements ActionListener
 	JButton selectFileButton = new JButton("Select File");
 		JButton clearButton = new JButton("Clear");
 		
-		
-
-		
 	JPanel fileDropPanel = new JPanel();
 		JTextArea ddText = new JTextArea();
 		JScrollPane ddScroll = new JScrollPane(ddText);
 		
-		
-		
 		FileDrop fileDropHere = new FileDrop( ddText, /*dragBorder,*/ new FileDrop.Listener()
 		{    
 			
-			//File[] goodFiles = null;
 			File thisFile = null;
 			public void filesDropped( java.io.File[] files )
 			{
 				ddText.setEditable(false);
-				//boolean badFiles = false;
 				File[] goodFiles = new File[files.length];
     			{   
     				
@@ -261,7 +259,6 @@ public class SimpleGlacierUploader extends Frame implements ActionListener
 	        			{
 							try
 		                    {   
-								//ddText.setForeground(rc);
 								ddText.append( "Unable to upload: " + files[i].getCanonicalPath() + "\n" ); 			                    	
 		                    }   // end try
 		                    catch( java.io.IOException e ) {}
@@ -357,7 +354,7 @@ public class SimpleGlacierUploader extends Frame implements ActionListener
 		credentialsPanel.add(secretField);
 			secretField.addMouseListener(rmb);
 			secretField.setPreferredSize(buttonDimension);
-		
+
 		
 		locationPanel.setBackground(wc);
 		locationPanel.setBorder(BorderFactory.createTitledBorder("Server Location"));
@@ -370,6 +367,10 @@ public class SimpleGlacierUploader extends Frame implements ActionListener
 			locationChoice.addItem(regionFour);
 			locationChoice.addItem(regionFive);
 			locationChoice.addActionListener(this);
+		locationPanel.add(loginButton);
+			loginButton.addActionListener(this);
+			loginButton.setBackground(wc);
+			loginButton.setPreferredSize(buttonDimension);
 		
 		
 		vaultPanel.setBackground(wc);
@@ -380,12 +381,14 @@ public class SimpleGlacierUploader extends Frame implements ActionListener
 			vaultSelector.setPreferredSize(buttonDimension);
 		vaultPanel.add(vaultField);
 			vaultField.addActionListener(this);
-			vaultField.setPreferredSize(buttonDimension);
-			
+			vaultField.setPreferredSize(buttonDimension);			
 		vaultPanel.add(newVaultButton);
 			newVaultButton.addActionListener(this);
 			newVaultButton.setBackground(wc);
 			newVaultButton.setPreferredSize(buttonDimension);
+		
+		logoPanel.setBackground(wc);	
+		logoPanel.add(logoLabel);
 		
 		logPanel.setBackground(wc);
 		logPanel.setBorder(BorderFactory.createTitledBorder("Options"));
@@ -421,20 +424,16 @@ public class SimpleGlacierUploader extends Frame implements ActionListener
 			ddText.setEditable(false);
 			ddScroll.setSize(180, 300);
 		
-		//q1.setBackground(wc);
-		//q1.add(locationPanel);
-		//q1.add(vaultPanel);
 		
 		p1.setBackground(wc);
 		p1.add(credentialsPanel);
-		//p1.add(q1);
 		p1.add(locationPanel);
 		p1.add(vaultPanel);
-		//p1.add(vaultPanel);
 		
 			
 		p2.setBackground(wc);
-		p2.add(logPanel);
+		p2.add(logoPanel, BorderLayout.NORTH);
+		p2.add(logPanel, BorderLayout.CENTER);
 		
 		p3.setBackground(wc);
 		p3.add(selectionsPanel, BorderLayout.NORTH);
@@ -443,7 +442,6 @@ public class SimpleGlacierUploader extends Frame implements ActionListener
 			uploadButton.setBackground(wc);
 			uploadButton.addActionListener(this);
 		p3.setBorder(BorderFactory.createTitledBorder("Uploads"));
-		
 		
 		
 		o1.setBackground(wc);
@@ -891,23 +889,6 @@ public class SimpleGlacierUploader extends Frame implements ActionListener
 	  } // centerFrame
 	
 	
-	/*
-	public void dummyProgress(Boolean b)
-	{   
-		centerDefineFrame(uploadFrame, 300, 50);
-	    if(b == true)
-	    {
-	    	uploadFrame.setVisible(b);
-	    }
-	    else
-	    {
-	    	uploadFrame.dispose();
-	    }
-	    
-	}
-	*/
-	
-	
 	public static String getRegion(int reg)
 	{
 		String regString;
@@ -991,6 +972,10 @@ public class SimpleGlacierUploader extends Frame implements ActionListener
 			}
 			else{}
 		}
+		if(e.getSource() == loginButton)
+		{
+			repopulateVaults(accessString, secretString, regionInt);
+		}
 		if(e.getSource() == exitApplicationMnu)
 		{
 			System.exit(0);
@@ -1001,7 +986,6 @@ public class SimpleGlacierUploader extends Frame implements ActionListener
 		}
 		if(e.getSource() == saveFileMnu)
 		{
-			//JFileChooser saveChooser = new JFileChooser();
 			FileDialog fd = new FileDialog(new Frame(), "Save...", FileDialog.SAVE);
 		    fd.setFile("Glacier.txt");
 		    fd.setDirectory(curDir);
@@ -1012,7 +996,6 @@ public class SimpleGlacierUploader extends Frame implements ActionListener
 		    		
 		    		
 			File outFile = new File(filePath);
-			//System.out.println(outFile.toString());
 			
 			if ((outFile.equals("") == false) && (outFile.equals("null") == false) && ((outFile == null) == false))
 			{
@@ -1069,7 +1052,6 @@ public class SimpleGlacierUploader extends Frame implements ActionListener
 				}		
         	}
 		}
-        
 		
 		if(e.getSource() == viewLog || e.getSource() == logButton)
 		{
@@ -1085,8 +1067,7 @@ public class SimpleGlacierUploader extends Frame implements ActionListener
 		
 		if(e.getSource() == downloadRequestButton || e.getSource() == downloadFileMnu)
 		{	
-			//JOptionPane.showMessageDialog(null,DOWNLOAD_NOTICE, "Download Warning", JOptionPane.INFORMATION_MESSAGE);
-            
+	         
 			AmazonGlacierClient newDownloadClient = new AmazonGlacierClient();
 			newDownloadClient = makeClient(accessString, secretString, regionInt);
 			BasicAWSCredentials credentials = new BasicAWSCredentials(accessString,secretString);
@@ -1119,6 +1100,7 @@ public class SimpleGlacierUploader extends Frame implements ActionListener
             {
             	if (fc.getSelectedFile().isFile() == true)
             	{	
+            		/* Removed for v. 0.72
             		if (fc.getSelectedFile().length() > max_file_size == true)
             		{
             			JOptionPane.showMessageDialog(null, FILE_TOO_BIG_ERROR,"Error",JOptionPane.ERROR_MESSAGE);
@@ -1131,6 +1113,7 @@ public class SimpleGlacierUploader extends Frame implements ActionListener
             		}
             		else
             		{
+            		*/
             			File[] thisFile = new File[1];
             			thisFile[0] = fc.getSelectedFile();
                     	try
@@ -1148,7 +1131,7 @@ public class SimpleGlacierUploader extends Frame implements ActionListener
                     	}
                     	       
                     	
-            		}
+            		//}
                 }
                 else 
                 {
@@ -1226,8 +1209,6 @@ public class SimpleGlacierUploader extends Frame implements ActionListener
 						            		plainOutputTxt = new BufferedWriter(new FileWriter(getLogFilenamePath(1), true));
 						            		plainOutputCsv = new BufferedWriter(new FileWriter(getLogFilenamePath(2), true));
 						            		
-						            		//v0.4 method and earlier
-						                	//output = new DataOutputStream(new FileOutputStream(logFileName, true));
 						                }
 						                catch(IOException ex)
 						                {
@@ -1380,12 +1361,12 @@ public class SimpleGlacierUploader extends Frame implements ActionListener
 		SimpleGlacierUploader g = new SimpleGlacierUploader();
 		g.setBounds(300,300,650,475);
 		g.setTitle("Simple Amazon Glacier Uploader "+versionNumber);
+		g.setIconImage(Toolkit.getDefaultToolkit().getImage("/glaciericon.png"));
 		g.setVisible(true);
-		g.setIconImage(Toolkit.getDefaultToolkit().getImage("img\\glaciericon.png"));
+		
 		
 	} //end of main
 
-	
 
 	
 }

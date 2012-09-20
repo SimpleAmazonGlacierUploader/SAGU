@@ -33,7 +33,6 @@ import com.amazonaws.services.glacier.model.CreateVaultResult;
 
 	    JTextField jtfAddField;
 	    JButton jbtAdd, jbtBack;
-	    //JComboBox jcbStockList;
 	    
 	    AmazonGlacierClient addClient;
 	    int locationChoice;
@@ -55,8 +54,7 @@ import com.amazonaws.services.glacier.model.CreateVaultResult;
 			Color wc = Color.WHITE;
 	    	
 			this.addClient = client;
-			//addVault = vaultName;
-	    	
+			
 			JLabel label1 = new JLabel("Name of Vault to add to " + SimpleGlacierUploader.getRegion(thisRegion) + ":");
 	        jtfAddField = new JTextField(30);
 	        jbtAdd = new JButton("Add");
@@ -93,10 +91,6 @@ import com.amazonaws.services.glacier.model.CreateVaultResult;
 	    	
 	    	setContentPane(p4);
 	    	
-	    	// Register listeners
-	        //addWindowListener(this);
-
-		    
 			// Prepare for display
 			pack();
 			if( width < getWidth())				// prevent setting width too small
@@ -185,18 +179,13 @@ import com.amazonaws.services.glacier.model.CreateVaultResult;
 						
 						//TODO Limit to valid chars
 						
-						
-						//String vaultName = addVault;
-						
-			            // Add the archive.						
+						// Add the archive.						
 						
 						CreateVaultRequest cvreq = new CreateVaultRequest(vaultToAdd);
 						
 						CreateVaultResult cvres = new CreateVaultResult();
 						cvres = addClient.createVault(cvreq);
-						
-						//System.out.println(""+cvres);
-						
+
 						JOptionPane.showMessageDialog(null, "Added vault successfully.","Success",JOptionPane.INFORMATION_MESSAGE);
 	                	this.dispose();
 						
@@ -204,7 +193,6 @@ import com.amazonaws.services.glacier.model.CreateVaultResult;
 					catch (AmazonServiceException k)
 					{
 						JOptionPane.showMessageDialog(null,"The server returned an error.", "Error", JOptionPane.ERROR_MESSAGE);
-						//System.out.println(""+k);
 					}
 					catch (AmazonClientException i) 
 					{
