@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////////////
-//    Simple Amazon Glacier Uploader v0.6 - GUI upload and log for Amazon Glacier 
+//    Simple Amazon Glacier Uploader - GUI upload and log for Amazon Glacier 
 //    Copyright (C) 2012 Brian L. McMichael <brian@brianmcmichael.com>
 //
 //    This program is free software: you can redistribute it and/or modify
@@ -19,12 +19,10 @@
 
 package com.brianmcmichael.SimpleGlacierUploader;
 
-//import javax.swing.BorderFactory;
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
@@ -55,18 +53,11 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.LineNumberReader;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-
 import java.io.Writer;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Properties;
-
-
-
 import javax.swing.JFileChooser;
 
 import com.amazonaws.auth.BasicAWSCredentials;
