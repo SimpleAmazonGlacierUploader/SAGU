@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////////////
-//    Simple Amazon Glacier Uploader v0.51 - GUI upload and log for Amazon Glacier 
+//    Simple Amazon Glacier Uploader - GUI upload and log for Amazon Glacier 
 //    Copyright (C) 2012 Brian L. McMichael <brian@brianmcmichael.com>
 //
 //    This program is free software: you can redistribute it and/or modify
@@ -27,8 +27,8 @@
 
 package com.brianmcmichael.SimpleGlacierUploader;
 
-//import javax.swing.BorderFactory;
 import javax.swing.BorderFactory;
+import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -42,6 +42,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
+import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
@@ -50,14 +51,19 @@ import javax.swing.JTextField;
 import java.awt.*;
 import java.awt.event.*;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.LineNumberReader;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 
 import java.io.Writer;
 import java.util.ArrayList;
@@ -85,8 +91,10 @@ public class SimpleGlacierUploader extends Frame implements ActionListener
 	
 	//static identfiers
 	private static final long serialVersionUID = 1L;
-	private static final String versionNumber = "0.6";
-	private static final String logFileName = "Glacier.log";
+	private static final String versionNumber = "0.61";
+	private static final String logFileNamelog = "Glacier.log";
+	private static final String logFileNametxt = "Glacier.txt";
+	private static final String logFileNamecsv = "Glacier.csv";	
 	private static final String fileProperties = "SAGU.properties";
 	
 	//Server Region Strings
@@ -106,9 +114,12 @@ public class SimpleGlacierUploader extends Frame implements ActionListener
 	
 	//Other Strings
 	public static final String DOWNLOAD_STRING = "Download (Experimental)";
-	public static final String COPYRIGHT_STRING = "©2012 brian@brianmcmichael.com";
+	public static final String COPYRIGHT_STRING = "Simple Amazon Glacier Uploader v"+versionNumber+"\n ©2012 brian@brianmcmichael.com";
 	public static final String UPDATE_STRING = "Check for Update";
 	public static final String UPDATE_SITE_STRING = "http://simpleglacieruploader.brianmcmichael.com/";
+	public static final String ABOUT_WINDOW_STRING = ""+COPYRIGHT_STRING+"\n\nReport errors or direct correspondence to: brian@brianmcmichael.com\n\nSimple Amazon Glacier Uploader is free and always will be. \n I'm currently studying software development and I am hand coding this \nin Java to improve my skills and develop my portfolio.\n Your feedback is appreciated.\nThis program is not any way affiliated with Amazon Web Services or Amazon.com.";
+	public static final String DOWNLOAD_NOTICE = "!!!!!!EXPERIMENTAL!!!!!!! \nThis feature is not yet threaded and is provided here for convenience and necessity only.\n\nIn addition to your AWS keys, you must assure that the region and vault name match\nthe location of the file you are trying to download. \nThis information can be found in your Glacier.log file.\n\n-Insert the ArchiveID and hit the download button. \n-You will then need to select a location and enter a filename for the download. \n-You should name the file to the same name as the filename in your log. \n-Click to accept.\n\n---IMPORTANT---\nThe program will appear to freeze at this point. This is normal.\n\nAfter Amazon retrieves the files (about four hours) the download will begin automatically \nand save the data to the location and filename that you selected. \n\nWhen the download is complete, you will receive a notice and the program will resume normal operation.\nIf you wish to download another file or upload files during this period you will \nneed to open another instance of the program.";
+	public static final String URL_STRING = "http://simpleglacieruploader.brianmcmichael.com/";
 	
 	//Set Colors
 	Color wc = Color.WHITE;
@@ -162,13 +173,21 @@ public class SimpleGlacierUploader extends Frame implements ActionListener
 	JPanel p2 = new JPanel();
 	JPanel p3 = new JPanel();
 	
+	JPanel q1 = new JPanel();
+	
 	JMenuBar menuBar = new JMenuBar();
 		JMenu fileMenu = new JMenu("File");
-			JMenuItem downloadFileMnu = new JMenuItem(DOWNLOAD_STRING, downIcon);
+			JMenuItem saveFileMnu = new JMenuItem("Export Log");
 			JMenuItem exitApplicationMnu = new JMenuItem("Exit", exitIcon);
+		JMenu retreiveMenu = new JMenu("Retreive");
+			JMenuItem downloadFileMnu = new JMenuItem(DOWNLOAD_STRING, downIcon);
 		JMenu viewMenu = new JMenu("View");
 			JMenuItem viewLog = new JMenuItem("View Log", logIcon);
 			JCheckBoxMenuItem logCheckMenuItem = new JCheckBoxMenuItem("Logging");
+			JRadioButtonMenuItem logLogRadio = new JRadioButtonMenuItem(".log");
+			JRadioButtonMenuItem logTxtRadio = new JRadioButtonMenuItem(".txt");
+			JRadioButtonMenuItem logCsvRadio = new JRadioButtonMenuItem(".csv");
+				ButtonGroup logFileGroup = new ButtonGroup();
 		JMenu deleteMenu = new JMenu("Delete");
 			JMenuItem deleteArchiveMnu = new JMenuItem("Delete Archive", xIcon);
 		JMenu helpMenu = new JMenu("Help");
@@ -215,7 +234,7 @@ public class SimpleGlacierUploader extends Frame implements ActionListener
 		
 		
 		
-		FileDrop fileDropHere = new FileDrop( System.out, ddText, /*dragBorder,*/ new FileDrop.Listener()
+		FileDrop fileDropHere = new FileDrop( ddText, /*dragBorder,*/ new FileDrop.Listener()
 		{       	
 			//File[] goodFiles = null;
 			File thisFile = null;
@@ -322,16 +341,11 @@ public class SimpleGlacierUploader extends Frame implements ActionListener
 	public SimpleGlacierUploader()
 	{
 		this.setLayout(new BorderLayout());
-		//this.setJMenuBar(menuBar);
-			//titlePanel.setLayout(new FlowLayout());
-			//inputPanel.setLayout(new GridLayout(8,2,20,20));
-			//inputPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
-			//copyrightPanel.setLayout(new FlowLayout());
-			//logPanel.setLayout(new FlowLayout());
-			//selectionsPanel.setLayout(new GridLayout(1,2,5,5));
+		
 			mainPanel.setLayout(new BorderLayout());
 			o1.setLayout(new GridLayout(1,3,10,10));
-			p1.setLayout(new GridLayout(3,1,30,30));
+			p1.setLayout(new GridLayout(2,1,20,20));
+			q1.setLayout(new GridLayout(2,1,10,10));
 			//p2.setLayout(new GridLayout(8,1,10,10));	
 			p2.setLayout(new BorderLayout());
 			p3.setLayout(new BorderLayout());
@@ -385,7 +399,7 @@ public class SimpleGlacierUploader extends Frame implements ActionListener
 		selectionsPanel.add(selectFileButton);
 			selectFileButton.setBackground(wc);
 			selectFileButton.addActionListener(this);
-			fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
+			//fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
 		selectionsPanel.add(clearButton);
 			clearButton.setBackground(wc);
 			clearButton.addActionListener(this);
@@ -396,12 +410,14 @@ public class SimpleGlacierUploader extends Frame implements ActionListener
 		fileDropPanel.add(ddScroll, BorderLayout.CENTER);
 			ddScroll.setSize(180, 300);
 		
-		
+		q1.setBackground(wc);
+		q1.add(locationPanel);
+		q1.add(vaultPanel);
 		
 		p1.setBackground(wc);
 		p1.add(credentialsPanel);
-		p1.add(locationPanel);
-		p1.add(vaultPanel);
+		p1.add(q1);
+		//p1.add(vaultPanel);
 		
 			
 		p2.setBackground(wc);
@@ -415,6 +431,8 @@ public class SimpleGlacierUploader extends Frame implements ActionListener
 			uploadButton.addActionListener(this);
 		p3.setBorder(BorderFactory.createTitledBorder("Uploads"));
 		
+		
+		
 		o1.setBackground(wc);
 		o1.add(p1);
 		o1.add(p2);
@@ -427,15 +445,26 @@ public class SimpleGlacierUploader extends Frame implements ActionListener
 		
 		menuBar.setBackground(wc);
 		menuBar.add(fileMenu);
-			fileMenu.add(downloadFileMnu);
-				downloadFileMnu.addActionListener(this);
+			fileMenu.add(saveFileMnu);
+				saveFileMnu.addActionListener(this);
 			fileMenu.add(exitApplicationMnu);
 				exitApplicationMnu.addActionListener(this);
+		menuBar.add(retreiveMenu);
+			retreiveMenu.add(downloadFileMnu);
+				downloadFileMnu.addActionListener(this);		
 		menuBar.add(viewMenu);
 			viewMenu.add(viewLog);
 				viewLog.addActionListener(this);
 			viewMenu.add(logCheckMenuItem);
 				logCheckMenuItem.setSelected(true);
+			viewMenu.addSeparator();
+			viewMenu.add(logLogRadio);
+				logLogRadio.setSelected(true);				
+				logFileGroup.add(logLogRadio);				
+			viewMenu.add(logTxtRadio);
+				logFileGroup.add(logTxtRadio);
+			viewMenu.add(logCsvRadio);
+				logFileGroup.add(logCsvRadio);
 		menuBar.add(deleteMenu);
 			deleteMenu.add(deleteArchiveMnu);
 				deleteArchiveMnu.addActionListener(this);
@@ -444,6 +473,7 @@ public class SimpleGlacierUploader extends Frame implements ActionListener
 				updateMnu.addActionListener(this);
 			helpMenu.add(aboutMnu);
 				aboutMnu.addActionListener(this);
+				
 		
 		add(mainPanel, BorderLayout.CENTER);
 		pack();
@@ -469,6 +499,14 @@ public class SimpleGlacierUploader extends Frame implements ActionListener
 			secretField.setText(applicationProps.getProperty("secretKey"));
 			vaultField.setText(applicationProps.getProperty("vaultKey"));
 			locationChoice.setSelectedIndex(Integer.parseInt(applicationProps.getProperty("locationSet")));
+			if(applicationProps.getProperty("logType") == null)
+			{
+				setLogFileType(0);
+			}
+			else
+			{
+				setLogFileType(Integer.parseInt(applicationProps.getProperty("logType")));
+			}			
 			in.close();
 		} catch (FileNotFoundException e1) {			
 		} catch (IOException e1) {			
@@ -483,20 +521,88 @@ public class SimpleGlacierUploader extends Frame implements ActionListener
 			
 	}
 	
-	
-	
-	
-	
-	
-	public static String getLogFilename()
+	public void setLogFileType(int intype)
 	{
-		return "" + logFileName;
+		if((intype == 0) == true)
+		{
+			logLogRadio.setSelected(true);
+		}
+		else if((intype == 1) == true)
+		{
+			logTxtRadio.setSelected(true);
+		}
+		else if((intype == 0) == true)
+		{
+			logCsvRadio.setSelected(true);
+		}
+		else
+		{
+			logLogRadio.setSelected(true);
+		}		
 	}
 	
-	public static File getLogFilenamePath()
+	public int getLogFileType()
 	{
-		File logFile = new File(curDir + System.getProperty("file.separator") + logFileName);
-		return logFile;
+		if(logLogRadio.isSelected() == true)
+		{
+			return 0;
+		}
+		if(logTxtRadio.isSelected() == true)
+		{
+			return 1;
+		}
+		if(logCsvRadio.isSelected() == true)
+		{
+			return 2;
+		}
+		else
+		{
+			return 0;
+		}		
+	}
+	
+	public static String getLogFilename(int filename)
+	{
+		if(filename == 0)
+		{
+			return ""+logFileNamelog;
+		}
+		if(filename == 1)
+		{
+			return ""+logFileNametxt;
+		}
+		if(filename == 2)
+		{
+			return ""+logFileNamecsv;
+		}
+		else
+		{
+			return ""+logFileNamelog;
+		}
+	}
+	
+	public static File getLogFilenamePath(int filepath)
+	{
+		if(filepath == 0)
+		{
+			File logFile = new File(curDir + System.getProperty("file.separator") + logFileNamelog);
+			return logFile;
+		}
+		if(filepath == 1)
+		{
+			File logFile = new File(curDir + System.getProperty("file.separator") + logFileNametxt);
+			return logFile;
+		}
+		if(filepath == 2)
+		{
+			File logFile = new File(curDir + System.getProperty("file.separator") + logFileNamecsv);
+			return logFile;
+		}
+		else
+		{
+			File logFile = new File(curDir + System.getProperty("file.separator") + logFileNamelog);
+			return logFile;
+		}		
 	}
 	
 	public static String getFileProperties()
@@ -522,6 +628,7 @@ public class SimpleGlacierUploader extends Frame implements ActionListener
 			applicationProps.setProperty("secretKey", secretString);
 			applicationProps.setProperty("vaultKey", vaultString);
 			applicationProps.setProperty("locationSet", Integer.toString(selectedIndex));
+			applicationProps.setProperty("logType", convertSimple(getLogFileType()));
 			applicationProps.store(out, "Properties");
 			out.close();
 		} 
@@ -777,11 +884,84 @@ public class SimpleGlacierUploader extends Frame implements ActionListener
 		}
 		if(e.getSource() == updateMnu || e.getSource() == checkUpdateButton)
 		{
-			JHyperlinkLabel.OpenURI("http://simpleglacieruploader.brianmcmichael.com/");
+			JHyperlinkLabel.OpenURI(URL_STRING);
 		}
+		if(e.getSource() == saveFileMnu)
+		{
+			//JFileChooser saveChooser = new JFileChooser();
+			FileDialog fd = new FileDialog(new Frame(), "Save...", FileDialog.SAVE);
+		    fd.setFile("Glacier.txt");
+		    fd.setDirectory(curDir);
+		    fd.setLocation(50, 50);
+		    fd.setVisible(true);
+		    //fd.show();
+		    String filePath = ""+fd.getDirectory()+System.getProperty("file.separator")+fd.getFile();
+		    		
+		    		
+			File outFile = new File(filePath);
+			//System.out.println(outFile.toString());
+			
+			if ((outFile.equals("") == false) && (outFile.equals("null")) == false)
+			{
+				
+            	try 
+            	{
+            		FileReader fr = new FileReader(getLogFilenamePath(getLogFileType()));
+            		BufferedReader br = new BufferedReader(fr);
+            		
+            		FileWriter saveFile = new FileWriter(outFile.toString());
+            		
+					int count = 0;
+					boolean moreLines = true;
+					
+					String ln1 ="";
+					String ln2 ="";
+					String ln3 ="";
+					
+					while(moreLines == true)
+					{
+						ln1 = br.readLine();
+						ln2 = br.readLine();
+						ln3 = br.readLine();
+						
+						if (ln1 == null) { ln1 = ""; }
+						if (ln2 == null) { ln2 = ""; }
+						if (ln3 == null) { ln3 = ""; }
+								
+						saveFile.write(ln1);
+						saveFile.write("\r\n");
+						saveFile.write(ln2);
+						saveFile.write("\r\n");
+						saveFile.write(ln3);
+						saveFile.write("\r\n");
+						
+						count++;
+						
+						if (ln3.equals(""))
+						{
+							moreLines = false;
+							br.close();
+							saveFile.close();
+							JOptionPane.showMessageDialog(null,"Successfully exported " + count + " archive records to " + outFile.toString(), "Export", JOptionPane.INFORMATION_MESSAGE);				            
+						}
+					}
+				} 
+            	catch (FileNotFoundException e1) 
+				{					
+            		JOptionPane.showMessageDialog(null, "Unable to locate Glacier.log","Error",JOptionPane.ERROR_MESSAGE);
+        			e1.printStackTrace();
+				} catch (IOException e1) 
+				{					
+					e1.printStackTrace();
+				}		
+        	}
+		}
+            
+		
+		
 		if(e.getSource() == viewLog || e.getSource() == logButton)
 		{
-			JHyperlinkLabel.OpenURI(""+SimpleGlacierUploader.getLogFilenamePath().toURI());
+			JHyperlinkLabel.OpenURI(""+SimpleGlacierUploader.getLogFilenamePath(getLogFileType()).toURI());
 		}
 		if(e.getSource() == deleteArchiveMnu)
 		{
@@ -793,7 +973,7 @@ public class SimpleGlacierUploader extends Frame implements ActionListener
 		
 		if(e.getSource() == downloadRequestButton || e.getSource() == downloadFileMnu)
 		{	
-			JOptionPane.showMessageDialog(null,"!!!!!!EXPERIMENTAL!!!!!!! \nThis feature is not yet threaded and is provided here for convenience and necessity only.\n\nIn addition to your AWS keys, you must assure that the region and vault name match\nthe location of the file you are trying to download. \nThis information can be found in your Glacier.log file.\n\n-Insert the ArchiveID and hit the download button. \n-You will then need to select a location and enter a filename for the download. \n-You should name the file to the same name as the filename in your log. \n-Click to accept.\n\n---IMPORTANT---\nThe program will appear to freeze at this point. This is normal.\n\nAfter Amazon retrieves the files (about four hours) the download will begin automatically \nand save the data to the location and filename that you selected. \n\nWhen the download is complete, you will receive a notice and the program will resume normal operation.\nIf you wish to download another file or upload files during this period you will \nneed to open another instance of the program.", "Download Warning", JOptionPane.INFORMATION_MESSAGE);
+			JOptionPane.showMessageDialog(null,DOWNLOAD_NOTICE, "Download Warning", JOptionPane.INFORMATION_MESSAGE);
             
 			AmazonGlacierClient newDownloadClient = new AmazonGlacierClient();
 			newDownloadClient = makeClient(accessString, secretString, regionInt);
@@ -804,8 +984,7 @@ public class SimpleGlacierUploader extends Frame implements ActionListener
 		
 		if (e.getSource() == aboutMnu)
         {
-			JOptionPane.showMessageDialog(null,""+COPYRIGHT_STRING+"\n\nReport errors or direct correspondence to: brian@brianmcmichael.com\n\nSimple Amazon Glacier Uploader is free and always will be. \n I'm currently studying software development and I am hand coding this \nin Java to improve my skills and provide an interactive portfolio.\n Your feedback is appreciated.\nThis program is not any way affiliated with Amazon Web Services or Amazon.com.", "About", JOptionPane.INFORMATION_MESSAGE);
-            
+			JOptionPane.showMessageDialog(null,ABOUT_WINDOW_STRING, "About", JOptionPane.INFORMATION_MESSAGE);
         }
 		
 		if (e.getSource() == clearButton)
@@ -908,7 +1087,7 @@ public class SimpleGlacierUploader extends Frame implements ActionListener
 				            	try
 				                {	
 				            		
-				            		plainOutput = new BufferedWriter(new FileWriter(getLogFilenamePath(), true));
+				            		plainOutput = new BufferedWriter(new FileWriter(getLogFilenamePath(getLogFileType()), true));
 				            		
 				            		//v0.4 method and earlier
 				                	//output = new DataOutputStream(new FileOutputStream(logFileName, true));
@@ -919,40 +1098,72 @@ public class SimpleGlacierUploader extends Frame implements ActionListener
 				                	System.exit(1);
 				                }
 				            	
-				            	try
-				    			{
+				            	if (logLogRadio.isSelected() == true || logTxtRadio.isSelected() == true)
+				            	{
+				            		try
+					    			{
+					            		
+					            		Date d = new Date();
+					            		
+					            		String thisResult = result.getArchiveId();
+					            					            		
+					            		plainOutput.write(System.getProperty( "line.separator" ));
+					            		plainOutput.write(" | ArchiveID: " + thisResult + " ");
+					            		plainOutput.write(System.getProperty( "line.separator" ));
+					            		plainOutput.write(" | File: " + thisFile + " ");
+					            		plainOutput.write(" | Bytes: " + fileLength + " ");
+					            		plainOutput.write(" | Vault: " +vaultName + " ");
+					            		plainOutput.write(" | Location: " + locationUpped + " ");
+					            		plainOutput.write(" | Date: "+d.toString()+ " ");
+					            		plainOutput.write(System.getProperty( "line.separator" ));
+					            		plainOutput.close();
+					            		
+					            		uploadList.add("Successfully uploaded " + thisFile + " to vault " + vaultName + " at " + locationUpped + ". Bytes: " + fileLength + ". ArchiveID Logged.\n");
+					    			}
+					            		
+					            		//v0.4 logging code
+					            		//output.writeUTF("ArchiveID: " + thisResult + " ");
+					            		//output.writeUTF(" | File: " + thisFile + " ");
+					    				//output.writeUTF(" | Vault: " +vaultName + " ");
+					    				//output.writeUTF(" | Location: " + locationUpped + " ");
+					    				//output.writeUTF(" | Date: "+d.toString()+"\n\n");	  
+				            		catch(IOException c)
+					    			{
+					    				JOptionPane.showMessageDialog(null, LOG_WRITE_ERROR,"IO Error",JOptionPane.ERROR_MESSAGE);
+					    				System.exit(1);
+					    			}
+					    		}
+					            else if (logCsvRadio.isSelected() == true)
+					            {
+					            	try
+					    			{
+					            		
+					            		Date d = new Date();
+					            		
+					            		String thisResult = result.getArchiveId();
+					            					            		
+					            		plainOutput.write(""+thisResult+",");
+					            		plainOutput.write(""+thisFile+",");
+					            		plainOutput.write(""+fileLength+",");
+					            		plainOutput.write(""+vaultName +",");
+					            		plainOutput.write(""+locationUpped+",");
+					            		plainOutput.write(""+d.toString()+",");
+					            		plainOutput.write(System.getProperty( "line.separator" ));
+					            		plainOutput.close();
+					            		
+					            		uploadList.add("Successfully uploaded " + thisFile + " to vault " + vaultName + " at " + locationUpped + ". Bytes: " + fileLength + ". ArchiveID Logged.\n");
+					    			}	
+				            		catch(IOException c)
+					    			{
+					    				JOptionPane.showMessageDialog(null, LOG_WRITE_ERROR,"IO Error",JOptionPane.ERROR_MESSAGE);
+					    				System.exit(1);
+					    			}
+					            }
+					            	
+					    				
+				            	
 				            		
-				            		Date d = new Date();
-				            		
-				            		String thisResult = result.getArchiveId();
-				            					            		
-				            		plainOutput.write(System.getProperty( "line.separator" ));
-				            		plainOutput.write(" | ArchiveID: " + thisResult + " ");
-				            		plainOutput.write(System.getProperty( "line.separator" ));
-				            		plainOutput.write(" | File: " + thisFile + " ");
-				            		plainOutput.write(" | Bytes: " + fileLength + " ");
-				            		plainOutput.write(" | Vault: " +vaultName + " ");
-				            		plainOutput.write(" | Location: " + locationUpped + " ");
-				            		plainOutput.write(" | Date: "+d.toString()+ " ");
-				            		plainOutput.write(System.getProperty( "line.separator" ));
-				            		plainOutput.close();
-				            		
-				            		uploadList.add("Successfully uploaded " + thisFile + " to vault " + vaultName + " at " + locationUpped + ". Bytes: " + fileLength + ". ArchiveID Logged.\n");
-				            		
-				            		//v0.4 logging code
-				            		//output.writeUTF("ArchiveID: " + thisResult + " ");
-				            		//output.writeUTF(" | File: " + thisFile + " ");
-				    				//output.writeUTF(" | Vault: " +vaultName + " ");
-				    				//output.writeUTF(" | Location: " + locationUpped + " ");
-				    				//output.writeUTF(" | Date: "+d.toString()+"\n\n");	  
-				    				
-				    				
-				    			}
-				    			catch(IOException c)
-				    			{
-				    				JOptionPane.showMessageDialog(null, LOG_WRITE_ERROR,"IO Error",JOptionPane.ERROR_MESSAGE);
-				    				System.exit(1);
-				    			}
+				    			
 				            }
 				            else
 				            {
@@ -990,10 +1201,39 @@ public class SimpleGlacierUploader extends Frame implements ActionListener
 			}
 			
 		}
+		else
+		{
+			
+		}
+			
 	
-		
-		
 	}
+	
+	public class UseFileDialog {
+		 
+		  public String loadFile
+		      (Frame f, String title, String defDir, String fileType) {
+		    FileDialog fd = new FileDialog(f, title, FileDialog.LOAD);
+		    fd.setFile(fileType);
+		    fd.setDirectory(defDir);
+		    fd.setLocation(50, 50);
+		    fd.setVisible(true);
+		    //fd.show();
+		    return fd.getFile();
+		    }
+		 
+		  public String saveFile
+		      (Frame f, String title, String defDir, String fileType) {
+		    FileDialog fd = new FileDialog(f, title,    FileDialog.SAVE);
+		    fd.setFile(fileType);
+		    fd.setDirectory(defDir);
+		    fd.setLocation(50, 50);
+		    fd.setVisible(true);
+		    //fd.show();
+		    return fd.getFile();
+		    }
+		 
+		}
 	
 	
 	

@@ -28,7 +28,9 @@ package com.brianmcmichael.SimpleGlacierUploader;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.FileDialog;
 import java.awt.FlowLayout;
+import java.awt.Frame;
 
 
 import java.awt.Toolkit;
@@ -219,40 +221,28 @@ class AmazonDownloadRequest extends JFrame implements ActionListener, WindowList
 			{
 					
 				try {
-					
-					/*
-					 * 
-					 *  AWSCredentials credentials = new PropertiesCredentials(
-                ArchiveDownloadHighLevel.class.getResourceAsStream("AwsCredentials.properties"));
-        client = new AmazonGlacierClient(credentials);
-        client.setEndpoint("https://glacier.us-east-1.amazonaws.com/");
-
-        try {
-            ArchiveTransferManager atm = new ArchiveTransferManager(client, credentials);
-            
-            atm.download(vaultName, archiveId, new File(downloadFilePath));
-            
-        } catch (Exception e)
-        {
-            System.err.println(e);
-        }
-					 * 
-					 */
-					
-					//Banish the extra chars printed in early logs.
-					//String sendThis = archiveId.replaceAll("[^\\p{Print}]", "");
-					
 					String vaultName = dlVault;
-					int returnVal = fc.showOpenDialog(AmazonDownloadRequest.this);
-
-		            	if (returnVal == JFileChooser.APPROVE_OPTION)
-		            	{
-		            		ArchiveTransferManager atm = new ArchiveTransferManager(dlClient, dlCredentials);
+					
+					FileDialog fd = new FileDialog(new Frame(), "Save Archive As...", FileDialog.SAVE);
+				    fd.setFile("Save Archive As...");
+				    fd.setDirectory(System.getProperty("user.dir"));
+				    fd.setLocation(50, 50);
+				    fd.setVisible(true);
+				    //fd.show();
+				    String filePath = ""+fd.getDirectory()+System.getProperty("file.separator")+fd.getFile();
+				    		
+				    		
+					File outFile = new File(filePath);
+					System.out.println(outFile.toString());
+					
+					if (outFile != null)
+					{
+						ArchiveTransferManager atm = new ArchiveTransferManager(dlClient, dlCredentials);
+				           
+				        atm.download(vaultName, archiveId, outFile);
 				            
-				            atm.download(vaultName, archiveId, fc.getSelectedFile());
-				            
-				            JOptionPane.showMessageDialog(null, "Request successful.","Success",JOptionPane.INFORMATION_MESSAGE);
-		                }
+				        JOptionPane.showMessageDialog(null, "Request successful.","Success",JOptionPane.INFORMATION_MESSAGE);
+		            }
 		        } 
 				catch (AmazonServiceException k)
 				{
@@ -267,7 +257,6 @@ class AmazonDownloadRequest extends JFrame implements ActionListener, WindowList
 				{
 		        	JOptionPane.showMessageDialog(null,"Archive not found. Unspecified Error.", "Error", JOptionPane.ERROR_MESSAGE);
 		        }
-
 			jtfDownloadField.setText("");
 			jtfDownloadField.requestFocus();
 			}
