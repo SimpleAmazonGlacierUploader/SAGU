@@ -18,7 +18,7 @@
 //		v0.1		Initial launch - basic upload functionality
 //		v0.2		Added upload logging
 //		v0.3		Right click context menus
-//		v0.4		Delete button. Save Preferences.
+//		v0.4		Download button. Save Preferences.
 //		v0.5		Cleaned up logs. Multifile upload.
 //		v0.51		Better multifile upload. Better error handling.
 //////////////////////////////////////////////////////////////////////////////////
@@ -30,11 +30,13 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 
+
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.io.File;
 
 
 import javax.swing.JButton;
@@ -43,37 +45,44 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.JFileChooser;
 
 
 import com.amazonaws.AmazonClientException;
 import com.amazonaws.AmazonServiceException;
+import com.amazonaws.auth.BasicAWSCredentials;
 //import com.amazonaws.auth.AWSCredentials;
 //import com.amazonaws.auth.PropertiesCredentials;
 import com.amazonaws.services.glacier.AmazonGlacierClient;
-import com.amazonaws.services.glacier.model.DeleteArchiveRequest;
+import com.amazonaws.services.glacier.transfer.ArchiveTransferManager;
+import com.amazonaws.services.securitytoken.model.Credentials;
 
-class DeleteArchiveFrame extends JFrame implements ActionListener, WindowListener
+
+class AmazonDownloadRequest extends JFrame implements ActionListener, WindowListener
 {
 
 	private static final long serialVersionUID = 1L;
 
 	//define instance variables
-    String deleteCode;
+    String dlCode;
 
-    JTextField jtfDeleteField;
-    JButton jbtDelete, jbtBack;
+    JTextField jtfDownloadField;
+    JButton jbtDownload, jbtBack;
     //JComboBox jcbStockList;
     
-    AmazonGlacierClient deleteClient;
+    AmazonGlacierClient dlClient;
+    BasicAWSCredentials dlCredentials;
     int locationChoice;
-    String deleteVault;
+    String dlVault;
+    
+    JFileChooser fc = new JFileChooser();
     
     ContextMenuMouseListener rmb = new ContextMenuMouseListener();
     
     //Constructor
-    public DeleteArchiveFrame(AmazonGlacierClient client, String vaultName, int region)
+    public AmazonDownloadRequest(AmazonGlacierClient client, String vaultName, int region, BasicAWSCredentials credentials)
     {	
-    	super("Delete Archive");
+    	super("Request Download");
     	
     	int width = 200;
 		int height = 170;
@@ -82,13 +91,17 @@ class DeleteArchiveFrame extends JFrame implements ActionListener, WindowListene
 		
 		Color wc = Color.WHITE;
     	
-		deleteClient = client;
-		deleteVault = vaultName;
+		dlClient = client;
+		dlVault = vaultName;
+		dlCredentials = credentials;
     	
-		JLabel label1 = new JLabel("ArchiveID to Delete from " +SimpleGlacierUploader.getRegion(thisRegion)+":");
-        jtfDeleteField = new JTextField(100);
-        jbtDelete = new JButton("Delete");
+		JLabel label1 = new JLabel("ArchiveID to Download from " + dlVault + " in server region " +SimpleGlacierUploader.getRegion(thisRegion)+":");
+        jtfDownloadField = new JTextField(100);
+        jbtDownload = new JButton("Request Download");
         jbtBack = new JButton("Back");
+        
+        fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
+        fc.setDialogTitle("Save File As");
     	
         JPanel p1 = new JPanel();
 	        p1.setLayout(new FlowLayout());
@@ -98,16 +111,16 @@ class DeleteArchiveFrame extends JFrame implements ActionListener, WindowListene
     	    	
     	JPanel p2 = new JPanel();
     		p2.setLayout(new FlowLayout());
-    		p2.add(jtfDeleteField);
-    			jtfDeleteField.addMouseListener(rmb);
-    			jtfDeleteField.setFocusable(true);
+    		p2.add(jtfDownloadField);
+    			jtfDownloadField.addMouseListener(rmb);
+    			jtfDownloadField.setFocusable(true);
     		p2.setBackground(wc);
     			
     	JPanel p3 = new JPanel();
     		p3.setLayout(new FlowLayout());
-    		p3.add(jbtDelete);
-				jbtDelete.addActionListener(this);
-				jbtDelete.setBackground(wc);
+    		p3.add(jbtDownload);
+				jbtDownload.addActionListener(this);
+				jbtDownload.setBackground(wc);
     		p3.add(jbtBack);	
     			jbtBack.addActionListener(this);
     			jbtBack.setBackground(wc);
@@ -122,7 +135,7 @@ class DeleteArchiveFrame extends JFrame implements ActionListener, WindowListene
     	setContentPane(p4);
     	
     	// Register listeners
-        //addWindowListener(this);
+        addWindowListener(this);
 
 	    
 		// Prepare for display
@@ -132,8 +145,8 @@ class DeleteArchiveFrame extends JFrame implements ActionListener, WindowListene
 		if(height < getHeight())			// prevent setting height too small
 			height = getHeight();
 		centerOnScreen(width, height);
-	    jtfDeleteField.setText("");
-	    jtfDeleteField.requestFocus();
+	    jtfDownloadField.setText("");
+	    jtfDownloadField.requestFocus();
 	    
    }
     
@@ -188,37 +201,58 @@ class DeleteArchiveFrame extends JFrame implements ActionListener, WindowListene
 	}
 	@Override
 	public void windowOpened(WindowEvent arg0) {
-		jtfDeleteField.setText("");
-		jtfDeleteField.requestFocus();
+		jtfDownloadField.setText("");
+		jtfDownloadField.requestFocus();
 		
 	}
 	@Override
 	public void actionPerformed(ActionEvent e) 
 	{
-		if(e.getSource() == jbtDelete)
+		if(e.getSource() == jbtDownload)
         {
-			if ((jtfDeleteField.getText().trim().equals("")))
+			String archiveId = jtfDownloadField.getText().trim();
+			if ((archiveId.equals("")))
 			{
-				JOptionPane.showMessageDialog(null,"Enter the Archive ID of the file to be deleted.", "Error", JOptionPane.ERROR_MESSAGE);				
+				JOptionPane.showMessageDialog(null,"Enter the Archive ID of the file to be requested.", "Error", JOptionPane.ERROR_MESSAGE);				
 			}
 			else
 			{
 					
 				try {
-					String archiveId = jtfDeleteField.getText().trim();
+					
+					/*
+					 * 
+					 *  AWSCredentials credentials = new PropertiesCredentials(
+                ArchiveDownloadHighLevel.class.getResourceAsStream("AwsCredentials.properties"));
+        client = new AmazonGlacierClient(credentials);
+        client.setEndpoint("https://glacier.us-east-1.amazonaws.com/");
+
+        try {
+            ArchiveTransferManager atm = new ArchiveTransferManager(client, credentials);
+            
+            atm.download(vaultName, archiveId, new File(downloadFilePath));
+            
+        } catch (Exception e)
+        {
+            System.err.println(e);
+        }
+					 * 
+					 */
 					
 					//Banish the extra chars printed in early logs.
-					String sendThis = archiveId.replaceAll("[^\\p{Print}]", "");
+					//String sendThis = archiveId.replaceAll("[^\\p{Print}]", "");
 					
-					String vaultName = deleteVault;
-					
-		            // Delete the archive.
-		            deleteClient.deleteArchive(new DeleteArchiveRequest()
-		                .withVaultName(vaultName)
-		                .withArchiveId(sendThis));
-		            
-		            JOptionPane.showMessageDialog(null, "Deleted archive successfully.","Success",JOptionPane.INFORMATION_MESSAGE);
-                	
+					String vaultName = dlVault;
+					int returnVal = fc.showOpenDialog(AmazonDownloadRequest.this);
+
+		            	if (returnVal == JFileChooser.APPROVE_OPTION)
+		            	{
+		            		ArchiveTransferManager atm = new ArchiveTransferManager(dlClient, dlCredentials);
+				            
+				            atm.download(vaultName, archiveId, fc.getSelectedFile());
+				            
+				            JOptionPane.showMessageDialog(null, "Request successful.","Success",JOptionPane.INFORMATION_MESSAGE);
+		                }
 		        } 
 				catch (AmazonServiceException k)
 				{
@@ -231,11 +265,11 @@ class DeleteArchiveFrame extends JFrame implements ActionListener, WindowListene
 		        }
 				catch (Exception j) 
 				{
-		        	JOptionPane.showMessageDialog(null,"Archive not deleted. Unspecified Error.", "Error", JOptionPane.ERROR_MESSAGE);
+		        	JOptionPane.showMessageDialog(null,"Archive not found. Unspecified Error.", "Error", JOptionPane.ERROR_MESSAGE);
 		        }
 
-			jtfDeleteField.setText("");
-			jtfDeleteField.requestFocus();
+			jtfDownloadField.setText("");
+			jtfDownloadField.requestFocus();
 			}
 	        
         }

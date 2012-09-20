@@ -78,14 +78,14 @@ public class JHyperlinkLabel extends JLabel {
     	{
     		OpenURI(""+SimpleGlacierUploader.getLogFilenamePath().toURI());    		
     	}
-    	else if (getText().equals("\tCheck for Update"))
+    	else if (getText().equals("Check for Update"))
     	{
     		OpenURI("http://simpleglacieruploader.brianmcmichael.com/");    		
     	}
     }
   }
 
-  	public void OpenURI(String url) 
+  	public static void OpenURI(String url) 
   	{
 
 	        if( !java.awt.Desktop.isDesktopSupported() ) {
