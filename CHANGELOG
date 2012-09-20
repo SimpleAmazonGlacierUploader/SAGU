@@ -1,0 +1,18 @@
+2012/08/24 - Version 0.2.
+
+-Upload Logging! 
+-Logging is enabled by default. Saves to Glacier.log in program directory.
+-Log contains Archive ID, Filename, Vault Name, Upload Date
+-ArchiveID will be useful for deleting or retreiving individual archives.
+
+2012/08/23 - Version 0.1.
+
+-Ability to upload a single file at a time to the Glacier service. 
+-Requires Security Credentials from Amazon AWS Console. 
+https://portal.aws.amazon.com/gp/aws/securityCredentials
+-Requires you to create a vault at the Glacier Console. 
+https://console.aws.amazon.com/glacier/home
+-Select hosting location via dropdown.
+-Select single file.
+-Upload file to selected vault/server.
+-(Amazon Glacier inventory is updated approximately once per day. It may take 24 hours for your files to appear.)

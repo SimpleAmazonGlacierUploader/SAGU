@@ -3,36 +3,42 @@
 
 package com.brianmcmichael.SimpleGlacierUploader;
 
+import javax.swing.JCheckBox;
 import javax.swing.JOptionPane;
 import java.awt.*;
 import java.awt.event.*;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.security.MessageDigest;
-import java.util.Date;
 
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.Date;
 import javax.swing.JFileChooser;
 
-import com.amazonaws.AmazonWebServiceRequest;
-import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.BasicAWSCredentials;
-import com.amazonaws.auth.PropertiesCredentials;
-import com.amazonaws.services.glacier.*;
-import com.amazonaws.services.glacier.model.UploadArchiveRequest;
-import com.amazonaws.services.glacier.model.UploadArchiveResult;
+import com.amazonaws.services.glacier.AmazonGlacierClient;
 import com.amazonaws.services.glacier.transfer.ArchiveTransferManager;
 import com.amazonaws.services.glacier.transfer.UploadResult;
 
 public class SimpleGlacierUploader extends Frame implements ActionListener
 {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	private static final String versionNumber = "0.2";
+	private static final String fileName = "Glacier.log";
+
+	DataOutputStream output;
+	
+	
+	Font f3= new Font("Helvetica",Font.BOLD,20);
+	
+	
 	File uploadFile = null;
 	
 	Panel titlePanel = new Panel();
-		Label titleLabel = new Label("Simple Amazon Glacier Uploader 1.0");
+		Label titleLabel = new Label("Simple Amazon Glacier Uploader "+versionNumber);
 	
 	Panel inputPanel = new Panel();
 		Label accessLabel = new Label("AWS Access Key: ");
@@ -41,10 +47,14 @@ public class SimpleGlacierUploader extends Frame implements ActionListener
 		TextField secretField = new TextField(50);
 		Label vaultName = new Label("Vault Name: ");
 		TextField vaultField = new TextField(25);
+		Label locationName = new Label("Upload Location: ");
+		Choice locationChoice = new Choice();
 		Label fileLabel = new Label("File to upload: ");
 		Button selectFile = new Button("Select File");
 		Label selectedLabel = new Label("");
 		Button uploadButton = new Button("Upload");
+		Label blankLabel = new Label("");
+		JCheckBox logCheck = new JCheckBox("Log?");
 		
 	JFileChooser fc = new JFileChooser();
 		
@@ -56,10 +66,11 @@ public class SimpleGlacierUploader extends Frame implements ActionListener
 	{
 		this.setLayout(new BorderLayout());
 			titlePanel.setLayout(new FlowLayout());
-			inputPanel.setLayout(new GridLayout(5,2,40,40));
+			inputPanel.setLayout(new GridLayout(7,2,40,40));
 			copyrightPanel.setLayout(new FlowLayout());
 			
 		titlePanel.add(titleLabel);
+		titleLabel.setFont(f3);
 		
 		inputPanel.add(accessLabel);
 		inputPanel.add(accessField);
@@ -67,12 +78,22 @@ public class SimpleGlacierUploader extends Frame implements ActionListener
 		inputPanel.add(secretField);
 		inputPanel.add(vaultName);
 		inputPanel.add(vaultField);
+		inputPanel.add(locationName);
+		inputPanel.add(locationChoice);
+			locationChoice.add("US East (Northern Virginia) Region");
+			locationChoice.add("US West (Oregon) Region");
+			locationChoice.add("US West (Northern California) Region");
+			locationChoice.add("EU (Ireland) Region");
+			locationChoice.add("Asia Pacific (Tokyo) Region");
 		inputPanel.add(fileLabel);
 		inputPanel.add(selectFile);
 		selectFile.addActionListener(this);
 		inputPanel.add(selectedLabel);
 		inputPanel.add(uploadButton);
 		uploadButton.addActionListener(this);
+		inputPanel.add(blankLabel);
+		inputPanel.add(logCheck);
+		logCheck.setSelected(true);
 		
 		fc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
 			
@@ -98,10 +119,16 @@ public class SimpleGlacierUploader extends Frame implements ActionListener
 	public static void main(String[] args) throws Exception
 	{
 		SimpleGlacierUploader g = new SimpleGlacierUploader();
-		g.setBounds(300,300,600,400);
+		g.setBounds(300,300,600,500);
 		g.setTitle("Simple Glacier Uploader");
 		g.setVisible(true);
 	} //end of main
+	
+	public void clearFile()
+	{
+		uploadFile = null;
+        selectedLabel.setText("");
+	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) 
@@ -138,8 +165,7 @@ public class SimpleGlacierUploader extends Frame implements ActionListener
 			{
 				
 					String vaultName = vaultField.getText().trim();
-				    String archiveToUpload = uploadFile.toString();
-				    
+
 				    AmazonGlacierClient client;
 				    
 				    BasicAWSCredentials credentials = new BasicAWSCredentials(accessField.getText().trim(),secretField.getText().trim());	        
@@ -147,15 +173,77 @@ public class SimpleGlacierUploader extends Frame implements ActionListener
 				        //        SimpleGlacierUploader.class.getResourceAsStream("AwsCredentials.properties"));
 				        client = new AmazonGlacierClient(credentials);
 				        
-				        client.setEndpoint("https://glacier.us-east-1.amazonaws.com/");
+				        if(locationChoice.getSelectedIndex() == 0)
+				        {
+				        	client.setEndpoint("https://glacier.us-east-1.amazonaws.com/");
+				        }
+				        if(locationChoice.getSelectedIndex() == 1)
+				        {
+				        	client.setEndpoint("https://glacier.us-west-2.amazonaws.com/");
+				        }
+				        if(locationChoice.getSelectedIndex() == 2)
+				        {
+				        	client.setEndpoint("https://glacier.us-west-1.amazonaws.com/");
+				        }
+				        if(locationChoice.getSelectedIndex() == 3)
+				        {
+				        	client.setEndpoint("https://glacier.eu-west-1.amazonaws.com/");
+				        }
+				        if(locationChoice.getSelectedIndex() == 4)
+				        {
+				        	client.setEndpoint("https://glacier.ap-northeast-1.amazonaws.com/");
+				        }
+				
 
 				        try {
 				            ArchiveTransferManager atm = new ArchiveTransferManager(client, credentials);
 				            
 				            UploadResult result = atm.upload(vaultName, "-", uploadFile);
-				            //UploadResult result = atm.upload(vaultName, "my archive " + (new Date()), new File(archiveToUpload));
-				            //System.out.println("Archive ID: " + result.getArchiveId());
-				            JOptionPane.showMessageDialog(null,"Archive ID: " + result.getArchiveId(), "Uploaded", JOptionPane.ERROR_MESSAGE);
+				            
+				            //write to file
+				            if(logCheck.isSelected())
+				            {
+				            	try
+				                {
+				                	output = new DataOutputStream(new FileOutputStream(fileName, true));
+				                }
+				                catch(IOException ex)
+				                {
+				                	JOptionPane.showMessageDialog(null, "There was an error creating the log.","IO Error",JOptionPane.INFORMATION_MESSAGE);
+				                	System.exit(1);
+				                }
+				            	
+				            	try
+				    			{
+				            		
+				            		Date d = new Date();
+				            		
+				            		output.writeUTF("ArchiveID: ");
+				    				output.writeUTF(result.getArchiveId());
+				    				output.writeUTF(" |  File: ");
+				    				output.writeUTF(selectedLabel.getText());
+				    				output.writeUTF(" | Vault: ");
+				    				output.writeUTF(vaultName);
+				    				output.writeUTF(" | Date: ");
+				    				output.writeUTF(d.toString() +"\n\n");				    				
+				    				
+				    				JOptionPane.showMessageDialog(null,"Upload Complete! Archive ID logged to " + fileName + "\nArchive ID: " + result.getArchiveId()+"\n Amazon updates their inventory every 24 hours.", "Uploaded", JOptionPane.INFORMATION_MESSAGE);
+						            
+				    			}
+				    			catch(IOException c)
+				    			{
+				    				JOptionPane.showMessageDialog(null, "There was an error writing to the log.","IO Error",JOptionPane.ERROR_MESSAGE);
+				    				System.exit(1);
+				    			}
+				            }
+				            else
+				            {
+				            	JOptionPane.showMessageDialog(null,"Upload Complete!\nArchive ID: " + result.getArchiveId()+"\nIt may take some time for Amazon to update the inventory.", "Uploaded", JOptionPane.INFORMATION_MESSAGE);
+					            
+				            }
+				            
+				            clearFile();
+				            
 				            
 				        } catch (Exception h)
 				        {

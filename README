@@ -1,11 +1,8 @@
-2012/08/23 - Version 0.1.
+Amazon Glacier is a long-term persistent file-storage system for cold data storage. 
 
--Ability to upload a single file at a time to the Glacier service. 
--Requires Security Credentials from Amazon AWS Console. 
-https://portal.aws.amazon.com/gp/aws/securityCredentials
--Requires you to create a vault at the Glacier Console. 
-https://console.aws.amazon.com/glacier/home
--Select hosting location via dropdown.
--Select single file.
--Upload file to selected vault/server.
--(Amazon Glacier inventory is updated approximately once per day. It may take 24 hours for your files to appear.)
+The Simple Amazon Glacier Uploader aims to be an upload and download solution that is as durable as your data.
+
+SAGU is a single .jar file Glacier interface written in Java for cross-platform usability. 
+
+The use of Java is assures that you will have access to your files regardless of your operating system when 
+it is time to retrieve your data.
