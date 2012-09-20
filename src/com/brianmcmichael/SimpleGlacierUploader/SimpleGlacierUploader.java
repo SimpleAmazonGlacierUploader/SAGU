@@ -21,10 +21,12 @@
 //		v0.4		Delete button. Save Preferences.
 //		v0.5		Cleaned up logs. Multifile upload.
 //		v0.51		Better multifile upload. Better error handling.
+//		v0.52		Bug fixes.
 //////////////////////////////////////////////////////////////////////////////////
 
 package com.brianmcmichael.SimpleGlacierUploader;
 
+//import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JFrame;
@@ -33,6 +35,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JTextField;
+
 
 import java.awt.*;
 import java.awt.event.*;
@@ -50,31 +53,50 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Properties;
+
+
+
 import javax.swing.JFileChooser;
 
 import com.amazonaws.auth.BasicAWSCredentials;
+
 
 import com.amazonaws.services.glacier.AmazonGlacierClient;
 import com.amazonaws.services.glacier.transfer.ArchiveTransferManager;
 import com.amazonaws.services.glacier.transfer.UploadResult;
 
 public class SimpleGlacierUploader extends Frame implements ActionListener
-{	
+{
+	
+
+	//Set Colors
 	Color wc = Color.WHITE;
 
+	//Set ints
 	int width = 200;
 	int height = 170;
 	int fileInt = 0;
 	
+	//set longs
+	long max_file_size = 4294967296L;
+	
+	//Call properties
 	Properties applicationProps = new Properties();
 	
 	//static identfiers
 	private static final long serialVersionUID = 1L;
-	private static final String versionNumber = "0.51";
+	private static final String versionNumber = "0.52";
 	private static final String logFileName = "Glacier.log";
 	private static final String fileProperties = "SAGU.properties";
+	public static final String curDir = System.getProperty("user.dir");
 	
-	//parts for progress bar  v0.4
+	//Error messages
+	private static final String NO_DIRECTORIES_ERROR = "Directories, folders, and packages are not supported. \nPlease compress this into a single archive (such as a .zip) and try uploading again.";
+	private static final String LOG_CREATION_ERROR = "There was an error creating the log.";
+	private static final String FILE_TOO_BIG_ERROR = "Files over 4GB are currently unsuppoted. \nYou may want to split your upload into multiple archives. \nAmazon recommends files of 100mb at a time.";
+	private static final String LOG_WRITE_ERROR = "There was an error writing to the log.";
+	
+	//parts for progress bar
 	static JFrame frmMain;
 	static Container pane;
 	static JButton btnDo;
@@ -266,7 +288,7 @@ public class SimpleGlacierUploader extends Frame implements ActionListener
 		FileInputStream in;
 		try 
 		{
-			in = new FileInputStream("SAGU.properties");
+			in = new FileInputStream(getFilePropertiesPath());
 			applicationProps.load(in);
 			accessField.setText(applicationProps.getProperty("accessKey"));
 			secretField.setText(applicationProps.getProperty("secretKey"));
@@ -304,7 +326,24 @@ public class SimpleGlacierUploader extends Frame implements ActionListener
 	
 	public static String getLogFilename()
 	{
-		return logFileName;
+		return "" + logFileName;
+	}
+	
+	public static File getLogFilenamePath()
+	{
+		File logFile = new File(curDir + System.getProperty("file.separator") + logFileName);
+		return logFile;
+	}
+	
+	public static String getFileProperties()
+	{
+		return "" + fileProperties;
+	}
+	
+	public static File getFilePropertiesPath()
+	{
+		File propsFile = new File(curDir  + System.getProperty("file.separator") + fileProperties);
+		return propsFile;
 	}
 	
 	@Override
@@ -319,11 +358,29 @@ public class SimpleGlacierUploader extends Frame implements ActionListener
 			clearFile();
 			int returnVal = fc.showOpenDialog(SimpleGlacierUploader.this);
 
-            if (returnVal == JFileChooser.APPROVE_OPTION) {
-            	File[] thisFile = new File[1];
-            	thisFile[0] = fc.getSelectedFile();
-            	multiFiles = thisFile;
-                selectedLabel.setText(thisFile[0].toString());
+            if (returnVal == JFileChooser.APPROVE_OPTION) 
+            {
+            	if (fc.getSelectedFile().isFile() == true)
+            	{	
+            		if (fc.getSelectedFile().length() > max_file_size == true)
+            		{
+            			multiFiles = null;
+            			ddText.setText("");            			
+            			JOptionPane.showMessageDialog(null, FILE_TOO_BIG_ERROR,"Error",JOptionPane.ERROR_MESSAGE);
+	                	clearFile();
+            		}
+            		else
+            		{
+            			File[] thisFile = new File[1];
+                    	thisFile[0] = fc.getSelectedFile();
+                    	multiFiles = thisFile;
+                        selectedLabel.setText(thisFile[0].toString());
+            		}
+                }
+                else {
+                	JOptionPane.showMessageDialog(null, NO_DIRECTORIES_ERROR,"Error",JOptionPane.ERROR_MESSAGE);
+                	
+                }
             } else {
             }
             
@@ -339,10 +396,10 @@ public class SimpleGlacierUploader extends Frame implements ActionListener
 			        	
 			        	public void filesDropped( java.io.File[] files )
 			        	{
-			        		boolean dirCheck = false;
+			        		boolean badFiles = false;
 			        		
 			        		{	
-				        		//ddText.setText("");
+			        			
 				        		for( int i = 0; i < files.length; i++ )
 				                {   
 				        			if (files[i].isDirectory() == true)
@@ -350,19 +407,26 @@ public class SimpleGlacierUploader extends Frame implements ActionListener
 				        				ddText.setText("");
 				        				clearFile();
 				        				multiFiles = null;
-				        				dirCheck = true;
-				        				JOptionPane.showMessageDialog(null, "Directories are not suppoted.","Error",JOptionPane.ERROR_MESSAGE);
+				        				badFiles = true;
+				        				JOptionPane.showMessageDialog(null, NO_DIRECTORIES_ERROR,"Error",JOptionPane.ERROR_MESSAGE);
+					                	break;
+				        			}
+				        			else if (files[i].length() > max_file_size == true)
+				        			{
+				        				ddText.setText("");
+				        				clearFile();
+				        				multiFiles = null;
+				        				badFiles = true;
+				        				JOptionPane.showMessageDialog(null, FILE_TOO_BIG_ERROR,"Error",JOptionPane.ERROR_MESSAGE);
 					                	break;
 				        			}
 				        			else
 				        			{
 				        				try
-					                    {   ddText.append( files[i].getCanonicalPath() + "\n" );
-					                    	
+					                    {   ddText.append( files[i].getCanonicalPath() + "\n" ); 			                    	
 					                    }   // end try
 					                    catch( java.io.IOException e ) {}
-				        			}
-				        			
+				        			}				        			
 				                }   // end for: through each dropped file
 			        		}
 			            if (multiFiles != null)
@@ -375,7 +439,7 @@ public class SimpleGlacierUploader extends Frame implements ActionListener
 			            }
 			        		
 			            
-			            if (dirCheck == true)
+			            if (badFiles == true)
 			            {
 			            	clearFile();
 			            	multiFiles = null;
@@ -445,6 +509,7 @@ public class SimpleGlacierUploader extends Frame implements ActionListener
 				String vaultName = getVaultField();
 								
 				DummyProgress(true);
+				try { Thread.sleep(500L);} catch (InterruptedException e1) {e1.printStackTrace();}
 			    BasicAWSCredentials credentials = new BasicAWSCredentials(accessString,secretString);	        
 			    client = new AmazonGlacierClient(credentials);
 			    int locInt = locationChoice.getSelectedIndex();
@@ -480,15 +545,15 @@ public class SimpleGlacierUploader extends Frame implements ActionListener
 				            {
 				            	try
 				                {	
-				            		File myFile = new File(logFileName);
-				            		plainOutput = new BufferedWriter(new FileWriter(myFile, true));
+				            		
+				            		plainOutput = new BufferedWriter(new FileWriter(getLogFilenamePath(), true));
 				            		
 				            		//v0.4 method and earlier
 				                	//output = new DataOutputStream(new FileOutputStream(logFileName, true));
 				                }
 				                catch(IOException ex)
 				                {
-				                	JOptionPane.showMessageDialog(null, "There was an error creating the log.","IO Error",JOptionPane.ERROR_MESSAGE);
+				                	JOptionPane.showMessageDialog(null, LOG_CREATION_ERROR,"IO Error",JOptionPane.ERROR_MESSAGE);
 				                	System.exit(1);
 				                }
 				            	
@@ -498,9 +563,7 @@ public class SimpleGlacierUploader extends Frame implements ActionListener
 				            		Date d = new Date();
 				            		
 				            		String thisResult = result.getArchiveId();
-				            		//thisResult.replaceAll("Š", "");
-				            		//String thisFile = selectedLabel.getText();
-				            		
+				            					            		
 				            		plainOutput.write(System.getProperty( "line.separator" ));
 				            		plainOutput.write(" | ArchiveID: " + thisResult + " ");
 				            		plainOutput.write(System.getProperty( "line.separator" ));
@@ -525,7 +588,7 @@ public class SimpleGlacierUploader extends Frame implements ActionListener
 				    			}
 				    			catch(IOException c)
 				    			{
-				    				JOptionPane.showMessageDialog(null, "There was an error writing to the log.","IO Error",JOptionPane.ERROR_MESSAGE);
+				    				JOptionPane.showMessageDialog(null, LOG_WRITE_ERROR,"IO Error",JOptionPane.ERROR_MESSAGE);
 				    				System.exit(1);
 				    			}
 				            }
@@ -533,6 +596,7 @@ public class SimpleGlacierUploader extends Frame implements ActionListener
 				            {
 				            	JOptionPane.showMessageDialog(null,"Upload Complete!\nArchive ID: " + result.getArchiveId()+"\nIt may take some time for Amazon to update the inventory.", "Uploaded", JOptionPane.INFORMATION_MESSAGE);
 					            multiFiles = null;
+					            DummyProgress(false);
 				            }
 				            
 				            clearFile();
@@ -578,7 +642,8 @@ public class SimpleGlacierUploader extends Frame implements ActionListener
 		FileOutputStream out;
 		try 
 		{
-			out = new FileOutputStream(fileProperties);
+			out = new FileOutputStream(getFilePropertiesPath());
+			
 			applicationProps.setProperty("accessKey", accessString);
 			applicationProps.setProperty("secretKey", secretString);
 			applicationProps.setProperty("vaultKey", vaultString);
@@ -597,7 +662,7 @@ public class SimpleGlacierUploader extends Frame implements ActionListener
 	
 	public boolean checkAllFields()
 	{
-		boolean passBool;
+		boolean passBool = false;
 		
 		if ((accessField.getText().trim().equals("")) || vaultField.getText().trim().equals("") || (secretField.getText().trim().equals("")))
 		{
@@ -618,6 +683,23 @@ public class SimpleGlacierUploader extends Frame implements ActionListener
 			}
 			JOptionPane.showMessageDialog(null,"You must complete all fields.", "Error", JOptionPane.ERROR_MESSAGE);
 			passBool = false;
+		}
+		else if ((accessField.getText().trim().length() != 20) || (secretField.getText().trim().length() != 40))
+		{
+			if (accessField.getText().trim().length() != 20)
+			{
+				accessField.setFocusable(true);
+				accessField.requestFocus();
+				JOptionPane.showMessageDialog(null,"Your AWS Access Key does not appear to be valid.", "Error", JOptionPane.ERROR_MESSAGE);
+				passBool = false;
+			}
+			else if (secretField.getText().trim().length() != 40) 
+			{
+				secretField.setFocusable(true);
+				secretField.requestFocus();
+				JOptionPane.showMessageDialog(null,"Your AWS Secret Key does not appear to be valid.", "Error", JOptionPane.ERROR_MESSAGE);
+				passBool = false;
+			}
 		}
 		else{
 			passBool = true; 
@@ -698,8 +780,29 @@ public class SimpleGlacierUploader extends Frame implements ActionListener
 	    f.setLocation (lx,ly);
 	  } // centerFrame
 	
+	void centerDefineFrame (JFrame f, int width, int height) {
+	    // Need the toolkit to get info on system.
+	    Toolkit tk = Toolkit.getDefaultToolkit ();
+
+	    // Get the screen dimensions.
+	    Dimension screen = tk.getScreenSize ();
+
+	    // Make the frame 1/4th size of screen.
+	    //int fw =  (int) (screen.getWidth ()/4);
+	    //int fh =  (int) (screen.getWidth ()/4);
+	    
+	    //Set frame size
+	    f.setSize (width,height);
+
+	    // And place it in center of screen.
+	    int lx =  (int) (screen.getWidth ()  * 3/8);
+	    int ly =  (int) (screen.getHeight () * 3/8);
+	    f.setLocation (lx,ly);
+	  } // centerFrame
+	
 	public void DummyProgress(Boolean b)
 	{   
+		centerDefineFrame(uploadFrame, 300, 50);
 	    if(b == true)
 	    {
 	    	uploadFrame.setVisible(b);

@@ -76,7 +76,7 @@ public class JHyperlinkLabel extends JLabel {
     	}
     	else if (getText().equals(" View Log"))
     	{
-    		OpenURI(SimpleGlacierUploader.getLogFilename());    		
+    		OpenURI(""+SimpleGlacierUploader.getLogFilenamePath().toURI());    		
     	}
     	else if (getText().equals("\tCheck for Update"))
     	{
