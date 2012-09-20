@@ -1,3 +1,16 @@
+2012/09/06 - Version 0.7
+
+-The threaded update. UI no longer sticks during upload/download.
+-Indeterminite progressbar added. To be enhanced in upcoming releases.
+-Batch multiple upload requests at once, even to different servers.
+-Have several download requests processing at once.
+-UI tweaks and graphical assets.
+-SAGU now creates a Glacier.log file, a Glacier.txt file, and a Glacier.csv file by default.
+-Glacier.log files are intended to be parsed by future versions of the program and for export. .txt files and .csv files are for viewing convenience.
+-OSX users should select the option to view .txt files to prevent logs from opening in the console.
+-Known Bug: Progress bar disappears during multiple uploads if one completes first. This is cosmetic. The process still continues in the background until completed or until an error is received. This will be corrected in an update.
+
+
 2012/09/04 - Version 0.62
 
 -Select upload vault from existing. Selecting a server location populates a dropdown with existing vaults on that server.

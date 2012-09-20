@@ -195,24 +195,25 @@ import com.amazonaws.services.glacier.model.CreateVaultResult;
 						CreateVaultResult cvres = new CreateVaultResult();
 						cvres = addClient.createVault(cvreq);
 						
-						System.out.println(""+cvres);
+						//System.out.println(""+cvres);
 						
 						JOptionPane.showMessageDialog(null, "Added vault successfully.","Success",JOptionPane.INFORMATION_MESSAGE);
-	                	
+	                	this.dispose();
 						
 			        } 
 					catch (AmazonServiceException k)
 					{
 						JOptionPane.showMessageDialog(null,"The server returned an error.", "Error", JOptionPane.ERROR_MESSAGE);
-						System.out.println(""+k);
+						//System.out.println(""+k);
 					}
 					catch (AmazonClientException i) 
 					{
 			        	JOptionPane.showMessageDialog(null,"Client Error. Check that all fields are correct. Archive not deleted.", "Error", JOptionPane.ERROR_MESSAGE);
+			        	
 			        }
 					catch (Exception j) 
 					{
-			        	JOptionPane.showMessageDialog(null,"Archive not deleted. Unspecified Error.", "Error", JOptionPane.ERROR_MESSAGE);
+			        	JOptionPane.showMessageDialog(null,"Vault not Added. Unspecified Error.", "Error", JOptionPane.ERROR_MESSAGE);
 			        }
 
 				jtfAddField.setText("");

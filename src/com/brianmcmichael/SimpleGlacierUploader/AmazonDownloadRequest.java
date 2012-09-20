@@ -15,13 +15,7 @@
 //    You should have received a copy of the GNU General Public License
 //    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //////////////////////////////////////////////////////////////////////////////////
-//		v0.1		Initial launch - basic upload functionality
-//		v0.2		Added upload logging
-//		v0.3		Right click context menus
-//		v0.4		Download button. Save Preferences.
-//		v0.5		Cleaned up logs. Multifile upload.
-//		v0.51		Better multifile upload. Better error handling.
-//////////////////////////////////////////////////////////////////////////////////
+
 
 package com.brianmcmichael.SimpleGlacierUploader;
 
@@ -46,6 +40,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JProgressBar;
 import javax.swing.JTextField;
 import javax.swing.JFileChooser;
 import javax.swing.SwingWorker;
@@ -65,6 +60,9 @@ class AmazonDownloadRequest extends JFrame implements ActionListener, WindowList
 {
 
 	private static final long serialVersionUID = 1L;
+	
+	public static final String DOWNLOAD_NOTICE = "<html><body><br>Amazon stores your data as a stream of data by archive ID.<br>This information can be found in your log file.<br><br>˃> Verify that the server and vault on the previous page match the archive<br> you are attmpting to retreive and enter the archive ID.<br>>> You will then select the location and enter a filename to save the data.<br>>> Once you click the 'retreive' button it will take approximately 4 hours <br>for Amazon to process your request.<br>>> Once your files have been prepared your download will begin automatically.<br>>> You will be notified when your download has completed successfully.<br><br> WARNING: <br>Closing the program during a retreival request will cancel your download.</body><html>";
+
 
 	//define instance variables
     String dlCode;
@@ -100,6 +98,7 @@ class AmazonDownloadRequest extends JFrame implements ActionListener, WindowList
     	
 		JLabel label1 = new JLabel("ArchiveID to Download from " + dlVault + " in server region " +SimpleGlacierUploader.getRegion(thisRegion)+":");
         jtfDownloadField = new JTextField(100);
+        JLabel label2 = new JLabel(DOWNLOAD_NOTICE);
         jbtDownload = new JButton("Request Download");
         jbtBack = new JButton("Back");
         
@@ -113,10 +112,12 @@ class AmazonDownloadRequest extends JFrame implements ActionListener, WindowList
 	    	
     	    	
     	JPanel p2 = new JPanel();
-    		p2.setLayout(new FlowLayout());
-    		p2.add(jtfDownloadField);
+    		p2.setLayout(new BorderLayout());
+    		p2.add(jtfDownloadField, BorderLayout.NORTH);
     			jtfDownloadField.addMouseListener(rmb);
     			jtfDownloadField.setFocusable(true);
+    		p2.add(label2, BorderLayout.CENTER);
+    			label2.setHorizontalAlignment(JLabel.CENTER);
     		p2.setBackground(wc);
     			
     	JPanel p3 = new JPanel();
@@ -222,46 +223,88 @@ class AmazonDownloadRequest extends JFrame implements ActionListener, WindowList
 			}
 			else
 			{
+				
+					SwingWorker downloadWorker = new SwingWorker() {
+		    		
+					String archiveId = jtfDownloadField.getText().trim();
 					
-				try {
-					String vaultName = dlVault;
 					
-					FileDialog fd = new FileDialog(new Frame(), "Save Archive As...", FileDialog.SAVE);
-				    fd.setFile("Save Archive As...");
-				    fd.setDirectory(System.getProperty("user.dir"));
-				    fd.setLocation(50, 50);
-				    fd.setVisible(true);
-				    //fd.show();
-				    String filePath = ""+fd.getDirectory()+System.getProperty("file.separator")+fd.getFile();
-				    		
-				    		
-					File outFile = new File(filePath);
-					System.out.println(outFile.toString());
-					
-					if (outFile != null)
-					{
-						ArchiveTransferManager atm = new ArchiveTransferManager(dlClient, dlCredentials);
-				           
-				        atm.download(vaultName, archiveId, outFile);
-				            
-				        JOptionPane.showMessageDialog(null, "Request successful.","Success",JOptionPane.INFORMATION_MESSAGE);
-		            }
-		        } 
-				catch (AmazonServiceException k)
-				{
-					JOptionPane.showMessageDialog(null,"The server returned an error. Wait 24 hours after submitting an archive to attempt a delete. Also check that correct location of archive has been set on the previous page.", "Error", JOptionPane.ERROR_MESSAGE);
-					System.out.println(""+k);
+							
+					@Override
+					protected Object doInBackground() throws Exception {
+						
+						//Create dumb progressbar
+					    JFrame downloadFrame = new JFrame("Downloading"); {
+					    downloadFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+					    final JProgressBar dumJProgressBar = new JProgressBar(JProgressBar.HORIZONTAL);
+					    //aJProgressBar.setStringPainted(true);
+					    dumJProgressBar.setIndeterminate(true);
+					    downloadFrame.add(dumJProgressBar, BorderLayout.NORTH);
+					    downloadFrame.setSize(300, 60);}
+					    centerDefineFrame(downloadFrame, 300, 50);
+						
+						String archiveId = jtfDownloadField.getText().trim();
+						try {
+							String vaultName = dlVault;
+							
+							FileDialog fd = new FileDialog(new Frame(), "Save Archive As...", FileDialog.SAVE);
+						    fd.setFile("Save Archive As...");
+						    fd.setDirectory(System.getProperty("user.dir"));
+						    fd.setLocation(50, 50);
+						    fd.setVisible(true);
+						    
+						    
+						    String filePath = ""+fd.getDirectory()+System.getProperty("file.separator")+fd.getFile();
+						    		
+						    		
+							File outFile = new File(filePath);
+							//System.out.println(outFile.toString());
+							
+							if (outFile != null)
+							{
+								downloadFrame.setTitle("Downloading "+outFile.toString());
+							    downloadFrame.setVisible(true);
+								
+								ArchiveTransferManager atm = new ArchiveTransferManager(dlClient, dlCredentials);
+						           
+						        atm.download(vaultName, archiveId, outFile);
+						            
+						        JOptionPane.showMessageDialog(null, "Request successful.","Success",JOptionPane.INFORMATION_MESSAGE);
+						        downloadFrame.setVisible(false);
+				            }
+				        } 
+						catch (AmazonServiceException k)
+						{
+							JOptionPane.showMessageDialog(null,"The server returned an error. Wait 24 hours after submitting an archive to attempt a download. Also check that correct location of archive has been set on the previous page.", "Error", JOptionPane.ERROR_MESSAGE);
+							System.out.println(""+k);
+							downloadFrame.setVisible(false);
+						}
+						catch (AmazonClientException i) 
+						{
+				        	JOptionPane.showMessageDialog(null,"Client Error. Check that all fields are correct. Archive not deleted.", "Error", JOptionPane.ERROR_MESSAGE);
+				        	downloadFrame.setVisible(false);
+				        }
+						catch (Exception j) 
+						{
+				        	JOptionPane.showMessageDialog(null,"Archive not found. Unspecified Error.", "Error", JOptionPane.ERROR_MESSAGE);
+				        	downloadFrame.setVisible(false);
+				        }
+						return null;
+					}
+		    		
+		    	};
+		    	downloadWorker.execute();
+		    	try {
+					Thread.sleep(500);
+				} catch (InterruptedException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
 				}
-				catch (AmazonClientException i) 
-				{
-		        	JOptionPane.showMessageDialog(null,"Client Error. Check that all fields are correct. Archive not deleted.", "Error", JOptionPane.ERROR_MESSAGE);
-		        }
-				catch (Exception j) 
-				{
-		        	JOptionPane.showMessageDialog(null,"Archive not found. Unspecified Error.", "Error", JOptionPane.ERROR_MESSAGE);
-		        }
-			jtfDownloadField.setText("");
-			jtfDownloadField.requestFocus();
+			
+		    this.setVisible(false);
+		    dispose();
+			//jtfDownloadField.setText("");
+			//jtfDownloadField.requestFocus();
 			}
 	        
         }
@@ -276,5 +319,21 @@ class AmazonDownloadRequest extends JFrame implements ActionListener, WindowList
 		}
 		
 	}
+	
+	void centerDefineFrame (JFrame f, int width, int height) {
+	    
+	    Toolkit tk = Toolkit.getDefaultToolkit ();
+
+	    // Get the screen dimensions.
+	    Dimension screen = tk.getScreenSize ();
+
+	    //Set frame size
+	    f.setSize (width,height);
+
+	    // And place it in center of screen.
+	    int lx =  (int) (screen.getWidth ()  * 3/8);
+	    int ly =  (int) (screen.getHeight () * 3/8);
+	    f.setLocation (lx,ly);
+	  } // centerFrame
 
 }
