@@ -18,7 +18,6 @@
 
 package com.brianmcmichael.SimpleGlacierUploader;
 
-import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
@@ -58,12 +57,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Properties;
 
-
-
 import javax.swing.JFileChooser;
 
 import com.amazonaws.auth.BasicAWSCredentials;
-
 
 import com.amazonaws.services.glacier.AmazonGlacierClient;
 import com.amazonaws.services.glacier.model.CreateVaultRequest;
@@ -82,7 +78,7 @@ public class SimpleGlacierUploader extends Frame implements ActionListener
 	
 	//static identfiers
 	private static final long serialVersionUID = 1L;
-	private static final String versionNumber = "0.73";
+	private static final String versionNumber = "0.74";
 	private static final String logFileNamelog = "Glacier.log";
 	private static final String logFileNametxt = "Glacier.txt";
 	private static final String logFileNamecsv = "Glacier.csv";	
@@ -100,15 +96,16 @@ public class SimpleGlacierUploader extends Frame implements ActionListener
 	//Error messages
 	private static final String NO_DIRECTORIES_ERROR = "Directories, folders, and packages are not supported. \nPlease compress this into a single archive (such as a .zip) and try uploading again.";
 	private static final String LOG_CREATION_ERROR = "There was an error creating the log.";
-	private static final String FILE_TOO_BIG_ERROR = "Files over 4GB are currently unsuppoted. \nYou may want to split your upload into multiple archives. \nAmazon recommends files of 100mb at a time.";
+	//private static final String FILE_TOO_BIG_ERROR = "Files over 4GB are currently unsuppoted. \nYou may want to split your upload into multiple archives. \nAmazon recommends files of 100mb at a time.";
 	private static final String LOG_WRITE_ERROR = "There was an error writing to the log.";
 	
 	//Other Strings
 	public static final String DOWNLOAD_STRING = "Download Archive";
+	public static final String INVENTORY_REQUEST_STRING = "Request Inventory";
 	public static final String COPYRIGHT_STRING = "Simple Amazon Glacier Uploader\nVersion "+versionNumber+"\n ©2012 brian@brianmcmichael.com";
 	public static final String UPDATE_STRING = "Check for Update";
 	public static final String UPDATE_SITE_STRING = "http://simpleglacieruploader.brianmcmichael.com/";
-	public static final String ABOUT_WINDOW_STRING = ""+COPYRIGHT_STRING+"\n\nReport errors or direct correspondence to: brian@brianmcmichael.com\n\nSimple Amazon Glacier Uploader is free and always will be. \n I'm currently studying software development and I am hand coding this \nin Java to improve my skills and develop my portfolio.\n Your feedback is appreciated.\nThis program is not any way affiliated with Amazon Web Services or Amazon.com.";
+	public static final String ABOUT_WINDOW_STRING = ""+COPYRIGHT_STRING+"\n\nReport errors or direct correspondence to: brian@brianmcmichael.com\n\nSimple Amazon Glacier Uploader is free and always will be. \nYour feedback is appreciated.\nThis program is not any way affiliated with Amazon Web Services or Amazon.com.";
 	public static final String URL_STRING = "http://simpleglacieruploader.brianmcmichael.com/";
 	public static final String AWS_SITE_STRING = "Get AWS Credentials";
 	public static final String ACCESS_LABEL = "Access Key: ";
@@ -187,7 +184,7 @@ public class SimpleGlacierUploader extends Frame implements ActionListener
 		JMenu fileMenu = new JMenu("File");
 			JMenuItem saveFileMnu = new JMenuItem("Export Log", saveIcon);
 			JMenuItem exitApplicationMnu = new JMenuItem("Exit", exitIcon);
-		JMenu retreiveMenu = new JMenu("Retreive");
+		JMenu retrieveMenu = new JMenu("retrieve");
 			JMenuItem getAWSCredentialsLinkMnu = new JMenuItem(AWS_SITE_STRING, userIcon);
 			JMenuItem downloadFileMnu = new JMenuItem(DOWNLOAD_STRING, downIcon);
 		JMenu viewMenu = new JMenu("View");
@@ -231,6 +228,7 @@ public class SimpleGlacierUploader extends Frame implements ActionListener
 	JPanel logPanel = new JPanel();
 		JButton logButton = new JButton("View Log");
 		JButton downloadRequestButton = new JButton(DOWNLOAD_STRING);
+		JButton inventoryRequestButton = new JButton(INVENTORY_REQUEST_STRING);
 		JButton checkUpdateButton = new JButton(UPDATE_STRING);
 		
 	
@@ -400,6 +398,10 @@ public class SimpleGlacierUploader extends Frame implements ActionListener
 			downloadRequestButton.setBackground(wc);
 			downloadRequestButton.addActionListener(this);
 			downloadRequestButton.setPreferredSize(buttonDimension);
+		logPanel.add(inventoryRequestButton);
+			inventoryRequestButton.setBackground(wc);
+			inventoryRequestButton.addActionListener(this);
+			inventoryRequestButton.setPreferredSize(buttonDimension);
 		logPanel.add(checkUpdateButton);
 			checkUpdateButton.setBackground(wc);
 			checkUpdateButton.addActionListener(this);
@@ -464,12 +466,12 @@ public class SimpleGlacierUploader extends Frame implements ActionListener
 			fileMenu.add(exitApplicationMnu);
 				exitApplicationMnu.setBackground(wc);
 				exitApplicationMnu.addActionListener(this);
-		menuBar.add(retreiveMenu);
-			retreiveMenu.setBackground(wc);
-			retreiveMenu.add(getAWSCredentialsLinkMnu);
+		menuBar.add(retrieveMenu);
+			retrieveMenu.setBackground(wc);
+			retrieveMenu.add(getAWSCredentialsLinkMnu);
 				getAWSCredentialsLinkMnu.setBackground(wc);
 				getAWSCredentialsLinkMnu.addActionListener(this);
-			retreiveMenu.add(downloadFileMnu);
+			retrieveMenu.add(downloadFileMnu);
 				downloadFileMnu.setBackground(wc);
 				downloadFileMnu.addActionListener(this);		
 		menuBar.add(viewMenu);
@@ -1059,20 +1061,34 @@ public class SimpleGlacierUploader extends Frame implements ActionListener
 		}
 		if(e.getSource() == deleteArchiveMnu)
 		{
-			AmazonGlacierClient newDeleteClient = new AmazonGlacierClient();
-			newDeleteClient = makeClient(accessString, secretString, regionInt);
-			DeleteArchiveFrame adf = new DeleteArchiveFrame(newDeleteClient, vaultString, regionInt);
-			adf.setVisible(true);
+			if (checkAllFields() == true)
+			{
+				AmazonGlacierClient newDeleteClient = new AmazonGlacierClient();
+				newDeleteClient = makeClient(accessString, secretString, regionInt);
+				DeleteArchiveFrame daf = new DeleteArchiveFrame(newDeleteClient, vaultString, regionInt);
+				daf.setVisible(true);
+			}
 		}
-		
+		if (e.getSource() == inventoryRequestButton)
+		{
+			if (checkAllFields() == true)
+			{
+				AmazonGlacierClient newInventoryClient = new AmazonGlacierClient();
+				newInventoryClient = makeClient(accessString, secretString, regionInt);
+				InventoryRequest ir = new InventoryRequest(newInventoryClient, vaultString, regionInt);
+				ir.setVisible(true);
+			}
+		}
 		if(e.getSource() == downloadRequestButton || e.getSource() == downloadFileMnu)
 		{	
-	         
-			AmazonGlacierClient newDownloadClient = new AmazonGlacierClient();
-			newDownloadClient = makeClient(accessString, secretString, regionInt);
-			BasicAWSCredentials credentials = new BasicAWSCredentials(accessString,secretString);
-			AmazonDownloadRequest adr = new AmazonDownloadRequest(newDownloadClient, vaultString, regionInt, credentials);
-			adr.setVisible(true);			
+	        if (checkAllFields() == true)
+	        {
+				AmazonGlacierClient newDownloadClient = new AmazonGlacierClient();
+				newDownloadClient = makeClient(accessString, secretString, regionInt);
+				BasicAWSCredentials credentials = new BasicAWSCredentials(accessString,secretString);
+				AmazonDownloadRequest adr = new AmazonDownloadRequest(newDownloadClient, vaultString, regionInt, credentials);
+				adr.setVisible(true);
+	        }
 		}
 		
 		if (e.getSource() == aboutMnu)

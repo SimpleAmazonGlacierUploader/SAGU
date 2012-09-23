@@ -126,6 +126,7 @@ class AmazonDownloadRequest extends JFrame implements ActionListener, WindowList
     		p3.setBackground(wc);
     			
     	JPanel p4 = new JPanel();
+    		p4.setBackground(wc);
     		p4.setLayout(new BorderLayout());
     		p4.add(p1, BorderLayout.NORTH);
     		p4.add(p2, BorderLayout.CENTER);

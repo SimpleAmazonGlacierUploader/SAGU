@@ -108,6 +108,7 @@ class DeleteArchiveFrame extends JFrame implements ActionListener, WindowListene
     			
     	JPanel p4 = new JPanel();
     		p4.setLayout(new BorderLayout());
+    		p4.setBackground(wc);
     		p4.add(p1, BorderLayout.NORTH);
     		p4.add(p2, BorderLayout.CENTER);
     		p4.add(p3, BorderLayout.SOUTH);

@@ -1,3 +1,22 @@
+2012/09/23 - Version 0.74
+
+-Request a vault inventory from AWS. Current version is rough. Saves unparsed response to file.
+    (NB: This is not a replacement for maintaining a local log file. 
+    Amazon does not store named files, only ArchiveID's. 
+    Archives uploaded with previous versions SAGU have included the filename as a descriptor, 
+    but archives uploaded with other programs may not. Use the inventory retrieval to acquire 
+    the Archive ID's within a particular vault. 
+    It takes AWS approximately 4 hours to prepare your inventory for download.)
+-Various fixes.
+-Updated AWS Java SDK to 1.3.21.
+
+
+2012/09/20 - SAGU goes Git!
+
+-Development stall for a couple of days while I learned Git.
+-Check out the public repository here: SAGU Source at Github
+
+
 2012/09/15 - Version 0.73
 
 -Masked secret key.
