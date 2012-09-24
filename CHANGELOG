@@ -1,3 +1,8 @@
+2012/09/24 - Version 0.74.1
+
+-Inventory request is saved as format "[vaultname][requesteddatetime].txt" now.
+-Minor misc. fixes.
+
 2012/09/23 - Version 0.74
 
 -Request a vault inventory from AWS. Current version is rough. Saves unparsed response to file.
@@ -123,3 +128,8 @@ https://console.aws.amazon.com/glacier/home
 -Select single file.
 -Upload file to selected vault/server.
 -(Amazon Glacier inventory is updated approximately once per day. It may take 24 hours for your files to appear.)
+
+
+2012/08/21 - Amazon Glacier Announced
+https://forums.aws.amazon.com/ann.jspa?annID=1599
+

@@ -78,7 +78,7 @@ public class SimpleGlacierUploader extends Frame implements ActionListener
 	
 	//static identfiers
 	private static final long serialVersionUID = 1L;
-	private static final String versionNumber = "0.74";
+	private static final String versionNumber = "0.74.1";
 	private static final String logFileNamelog = "Glacier.log";
 	private static final String logFileNametxt = "Glacier.txt";
 	private static final String logFileNamecsv = "Glacier.csv";	
@@ -184,7 +184,7 @@ public class SimpleGlacierUploader extends Frame implements ActionListener
 		JMenu fileMenu = new JMenu("File");
 			JMenuItem saveFileMnu = new JMenuItem("Export Log", saveIcon);
 			JMenuItem exitApplicationMnu = new JMenuItem("Exit", exitIcon);
-		JMenu retrieveMenu = new JMenu("retrieve");
+		JMenu retrieveMenu = new JMenu("Retrieve");
 			JMenuItem getAWSCredentialsLinkMnu = new JMenuItem(AWS_SITE_STRING, userIcon);
 			JMenuItem downloadFileMnu = new JMenuItem(DOWNLOAD_STRING, downIcon);
 		JMenu viewMenu = new JMenu("View");

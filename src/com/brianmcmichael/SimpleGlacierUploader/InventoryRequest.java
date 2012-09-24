@@ -235,7 +235,7 @@ public class InventoryRequest extends JFrame implements ActionListener, WindowLi
 				    Format formatter = new SimpleDateFormat("yyyyMMMdd_HHmmss");
 				    String fileDate = formatter.format(d);
 				    
-				    String fileName =  irVault + fileDate;
+				    String fileName =  irVault + fileDate + ".txt";
 				    		
 				    String filePath = ""+curDir+System.getProperty("file.separator")+fileName;
 				    
@@ -253,10 +253,10 @@ public class InventoryRequest extends JFrame implements ActionListener, WindowLi
 				    }
 				    out.close();
 				    
-				    JOptionPane.showMessageDialog(null,"Successfully exported " + irVault + " inventory to " + filePath.toString(), "Saved", JOptionPane.INFORMATION_MESSAGE);				            
-					
 				    inventoryFrame.setVisible(false);
 				    
+				    JOptionPane.showMessageDialog(null,"Successfully exported " + irVault + " inventory to " + filePath.toString(), "Saved", JOptionPane.INFORMATION_MESSAGE);				            
+					
 				    return null;
 				    
 				
