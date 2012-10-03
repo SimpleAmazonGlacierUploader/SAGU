@@ -59,6 +59,7 @@ import java.util.Properties;
 
 import javax.swing.JFileChooser;
 
+import com.amazonaws.ClientConfiguration;
 import com.amazonaws.auth.BasicAWSCredentials;
 
 import com.amazonaws.services.glacier.AmazonGlacierClient;
@@ -78,10 +79,11 @@ public class SimpleGlacierUploader extends Frame implements ActionListener
 	
 	//static identfiers
 	private static final long serialVersionUID = 1L;
-	private static final String versionNumber = "0.74.1";
+	private static final String versionNumber = "0.74.2";
 	private static final String logFileNamelog = "Glacier.log";
 	private static final String logFileNametxt = "Glacier.txt";
-	private static final String logFileNamecsv = "Glacier.csv";	
+	private static final String logFileNamecsv = "Glacier.csv";
+	private static final String logFileNameerr = "GlacierErrors.txt";
 	private static final String fileProperties = "SAGU.properties";
 	
 	//Server Region Strings
@@ -96,7 +98,7 @@ public class SimpleGlacierUploader extends Frame implements ActionListener
 	//Error messages
 	private static final String NO_DIRECTORIES_ERROR = "Directories, folders, and packages are not supported. \nPlease compress this into a single archive (such as a .zip) and try uploading again.";
 	private static final String LOG_CREATION_ERROR = "There was an error creating the log.";
-	//private static final String FILE_TOO_BIG_ERROR = "Files over 4GB are currently unsuppoted. \nYou may want to split your upload into multiple archives. \nAmazon recommends files of 100mb at a time.";
+	//private static final String FILE_TOO_BIG_ERROR = "Files over 4GB are currently unsupported. \nYou may want to split your upload into multiple archives. \nAmazon recommends files of 100mb at a time.";
 	private static final String LOG_WRITE_ERROR = "There was an error writing to the log.";
 	
 	//Other Strings
@@ -109,6 +111,10 @@ public class SimpleGlacierUploader extends Frame implements ActionListener
 	public static final String URL_STRING = "http://simpleglacieruploader.brianmcmichael.com/";
 	public static final String AWS_SITE_STRING = "Get AWS Credentials";
 	public static final String ACCESS_LABEL = "Access Key: ";
+	
+	//Config override
+	public static final int SOCKET_TIMEOUT = 1000000;
+	public static final int MAX_RETRIES = 6;
 	
 	//Set Colors
 	Color wc = Color.WHITE;
@@ -629,6 +635,11 @@ public class SimpleGlacierUploader extends Frame implements ActionListener
 			File logFile = new File(curDir + System.getProperty("file.separator") + logFileNamecsv);
 			return logFile;
 		}
+		if(filepath == 3)
+		{
+			File logFile = new File(curDir + System.getProperty("file.separator") + logFileNameerr);
+			return logFile;
+		}
 		else
 		{
 			File logFile = new File(curDir + System.getProperty("file.separator") + logFileNamelog);
@@ -838,6 +849,8 @@ public class SimpleGlacierUploader extends Frame implements ActionListener
 			while (marker != null);				
 		}
 	}
+	
+	
 	
 	public void centerOnScreen(int width, int height)
   	{
@@ -1193,23 +1206,32 @@ public class SimpleGlacierUploader extends Frame implements ActionListener
 					    		
 								
 								try { Thread.sleep(100L);} catch (InterruptedException e1) {e1.printStackTrace();}
-							    BasicAWSCredentials credentials = new BasicAWSCredentials(accessString,secretString);	        
-							    client = new AmazonGlacierClient(credentials);
+							    
+								ClientConfiguration config = new ClientConfiguration();
+						        	config.setSocketTimeout(SOCKET_TIMEOUT);
+						        	config.setMaxErrorRetry(MAX_RETRIES);
+						        
+						        BasicAWSCredentials credentials = new BasicAWSCredentials(accessString,secretString);	        
+							    client = new AmazonGlacierClient(credentials, config);
 							    Endpoints ep = new Endpoints();
 							    String endpointUrl = ep.Endpoint(locInt);
 							    client.setEndpoint(endpointUrl);
 							    String locationUpped = ep.Location(locInt);
+							    String thisFile = uploadFileBatch[i].getCanonicalPath();
+							    
+							    char emptyChar = 0xFFFA; 
+							    String thisCleanFile = thisFile.valueOf(emptyChar).replaceAll("\\p{C}", "?");
 								
 						        try {
+						        							        	
 						            ArchiveTransferManager atm = new ArchiveTransferManager(client, credentials);
 						            
-						            String thisFile = uploadFileBatch[i].getCanonicalPath();
 						            
 						            String fileLength = Long.toString(uploadFileBatch[i].length());
 						            
 						            uw.uploadFrame.setTitle("("+(i+1)+"/"+uploadFileBatch.length+")"+" Uploading: "+thisFile);
 						            
-						            UploadResult result = atm.upload(vaultName, thisFile, uploadFileBatch[i]);
+						            UploadResult result = atm.upload(vaultName, thisCleanFile, uploadFileBatch[i]);
 						            
 						            uw.uploadText.append("Done: "+thisFile+"\n");
 						            Writer plainOutputLog = null;
@@ -1244,7 +1266,7 @@ public class SimpleGlacierUploader extends Frame implements ActionListener
 						            		plainOutputLog.write(System.getProperty( "line.separator" ));
 						            		plainOutputLog.write(" | ArchiveID: " + thisResult + " ");
 						            		plainOutputLog.write(System.getProperty( "line.separator" ));
-						            		plainOutputLog.write(" | File: " + thisFile + " ");
+						            		plainOutputLog.write(" | File: " + thisCleanFile + " ");
 						            		plainOutputLog.write(" | Bytes: " + fileLength + " ");
 						            		plainOutputLog.write(" | Vault: " +vaultName + " ");
 						            		plainOutputLog.write(" | Location: " + locationUpped + " ");
@@ -1303,7 +1325,11 @@ public class SimpleGlacierUploader extends Frame implements ActionListener
 						            
 						        } catch (Exception h)
 						        {
-						        	JOptionPane.showMessageDialog(null,""+h, "Error", JOptionPane.ERROR_MESSAGE);
+						        	if (logCheckMenuItem.isSelected())
+						        	{
+						        		writeToErrorLog(h, thisFile);
+						        	}
+						        	JOptionPane.showMessageDialog(null,""+h, "Error", JOptionPane.ERROR_MESSAGE);						        	
 						        	uw.destroyUploadWindow();
 						        	
 						        }
@@ -1329,6 +1355,37 @@ public class SimpleGlacierUploader extends Frame implements ActionListener
 						
 						return null;
 					}
+
+					private void writeToErrorLog(Exception h, String thisFile) {
+						String thisError = h.toString();
+						
+						Writer errorOutputLog = null;
+						try
+						{
+							errorOutputLog = new BufferedWriter(new FileWriter(getLogFilenamePath(3), true));
+						}
+						catch(Exception badLogCreate)
+						{
+							JOptionPane.showMessageDialog(null, LOG_CREATION_ERROR,"IO Error",JOptionPane.ERROR_MESSAGE);
+				        	System.exit(1);
+						}
+						try
+						{
+							Date d = new Date();
+							
+							errorOutputLog.write(System.getProperty( "line.separator" ));
+							errorOutputLog.write(""+d.toString() + ": \""+thisFile+"\" *ERROR* " + thisError);
+							errorOutputLog.write(System.getProperty( "line.separator" ));
+							
+						}
+						catch(Exception badLogWrite)
+						{
+							JOptionPane.showMessageDialog(null, LOG_WRITE_ERROR,"IO Error",JOptionPane.ERROR_MESSAGE);
+							System.exit(1);
+						}	
+					}
+
+					
 		    		
 		    	};
 		    	uploadWorker.execute();

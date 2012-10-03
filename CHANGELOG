@@ -1,3 +1,9 @@
+2012/10/02 - Version 0.74.2
+
+-Increased length of time before socket timeout and doubled number of retries. Should reduce timeout errors for large files on slower connections.
+-Upload errors are now logged to GlacierErrors.txt.
+-Clean non-unicode characters from upload file path description to prevent possible signature exception. 
+
 2012/09/24 - Version 0.74.1
 
 -Inventory request is saved as format "[vaultname][requesteddatetime].txt" now.

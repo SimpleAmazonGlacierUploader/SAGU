@@ -242,7 +242,7 @@ public class InventoryRequest extends JFrame implements ActionListener, WindowLi
 				    FileWriter fileStream = new FileWriter(filePath);
 				    	
 				    BufferedWriter out = new BufferedWriter(fileStream);
-				    
+				    				    
 				    BufferedReader in = new BufferedReader(new InputStreamReader(gjoResult.getBody()));
 				    
 				    String inputLine;
