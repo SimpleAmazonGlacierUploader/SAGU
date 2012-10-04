@@ -1219,8 +1219,8 @@ public class SimpleGlacierUploader extends Frame implements ActionListener
 							    String locationUpped = ep.Location(locInt);
 							    String thisFile = uploadFileBatch[i].getCanonicalPath();
 							    
-							    char emptyChar = 0xFFFA; 
-							    String thisCleanFile = thisFile.valueOf(emptyChar).replaceAll("\\p{C}", "?");
+							    //char emptyChar = 0xFFFA; 
+							    //String thisCleanFile = thisFile.valueOf(emptyChar).replaceAll("\\p{C}", "?");
 								
 						        try {
 						        							        	
@@ -1231,7 +1231,7 @@ public class SimpleGlacierUploader extends Frame implements ActionListener
 						            
 						            uw.uploadFrame.setTitle("("+(i+1)+"/"+uploadFileBatch.length+")"+" Uploading: "+thisFile);
 						            
-						            UploadResult result = atm.upload(vaultName, thisCleanFile, uploadFileBatch[i]);
+						            UploadResult result = atm.upload(vaultName, thisFile, uploadFileBatch[i]);
 						            
 						            uw.uploadText.append("Done: "+thisFile+"\n");
 						            Writer plainOutputLog = null;
@@ -1266,7 +1266,7 @@ public class SimpleGlacierUploader extends Frame implements ActionListener
 						            		plainOutputLog.write(System.getProperty( "line.separator" ));
 						            		plainOutputLog.write(" | ArchiveID: " + thisResult + " ");
 						            		plainOutputLog.write(System.getProperty( "line.separator" ));
-						            		plainOutputLog.write(" | File: " + thisCleanFile + " ");
+						            		plainOutputLog.write(" | File: " + thisFile + " ");
 						            		plainOutputLog.write(" | Bytes: " + fileLength + " ");
 						            		plainOutputLog.write(" | Vault: " +vaultName + " ");
 						            		plainOutputLog.write(" | Location: " + locationUpped + " ");
