@@ -79,7 +79,7 @@ public class SimpleGlacierUploader extends Frame implements ActionListener
 	
 	//static identfiers
 	private static final long serialVersionUID = 1L;
-	private static final String versionNumber = "0.74.2";
+	private static final String versionNumber = "0.74.4";
 	private static final String logFileNamelog = "Glacier.log";
 	private static final String logFileNametxt = "Glacier.txt";
 	private static final String logFileNamecsv = "Glacier.csv";
@@ -823,28 +823,32 @@ public class SimpleGlacierUploader extends Frame implements ActionListener
 
 		int newLoc = locationChoice.getSelectedIndex();
 		
+		
 		if (((accessField.getText().trim().equals("")) == true) || (secretField.getText().trim().equals("")) == true) {}
 		else
 		{
 			AmazonGlacierClient newVaultCheckClient = new AmazonGlacierClient();
 			newVaultCheckClient = makeClient(accessString, secretString, newLoc);
-			BasicAWSCredentials credentials = new BasicAWSCredentials(accessString,secretString);
+			//BasicAWSCredentials credentials = new BasicAWSCredentials(accessString,secretString);
 			
 			String marker = null;
+			vaultSelector.removeAllItems();
+			vaultSelector.addItem("Select Existing:");
 			do
 			{
 				ListVaultsRequest lv = new ListVaultsRequest()
-					.withMarker(marker);
+					.withMarker(marker)
+					.withLimit("1000");
+				
 				ListVaultsResult lvr = newVaultCheckClient.listVaults(lv);
 				ArrayList<DescribeVaultOutput> vList = new ArrayList<DescribeVaultOutput>(lvr.getVaultList());
-				
-				vaultSelector.removeAllItems();
-				vaultSelector.addItem("Select Existing:");
+				marker = lvr.getMarker();
 				
 				for(DescribeVaultOutput vault: vList)
 				{
 					vaultSelector.addItem(vault.getVaultName());
 				}
+				
 			}
 			while (marker != null);				
 		}
@@ -949,9 +953,9 @@ public class SimpleGlacierUploader extends Frame implements ActionListener
 	    BasicAWSCredentials credentials = new BasicAWSCredentials(accessorString,secretiveString);	        
 	    client = new AmazonGlacierClient(credentials);
 	    //int locInt = locationChoice.getSelectedIndex();
-	    Endpoints ep = new Endpoints();
-	    String endpointUrl = ep.Endpoint(region);
-	    client.setEndpoint(endpointUrl);
+	    Endpoints ep = new Endpoints(region);
+	    //String endpointUrl = ep.Endpoint(region);
+	    client.setEndpoint(ep.Endpoint());
 		
 		return client;
 	}
@@ -1213,10 +1217,10 @@ public class SimpleGlacierUploader extends Frame implements ActionListener
 						        
 						        BasicAWSCredentials credentials = new BasicAWSCredentials(accessString,secretString);	        
 							    client = new AmazonGlacierClient(credentials, config);
-							    Endpoints ep = new Endpoints();
-							    String endpointUrl = ep.Endpoint(locInt);
-							    client.setEndpoint(endpointUrl);
-							    String locationUpped = ep.Location(locInt);
+							    Endpoints ep = new Endpoints(locInt);
+							    //String endpointUrl = ep.Endpoint(locInt);
+							    client.setEndpoint(ep.Endpoint());
+							    String locationUpped = ep.Location();
 							    String thisFile = uploadFileBatch[i].getCanonicalPath();
 							    
 							    //char emptyChar = 0xFFFA; 

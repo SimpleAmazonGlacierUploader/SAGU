@@ -11,6 +11,6 @@
 	<classpathentry kind="lib" path="libs/jackson-core-2.0.5.jar"/>
 	<classpathentry kind="lib" path="libs/jackson-lgpl-0.9.5.jar"/>
 	<classpathentry kind="lib" path="libs/org.apache.httpcomponents.httpcore_4.2.1.jar"/>
-	<classpathentry kind="lib" path="libs/aws-java-sdk-1.3.21.jar"/>
+	<classpathentry kind="lib" path="libs/aws-java-sdk-1.3.26.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

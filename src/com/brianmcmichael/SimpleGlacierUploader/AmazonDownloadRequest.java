@@ -48,6 +48,8 @@ import com.amazonaws.AmazonServiceException;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.glacier.AmazonGlacierClient;
 import com.amazonaws.services.glacier.transfer.ArchiveTransferManager;
+import com.amazonaws.services.sns.AmazonSNSClient;
+import com.amazonaws.services.sqs.AmazonSQSClient;
 
 
 class AmazonDownloadRequest extends JFrame implements ActionListener, WindowListener
@@ -89,6 +91,7 @@ class AmazonDownloadRequest extends JFrame implements ActionListener, WindowList
     	
 		dlClient = client;
 		dlVault = vaultName;
+		locationChoice = region;
 		dlCredentials = credentials;
     	
 		JLabel label1 = new JLabel("ArchiveID to Download from " + dlVault + " in server region " +SimpleGlacierUploader.getRegion(thisRegion)+":");
@@ -251,9 +254,18 @@ class AmazonDownloadRequest extends JFrame implements ActionListener, WindowList
 								downloadFrame.setTitle("Downloading "+outFile.toString());
 							    downloadFrame.setVisible(true);
 								
-								ArchiveTransferManager atm = new ArchiveTransferManager(dlClient, dlCredentials);
+							    Endpoints notificationEP = new Endpoints(locationChoice);
+							    
+							    AmazonSQSClient dlSQS = new AmazonSQSClient(dlCredentials);
+							    AmazonSNSClient dlSNS = new AmazonSNSClient(dlCredentials);
+							    
+							    dlSQS.setEndpoint(notificationEP.sqsEndpoint());
+							    dlSNS.setEndpoint(notificationEP.snsEndpoint());
+							    							    
+								//ArchiveTransferManager atm = new ArchiveTransferManager(dlClient, dlCredentials);
+							    ArchiveTransferManager atm = new ArchiveTransferManager(dlClient, dlSQS, dlSNS);
 						           
-						        atm.download(vaultName, archiveId, outFile);
+						        atm.download("-", vaultName, archiveId, outFile);
 						            
 						        JOptionPane.showMessageDialog(null, "Sucessfully downloaded " + outFile.toString(),"Success",JOptionPane.INFORMATION_MESSAGE);
 						        downloadFrame.setVisible(false);
@@ -267,7 +279,7 @@ class AmazonDownloadRequest extends JFrame implements ActionListener, WindowList
 						}
 						catch (AmazonClientException i) 
 						{
-				        	JOptionPane.showMessageDialog(null,"Client Error. Check that all fields are correct. Archive not deleted.", "Error", JOptionPane.ERROR_MESSAGE);
+				        	JOptionPane.showMessageDialog(null,"Client Error. Check that all fields are correct. Archive not downloaded.", "Error", JOptionPane.ERROR_MESSAGE);
 				        	downloadFrame.setVisible(false);
 				        }
 						catch (Exception j) 
