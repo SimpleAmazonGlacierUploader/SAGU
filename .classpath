@@ -3,14 +3,14 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="img"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
-	<classpathentry kind="lib" path="libs/commons-codec-1.6.jar"/>
-	<classpathentry kind="lib" path="libs/commons-logging-1.1.1.jar"/>
-	<classpathentry kind="lib" path="libs/httpclient-4.2.1.jar"/>
-	<classpathentry kind="lib" path="libs/httpclient-cache-4.2.1.jar"/>
-	<classpathentry kind="lib" path="libs/httpcore-4.2.1.jar"/>
-	<classpathentry kind="lib" path="libs/jackson-core-2.0.5.jar"/>
-	<classpathentry kind="lib" path="libs/jackson-lgpl-0.9.5.jar"/>
-	<classpathentry kind="lib" path="libs/org.apache.httpcomponents.httpcore_4.2.1.jar"/>
-	<classpathentry kind="lib" path="libs/aws-java-sdk-1.3.26.jar"/>
+	<classpathentry kind="lib" path="libraries/aws-java-sdk-1.3.26.jar"/>
+	<classpathentry kind="lib" path="libraries/commons-codec-1.6.jar"/>
+	<classpathentry kind="lib" path="libraries/commons-logging-1.1.1.jar"/>
+	<classpathentry kind="lib" path="libraries/httpclient-4.2.1.jar"/>
+	<classpathentry kind="lib" path="libraries/httpclient-cache-4.2.1.jar"/>
+	<classpathentry kind="lib" path="libraries/httpcore-4.2.1.jar"/>
+	<classpathentry kind="lib" path="libraries/jackson-core-2.0.5.jar"/>
+	<classpathentry kind="lib" path="libraries/jackson-lgpl-0.9.5.jar"/>
+	<classpathentry kind="lib" path="libraries/org.apache.httpcomponents.httpcore_4.2.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

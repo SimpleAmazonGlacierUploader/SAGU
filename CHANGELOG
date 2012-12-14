@@ -1,3 +1,8 @@
+2012/12/14 - Version 0.74.5
+
+-Regex clean file description for upload. This should reduce
+InvalidSignatureExceptions.
+
 2012/12/04 - Version 0.74.4
 
 Done with classes! Back to work on SAGU.

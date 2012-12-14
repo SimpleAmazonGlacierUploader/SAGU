@@ -78,8 +78,8 @@ public class SimpleGlacierUploader extends Frame implements ActionListener
 	Properties applicationProps = new Properties();
 	
 	//static identfiers
-	private static final long serialVersionUID = 1L;
-	private static final String versionNumber = "0.74.4";
+	private static final long serialVersionUID = 11041980L;
+	private static final String versionNumber = "0.74.5";
 	private static final String logFileNamelog = "Glacier.log";
 	private static final String logFileNametxt = "Glacier.txt";
 	private static final String logFileNamecsv = "Glacier.csv";
@@ -431,13 +431,12 @@ public class SimpleGlacierUploader extends Frame implements ActionListener
 		fileDropPanel.add(ddScroll, BorderLayout.CENTER);
 			ddText.setEditable(false);
 			ddScroll.setSize(180, 300);
-		
+			
 		
 		p1.setBackground(wc);
 		p1.add(credentialsPanel);
 		p1.add(locationPanel);
-		p1.add(vaultPanel);
-		
+		p1.add(vaultPanel);		
 			
 		p2.setBackground(wc);
 		p2.add(logoPanel, BorderLayout.NORTH);
@@ -456,6 +455,7 @@ public class SimpleGlacierUploader extends Frame implements ActionListener
 		o1.add(p1);
 		o1.add(p2);
 		o1.add(p3);
+		
 		
 		mainPanel.add(o1, BorderLayout.CENTER);	
 		mainPanel.setBackground(wc);
@@ -948,7 +948,6 @@ public class SimpleGlacierUploader extends Frame implements ActionListener
 	
 	public AmazonGlacierClient makeClient(String accessorString, String secretiveString, int region)
 	{
-		
 		//AmazonGlacierClient client;
 	    BasicAWSCredentials credentials = new BasicAWSCredentials(accessorString,secretiveString);	        
 	    client = new AmazonGlacierClient(credentials);
@@ -958,6 +957,14 @@ public class SimpleGlacierUploader extends Frame implements ActionListener
 	    client.setEndpoint(ep.Endpoint());
 		
 		return client;
+	}
+	
+	public static String regexClean(String statement)
+	{
+		String stmt = statement;
+		String regex = "[^a-zA-Z0-9_\\-\\.]";
+		String out = stmt.replaceAll(regex, "");
+		return out;
 	}
 	
 	@Override
@@ -1222,6 +1229,7 @@ public class SimpleGlacierUploader extends Frame implements ActionListener
 							    client.setEndpoint(ep.Endpoint());
 							    String locationUpped = ep.Location();
 							    String thisFile = uploadFileBatch[i].getCanonicalPath();
+							    String cleanFile = regexClean(thisFile);
 							    
 							    //char emptyChar = 0xFFFA; 
 							    //String thisCleanFile = thisFile.valueOf(emptyChar).replaceAll("\\p{C}", "?");
@@ -1235,7 +1243,7 @@ public class SimpleGlacierUploader extends Frame implements ActionListener
 						            
 						            uw.uploadFrame.setTitle("("+(i+1)+"/"+uploadFileBatch.length+")"+" Uploading: "+thisFile);
 						            
-						            UploadResult result = atm.upload(vaultName, thisFile, uploadFileBatch[i]);
+						            UploadResult result = atm.upload(vaultName, cleanFile, uploadFileBatch[i]);
 						            
 						            uw.uploadText.append("Done: "+thisFile+"\n");
 						            Writer plainOutputLog = null;
