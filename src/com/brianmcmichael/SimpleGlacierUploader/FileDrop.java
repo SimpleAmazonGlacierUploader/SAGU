@@ -1,6 +1,5 @@
 package com.brianmcmichael.SimpleGlacierUploader;
 
-
 import java.awt.datatransfer.DataFlavor;
 import java.io.BufferedReader;
 import java.io.File;
