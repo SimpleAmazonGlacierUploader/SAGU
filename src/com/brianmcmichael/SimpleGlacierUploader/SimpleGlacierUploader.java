@@ -104,7 +104,7 @@ public class SimpleGlacierUploader extends Frame implements ActionListener
 	//Other Strings
 	public static final String DOWNLOAD_STRING = "Download Archive";
 	public static final String INVENTORY_REQUEST_STRING = "Request Inventory";
-	public static final String COPYRIGHT_STRING = "Simple Amazon Glacier Uploader\nVersion "+versionNumber+"\n ©2012 brian@brianmcmichael.com";
+	public static final String COPYRIGHT_STRING = "Simple Amazon Glacier Uploader\nVersion "+versionNumber+"\n ï¿½2012 brian@brianmcmichael.com";
 	public static final String UPDATE_STRING = "Check for Update";
 	public static final String UPDATE_SITE_STRING = "http://simpleglacieruploader.brianmcmichael.com/";
 	public static final String ABOUT_WINDOW_STRING = ""+COPYRIGHT_STRING+"\n\nReport errors or direct correspondence to: brian@brianmcmichael.com\n\nSimple Amazon Glacier Uploader is free and always will be. \nYour feedback is appreciated.\nThis program is not any way affiliated with Amazon Web Services or Amazon.com.";
@@ -269,19 +269,7 @@ public class SimpleGlacierUploader extends Frame implements ActionListener
 	        				JOptionPane.showMessageDialog(null, NO_DIRECTORIES_ERROR,"Error",JOptionPane.ERROR_MESSAGE);
 		                	files[i] = null;
 	        			}
-	        			/*    Removed filesize limitation with 0.72. Upgraded AWS SDK to 1.3.19
-						else if (files[i].length() > max_file_size == true)
-	        			{
-	        				try
-		                    {   
-								//ddText.setForeground(rc);
-								ddText.append( "Unable to upload: " + files[i].getCanonicalPath() + "\n" ); 			                    	
-		                    }   // end try
-		                    catch( java.io.IOException e ) {}
-	        				JOptionPane.showMessageDialog(null, FILE_TOO_BIG_ERROR,"Error",JOptionPane.ERROR_MESSAGE);
-		                	files[i] = null;
-	        			}
-	        			*/	
+
 	        			else
 	        			{
 	        				try
@@ -317,19 +305,15 @@ public class SimpleGlacierUploader extends Frame implements ActionListener
 		        }
 			}
     	});   // end filesDropped
-   
-	
+
 	JButton uploadButton = new JButton("Upload");
 		
 	JPanel copyrightPanel = new JPanel();
 		JLabel copyrightLabel = new JLabel(COPYRIGHT_STRING);
 		JHyperlinkLabel updateLink = new JHyperlinkLabel("\tCheck for Update");
-		
-	
+
     //Set FileChooser
 	JFileChooser fc = new JFileChooser();
-		
-	       
         
 	public SimpleGlacierUploader()
 	{
@@ -779,7 +763,7 @@ public class SimpleGlacierUploader extends Frame implements ActionListener
 	{
 		boolean passBool;
 
-		if((multiFiles == null) == true)
+		if(multiFiles == null)
 		{
 			JOptionPane.showMessageDialog(null,"Please select a file.", "Error", JOptionPane.ERROR_MESSAGE);
 			passBool = false;
@@ -975,7 +959,7 @@ public class SimpleGlacierUploader extends Frame implements ActionListener
 		String vaultString = getVaultField();
 		int regionInt = getServerRegion();
 		
-		if(e.getSource() == newVaultButton && (checkAWSFields() == true))
+		if(e.getSource() == newVaultButton && checkAWSFields())
 		{
 				AmazonGlacierClient newVaultClient = new AmazonGlacierClient();
 				newVaultClient = makeClient(accessString, secretString, regionInt);
@@ -1085,7 +1069,7 @@ public class SimpleGlacierUploader extends Frame implements ActionListener
 		}
 		if(e.getSource() == deleteArchiveMnu)
 		{
-			if (checkAllFields() == true)
+			if (checkAllFields())
 			{
 				AmazonGlacierClient newDeleteClient = new AmazonGlacierClient();
 				newDeleteClient = makeClient(accessString, secretString, regionInt);
@@ -1095,7 +1079,7 @@ public class SimpleGlacierUploader extends Frame implements ActionListener
 		}
 		if (e.getSource() == inventoryRequestButton)
 		{
-			if (checkAllFields() == true)
+			if (checkAllFields())
 			{
 				AmazonGlacierClient newInventoryClient = new AmazonGlacierClient();
 				newInventoryClient = makeClient(accessString, secretString, regionInt);
@@ -1105,7 +1089,7 @@ public class SimpleGlacierUploader extends Frame implements ActionListener
 		}
 		if(e.getSource() == downloadRequestButton || e.getSource() == downloadFileMnu)
 		{	
-	        if (checkAllFields() == true)
+	        if (checkAllFields())
 	        {
 				AmazonGlacierClient newDownloadClient = new AmazonGlacierClient();
 				newDownloadClient = makeClient(accessString, secretString, regionInt);
@@ -1138,7 +1122,7 @@ public class SimpleGlacierUploader extends Frame implements ActionListener
 
             if (returnVal == JFileChooser.APPROVE_OPTION) 
             {
-            	if (fc.getSelectedFile().isFile() == true)
+            	if (fc.getSelectedFile().isFile())
             	{	
             		/* Removed for v. 0.72
             		if (fc.getSelectedFile().length() > max_file_size == true)
@@ -1185,7 +1169,7 @@ public class SimpleGlacierUploader extends Frame implements ActionListener
 		
 		if (e.getSource() == uploadButton)
 		{
-			if((checkAllFields() == true) && (checkForFile() == true))
+			if((checkAllFields()) && (checkForFile()))
 			{
 				
 				SaveCurrentProperties(accessString, secretString, vaultString, locationChoice.getSelectedIndex());
@@ -1196,7 +1180,7 @@ public class SimpleGlacierUploader extends Frame implements ActionListener
 					protected Object doInBackground() throws Exception {
 						String accessString = getAccessField();		
 						String secretString = getSecretField();
-						String vaultString = getVaultField();
+						//String vaultString = getVaultField();
 						String vaultName = getVaultField();
 						File[] uploadFileBatch = multiFiles;
 						int locInt = locationChoice.getSelectedIndex();
@@ -1448,12 +1432,8 @@ public class SimpleGlacierUploader extends Frame implements ActionListener
 		g.setTitle("Simple Amazon Glacier Uploader "+versionNumber);
 		g.setIconImage(Toolkit.getDefaultToolkit().getImage("/glaciericon.png"));
 		g.setVisible(true);
-		
-		
+
 	} //end of main
-
-
-	
 }
 
 
