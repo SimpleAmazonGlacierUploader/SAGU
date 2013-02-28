@@ -63,6 +63,7 @@ import com.amazonaws.ClientConfiguration;
 import com.amazonaws.auth.BasicAWSCredentials;
 
 import com.amazonaws.services.glacier.AmazonGlacierClient;
+import com.amazonaws.services.glacier.TreeHashGenerator;
 import com.amazonaws.services.glacier.model.CreateVaultRequest;
 import com.amazonaws.services.glacier.model.CreateVaultResult;
 import com.amazonaws.services.glacier.model.DescribeVaultOutput;
@@ -1237,6 +1238,8 @@ public class SimpleGlacierUploader extends Frame implements ActionListener
 						            //write to file
 						            if(logCheckMenuItem.isSelected())
 						            {
+						            	String treeHash = TreeHashGenerator.calculateTreeHash(uploadFileBatch[i]);
+						            	
 						            	try
 						                {							            		
 						            		plainOutputLog = new BufferedWriter(new FileWriter(getLogFilenamePath(0), true));
@@ -1267,6 +1270,7 @@ public class SimpleGlacierUploader extends Frame implements ActionListener
 						            		plainOutputLog.write(" | Vault: " +vaultName + " ");
 						            		plainOutputLog.write(" | Location: " + locationUpped + " ");
 						            		plainOutputLog.write(" | Date: "+d.toString()+ " ");
+						            		plainOutputLog.write(" | Hash: " + treeHash + " ");
 						            		plainOutputLog.write(System.getProperty( "line.separator" ));
 						            		plainOutputLog.close();
 						            		
@@ -1278,6 +1282,7 @@ public class SimpleGlacierUploader extends Frame implements ActionListener
 						            		plainOutputTxt.write(" | Vault: " +vaultName + " ");
 						            		plainOutputTxt.write(" | Location: " + locationUpped + " ");
 						            		plainOutputTxt.write(" | Date: "+d.toString()+ " ");
+						            		plainOutputTxt.write(" | Hash: " + treeHash + " ");
 						            		plainOutputTxt.write(System.getProperty( "line.separator" ));
 						            		plainOutputTxt.close();
 						            		
@@ -1287,6 +1292,7 @@ public class SimpleGlacierUploader extends Frame implements ActionListener
 						            		plainOutputCsv.write(""+vaultName +",");
 						            		plainOutputCsv.write(""+locationUpped+",");
 						            		plainOutputCsv.write(""+d.toString()+",");
+						            		plainOutputCsv.write(""+treeHash+",");
 						            		plainOutputCsv.write(System.getProperty( "line.separator" ));
 						            		plainOutputCsv.close();
 						            		
