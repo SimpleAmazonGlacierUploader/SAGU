@@ -37,6 +37,7 @@ import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 
 import java.awt.*;
@@ -1184,12 +1185,19 @@ public class SimpleGlacierUploader extends Frame implements ActionListener
 						//String vaultString = getVaultField();
 						String vaultName = getVaultField();
 						File[] uploadFileBatch = multiFiles;
+						
+						//work out exactly how much we are going to upload
+						//so we can support a second total upload progress bar
+						long totalSize = 0;
+						long uploadedSize = 0;
+						for (File f : uploadFileBatch) {
+							totalSize += f.length();
+						}
+											
 						int locInt = locationChoice.getSelectedIndex();
 						multiFiles = null;
 						clearFile();
 						UploadWindow uw = new UploadWindow();
-						uw.uploadFrame.setVisible(true);
-					    
 						
 					    if (uploadFileBatch.length > 0)
 					    {
@@ -1202,7 +1210,7 @@ public class SimpleGlacierUploader extends Frame implements ActionListener
 					    		
 								
 								try { Thread.sleep(100L);} catch (InterruptedException e1) {e1.printStackTrace();}
-							    
+							     
 								ClientConfiguration config = new ClientConfiguration();
 						        	config.setSocketTimeout(SOCKET_TIMEOUT);
 						        	config.setMaxErrorRetry(MAX_RETRIES);
@@ -1226,11 +1234,19 @@ public class SimpleGlacierUploader extends Frame implements ActionListener
 						            
 						            String fileLength = Long.toString(uploadFileBatch[i].length());
 						            
-						            uw.uploadFrame.setTitle("("+(i+1)+"/"+uploadFileBatch.length+")"+" Uploading: "+thisFile);
+						            uw.setTitle("("+(i+1)+"/"+uploadFileBatch.length+")"+" Uploading: "+thisFile);
 						            
 						            UploadResult result = atm.upload(vaultName, cleanFile, uploadFileBatch[i]);
 						            
-						            uw.uploadText.append("Done: "+thisFile+"\n");
+						            uw.addToLog("Done: "+thisFile+"\n");
+						            
+						            uploadedSize += uploadFileBatch[i].length();
+																		
+									int percentage = (int)(((double)uploadedSize/totalSize)*100);
+									
+									uw.updateProgress(percentage);
+						            
+						            
 						            Writer plainOutputLog = null;
 						            Writer plainOutputTxt = null;
 						            Writer plainOutputCsv = null;
@@ -1250,9 +1266,8 @@ public class SimpleGlacierUploader extends Frame implements ActionListener
 						                catch(IOException ex)
 						                {
 						                	JOptionPane.showMessageDialog(null, LOG_CREATION_ERROR,"IO Error",JOptionPane.ERROR_MESSAGE);
-						                	System.exit(1);
-						                	uw.destroyUploadWindow();
-						               
+						                	uw.dispose();
+						                	System.exit(1);						               
 						                }
 						            	
 					            		try
@@ -1308,9 +1323,8 @@ public class SimpleGlacierUploader extends Frame implements ActionListener
 					            		catch(IOException c)
 						    			{
 						    				JOptionPane.showMessageDialog(null, LOG_WRITE_ERROR,"IO Error",JOptionPane.ERROR_MESSAGE);
-						    				System.exit(1);
-						    				
-						    				uw.destroyUploadWindow();						    				
+						    				uw.dispose();
+						    				System.exit(1);						    										    				
 						    			} 	
 							            
 						            }
@@ -1318,8 +1332,7 @@ public class SimpleGlacierUploader extends Frame implements ActionListener
 						            {
 						            	JOptionPane.showMessageDialog(null,"Upload Complete!\nArchive ID: " + result.getArchiveId()+"\nIt may take some time for Amazon to update the inventory.", "Uploaded", JOptionPane.INFORMATION_MESSAGE);
 							            multiFiles = null;
-							            uw.destroyUploadWindow();
-							            
+							            uw.dispose();							            
 						            }
 						            
 						            clearFile();
@@ -1332,7 +1345,7 @@ public class SimpleGlacierUploader extends Frame implements ActionListener
 						        		writeToErrorLog(h, thisFile);
 						        	}
 						        	JOptionPane.showMessageDialog(null,""+h, "Error", JOptionPane.ERROR_MESSAGE);						        	
-						        	uw.destroyUploadWindow();
+						        	uw.dispose();
 						        	
 						        }
 						        
@@ -1341,7 +1354,7 @@ public class SimpleGlacierUploader extends Frame implements ActionListener
 					    	for( int j = 0; j < uploadFileBatch.length; j++ ){
 					    		sb.append(uploadList.get(j));
 					    		}			    	
-					    	uw.destroyUploadWindow();
+					    	uw.dispose();
 					    	
 					    	JOptionPane.showMessageDialog(null,"Upload Complete! \n" + sb,"Uploaded", JOptionPane.INFORMATION_MESSAGE);
 					        //Close the JProgressBar
@@ -1351,7 +1364,7 @@ public class SimpleGlacierUploader extends Frame implements ActionListener
 					    else
 					    {
 					    	JOptionPane.showMessageDialog(null,"This wasn't supposed to happen.", "Bug!", JOptionPane.ERROR_MESSAGE);			        
-					    	uw.destroyUploadWindow();
+					    	uw.dispose();
 					    	
 					    }
 						
