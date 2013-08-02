@@ -50,7 +50,7 @@ public class S {
 	//Other Strings
 	public static final String DOWNLOAD_STRING = "Download Archive";
 	public static final String INVENTORY_REQUEST_STRING = "Request Inventory";
-	public static final String COPYRIGHT_STRING = "Simple Amazon Glacier Uploader\nVersion "+versionNumber+"\n ©2012 brian@brianmcmichael.com";
+	public static final String COPYRIGHT_STRING = "Simple Amazon Glacier Uploader\nVersion "+versionNumber+"\n Â©2012-2013 brian@brianmcmichael.com";
 	public static final String UPDATE_STRING = "Check for Update";
 	public static final String UPDATE_SITE_STRING = "http://simpleglacieruploader.brianmcmichael.com/";
 	public static final String ABOUT_WINDOW_STRING = ""+COPYRIGHT_STRING+"\n\nReport errors or direct correspondence to: brian@brianmcmichael.com\n\nSimple Amazon Glacier Uploader is free and always will be. \nYour feedback is appreciated.\nThis program is not any way affiliated with Amazon Web Services or Amazon.com.";
