@@ -113,12 +113,12 @@ public class SimpleGlacierUploader extends Frame implements ActionListener {
 	public static final String DOWNLOAD_STRING = "Download Archive";
 	public static final String INVENTORY_REQUEST_STRING = "Request Inventory";
 	public static final String COPYRIGHT_STRING = "Simple Amazon Glacier Uploader\nVersion "
-			+ versionNumber + "\n ©2012-2013 brian@brianmcmichael.com";
+			+ versionNumber + "\n ©2012-2013 Brian McMichael";
 	public static final String UPDATE_STRING = "Check for Update";
 	public static final String UPDATE_SITE_STRING = "http://simpleglacieruploader.brianmcmichael.com/";
 	public static final String ABOUT_WINDOW_STRING = ""
 			+ COPYRIGHT_STRING
-			+ "\n\nReport errors or direct correspondence to: brian@brianmcmichael.com\n\nSimple Amazon Glacier Uploader is free and always will be. \nYour feedback is appreciated.\nThis program is not any way affiliated with Amazon Web Services or Amazon.com.";
+			+ "\n\nReport errors or direct correspondence to: brian@brianmcmichael.com\n\nSimple Amazon Glacier Uploader is free software. \nYour feedback is appreciated.\nThis program is not any way affiliated with Amazon Web Services or Amazon.com.";
 	public static final String URL_STRING = "http://simpleglacieruploader.brianmcmichael.com/";
 	public static final String AWS_SITE_STRING = "Get AWS Credentials";
 	public static final String ACCESS_LABEL = "Access Key: ";

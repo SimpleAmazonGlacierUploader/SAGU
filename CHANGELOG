@@ -1,3 +1,9 @@
+2013/08/02 - Version 0.74.6
+
+-Update all dependencies
+-Add something of a progressbar on multi-file uploads courtesy GitHubber greenwoodma (https://github.com/greenwoodma) 
+-Code enhancements courtesy greenwoodma
+
 2012/12/14 - Version 0.74.5
 
 -Regex clean file description for upload. This should reduce
