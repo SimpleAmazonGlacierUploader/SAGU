@@ -20,36 +20,34 @@ package com.brianmcmichael.SimpleGlacierUploader;
 
 public class OpenURI {
 
-	public static void open(String url)
-	{
-		if( !java.awt.Desktop.isDesktopSupported() ) {
+    public static void open(String url) {
+        if (!java.awt.Desktop.isDesktopSupported()) {
 
-            System.err.println( "Desktop is not supported (fatal)" );
-            System.exit( 1 );
+            System.err.println("Desktop is not supported (fatal)");
+            System.exit(1);
         }
 
-        if ( url.length() == 0 ) {
+        if (url.length() == 0) {
 
-            System.out.println( "Usage: OpenURI [URI [URI ... ]]" );
-            System.exit( 0 );
+            System.out.println("Usage: OpenURI [URI [URI ... ]]");
+            System.exit(0);
         }
 
         java.awt.Desktop desktop = java.awt.Desktop.getDesktop();
 
-        if( !desktop.isSupported( java.awt.Desktop.Action.BROWSE ) ) {
+        if (!desktop.isSupported(java.awt.Desktop.Action.BROWSE)) {
 
-            System.err.println( "Desktop doesn't support the browse action (fatal)" );
-            System.exit( 1 );
+            System.err.println("Desktop doesn't support the browse action (fatal)");
+            System.exit(1);
         }
 
         try {
 
-            java.net.URI uri = new java.net.URI( url );
-            desktop.browse( uri );
-        }
-        catch ( Exception e ) {
+            java.net.URI uri = new java.net.URI(url);
+            desktop.browse(uri);
+        } catch (Exception e) {
 
-            System.err.println( e.getMessage() );
+            System.err.println(e.getMessage());
         }
-	}
+    }
 }

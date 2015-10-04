@@ -19,137 +19,113 @@
 package com.brianmcmichael.SimpleGlacierUploader;
 
 public class Endpoints {
-	
-	private int endpt;
-	/*
-	public Endpoints()
-	{
-		this.setEndpt(0);
-	}
-	*/
-	public Endpoints(int currentEndpoint)
-	{
-		this.setEndpt(currentEndpoint);
-	}
-	
-	public String Endpoint()
-	{
-		String endString = "";
-		
-        if(endpt == 0)
-        {
-        	endString = "https://glacier.us-east-1.amazonaws.com/";		        	
+
+    private int endpt;
+
+    /*
+    public Endpoints()
+    {
+        this.setEndpt(0);
+    }
+    */
+    public Endpoints(int currentEndpoint) {
+        this.setEndpt(currentEndpoint);
+    }
+
+    public String Endpoint() {
+        String endString = "";
+
+        if (endpt == 0) {
+            endString = "https://glacier.us-east-1.amazonaws.com/";
         }
-        if(endpt == 1)
-        {
-        	endString = "https://glacier.us-west-2.amazonaws.com/";		        	
+        if (endpt == 1) {
+            endString = "https://glacier.us-west-2.amazonaws.com/";
         }
-        if(endpt == 2)
-        {
-        	endString = "https://glacier.us-west-1.amazonaws.com/";		        	
+        if (endpt == 2) {
+            endString = "https://glacier.us-west-1.amazonaws.com/";
         }
-        if(endpt == 3)
-        {
-        	endString = "https://glacier.eu-west-1.amazonaws.com/";
+        if (endpt == 3) {
+            endString = "https://glacier.eu-west-1.amazonaws.com/";
         }
-        if(endpt == 4)
-        {
-        	endString = "https://glacier.ap-northeast-1.amazonaws.com/";
-        }        
-        
+        if (endpt == 4) {
+            endString = "https://glacier.ap-northeast-1.amazonaws.com/";
+        }
+
         return endString;
-	}
-	
-	public String Location()
-	{
-		String locString = "";
-		
-        if(endpt == 0)
-        {
-        	locString = "USEASTNVA";		        	
+    }
+
+    public String Location() {
+        String locString = "";
+
+        if (endpt == 0) {
+            locString = "USEASTNVA";
         }
-        if(endpt == 1)
-        {
-        	locString = "USWESTOR";		        	
+        if (endpt == 1) {
+            locString = "USWESTOR";
         }
-        if(endpt == 2)
-        {
-        	locString = "USWESTNCA";		        	
+        if (endpt == 2) {
+            locString = "USWESTNCA";
         }
-        if(endpt == 3)
-        {
-        	locString = "EUIRELAND";
+        if (endpt == 3) {
+            locString = "EUIRELAND";
         }
-        if(endpt == 4)
-        {
-        	locString = "APTOKYO";
-        }        
-        
+        if (endpt == 4) {
+            locString = "APTOKYO";
+        }
+
         return locString;
-	}
+    }
 
-	public int getEndpt() {
-		return endpt;
-	}
+    public int getEndpt() {
+        return endpt;
+    }
 
-	public void setEndpt(int endpt) {
-		this.endpt = endpt;
-	}
-	
-	public String sqsEndpoint()
-	{
-		String endString = "";
-		
-        if(endpt == 0)
-        {
-        	endString = "https://sqs.us-east-1.amazonaws.com/";		        	
+    public void setEndpt(int endpt) {
+        this.endpt = endpt;
+    }
+
+    public String sqsEndpoint() {
+        String endString = "";
+
+        if (endpt == 0) {
+            endString = "https://sqs.us-east-1.amazonaws.com/";
         }
-        if(endpt == 1)
-        {
-        	endString = "https://sqs.us-west-2.amazonaws.com/";		        	
+        if (endpt == 1) {
+            endString = "https://sqs.us-west-2.amazonaws.com/";
         }
-        if(endpt == 2)
-        {
-        	endString = "https://sqs.us-west-1.amazonaws.com/";		        	
+        if (endpt == 2) {
+            endString = "https://sqs.us-west-1.amazonaws.com/";
         }
-        if(endpt == 3)
-        {
-        	endString = "https://sqs.eu-west-1.amazonaws.com/";
+        if (endpt == 3) {
+            endString = "https://sqs.eu-west-1.amazonaws.com/";
         }
-        if(endpt == 4)
-        {
-        	endString = "https://sqs.ap-northeast-1.amazonaws.com/";
-        }        
-        
+        if (endpt == 4) {
+            endString = "https://sqs.ap-northeast-1.amazonaws.com/";
+        }
+
         return endString;
-	}
-	
-	public String snsEndpoint()
-	{
-		String endString = "";
-		
-        if(endpt == 0)
-        {
-        	endString = "https://sns.us-east-1.amazonaws.com/";		        	
+    }
+
+    public String snsEndpoint() {
+        String endString = "";
+
+        if (endpt == 0) {
+            endString = "https://sns.us-east-1.amazonaws.com/";
         }
-        if(endpt == 1)
-        {
-        	endString = "https://sns.us-west-2.amazonaws.com/";		        	
+        if (endpt == 1) {
+            endString = "https://sns.us-west-2.amazonaws.com/";
         }
-        if(endpt == 2)
-        {
-        	endString = "https://sns.us-west-1.amazonaws.com/";		        	
+        if (endpt == 2) {
+            endString = "https://sns.us-west-1.amazonaws.com/";
         }
-        if(endpt == 3)
-        {
-        	endString = "https://sns.eu-west-1.amazonaws.com/";
+        if (endpt == 3) {
+            endString = "https://sns.eu-west-1.amazonaws.com/";
         }
-        if(endpt == 4)
-        {
-        	endString = "https://sns.ap-northeast-1.amazonaws.com/";
-        }        
-        
+        if (endpt == 4) {
+            endString = "https://sns.ap-northeast-1.amazonaws.com/";
+        }
+
         return endString;
-	}
+    }
 
 }
