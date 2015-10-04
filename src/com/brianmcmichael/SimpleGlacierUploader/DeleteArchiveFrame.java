@@ -30,25 +30,13 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 
-//import com.amazonaws.auth.AWSCredentials;
-//import com.amazonaws.auth.PropertiesCredentials;
-
 class DeleteArchiveFrame extends JFrame implements ActionListener, WindowListener {
 
-    private static final long serialVersionUID = 1L;
+    private JTextField jtfDeleteField;
+    private JButton jbtDelete, jbtBack;
 
-    //define instance variables
-    String deleteCode;
-
-    JTextField jtfDeleteField;
-    JButton jbtDelete, jbtBack;
-    //JComboBox jcbStockList;
-
-    AmazonGlacierClient deleteClient;
-    int locationChoice;
-    String deleteVault;
-
-    ContextMenuMouseListener rmb = new ContextMenuMouseListener();
+    private AmazonGlacierClient deleteClient;
+    private String deleteVault;
 
     //Constructor
     public DeleteArchiveFrame(AmazonGlacierClient client, String vaultName, int region) {
@@ -57,14 +45,12 @@ class DeleteArchiveFrame extends JFrame implements ActionListener, WindowListene
         int width = 200;
         int height = 170;
 
-        int thisRegion = region;
-
         Color wc = Color.WHITE;
 
         deleteClient = client;
         deleteVault = vaultName;
 
-        JLabel label1 = new JLabel("ArchiveID to Delete from " + SimpleGlacierUploader.getRegion(thisRegion) + ":");
+        JLabel label1 = new JLabel("ArchiveID to Delete from " + SimpleGlacierUploader.getRegion(region) + ":");
         jtfDeleteField = new JTextField(100);
         jbtDelete = new JButton("Delete");
         jbtBack = new JButton("Back");
@@ -78,7 +64,7 @@ class DeleteArchiveFrame extends JFrame implements ActionListener, WindowListene
         JPanel p2 = new JPanel();
         p2.setLayout(new FlowLayout());
         p2.add(jtfDeleteField);
-        jtfDeleteField.addMouseListener(rmb);
+        jtfDeleteField.addMouseListener(new ContextMenuMouseListener());
         jtfDeleteField.setFocusable(true);
         p2.setBackground(wc);
 
@@ -131,45 +117,32 @@ class DeleteArchiveFrame extends JFrame implements ActionListener, WindowListene
 
     @Override
     public void windowActivated(WindowEvent arg0) {
-        // TODO Auto-generated method stub
-
     }
 
     @Override
     public void windowClosed(WindowEvent arg0) {
-        // TODO Auto-generated method stub
-
     }
 
     @Override
     public void windowClosing(WindowEvent arg0) {
-        // TODO Auto-generated method stub
-
     }
 
     @Override
     public void windowDeactivated(WindowEvent arg0) {
-        // TODO Auto-generated method stub
-
     }
 
     @Override
     public void windowDeiconified(WindowEvent arg0) {
-        // TODO Auto-generated method stub
-
     }
 
     @Override
     public void windowIconified(WindowEvent arg0) {
-        // TODO Auto-generated method stub
-
     }
 
     @Override
     public void windowOpened(WindowEvent arg0) {
         jtfDeleteField.setText("");
         jtfDeleteField.requestFocus();
-
     }
 
     @Override

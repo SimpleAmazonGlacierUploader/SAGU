@@ -40,31 +40,22 @@ import java.util.Date;
 
 public class InventoryRequest extends JFrame implements ActionListener, WindowListener {
 
-    AmazonGlacierClient irClient;
-    String irVault;
-    int irRegion;
-
-    private static final long serialVersionUID = 1L;
-
     public static final String DOWNLOAD_NOTICE = "<html><body><br>Your data is stored on Glacier Servers by ArchiveID.<br>This function requests a list of Glacier ArchiveID's within a particular vault.<br><br>>> Verify that the server and vault on the previous page match the vault<br> you are attmpting to obtain the inventory from.<br>>> Once you click the 'retrieve' button it will take approximately 4 hours <br>for Amazon to process your request.<br>>> Once your files have been prepared your download will begin automatically.<br>>> You will be notified when your inventory had been retrieved successfully.<br><br> WARNING: <br>Closing the program during a retrieval request will cancel your download.</body><html>";
     public static final String curDir = System.getProperty("user.dir");
 
-    //define instance variables
-    String dlCode;
-
-    JButton jbtInventoryRequest, jbtBack;
-
-    JFileChooser fc = new JFileChooser();
+    private AmazonGlacierClient irClient;
+    private String irVault;
+    private int irRegion;
+    private JButton jbtInventoryRequest, jbtBack;
 
     //Wait between status requests.
-    long WAIT_TIME = 600000L;
+    private long WAIT_TIME = 600000L;
 
-    int width = 200;
-    int height = 170;
+    private int width = 200;
+    private int height = 170;
 
-    Color wc = Color.WHITE;
+    private Color wc = Color.WHITE;
 
-    //Constructor
     public InventoryRequest(AmazonGlacierClient thisClient, String thisVault, int thisRegion) {
         super("Request Inventory");
 
@@ -112,12 +103,13 @@ public class InventoryRequest extends JFrame implements ActionListener, WindowLi
 
         // Prepare for display
         pack();
-        if (width < getWidth())                // prevent setting width too small
+        if (width < getWidth()) {             // prevent setting width too small
             width = getWidth();
-        if (height < getHeight())            // prevent setting height too small
+        }
+        if (height < getHeight()) {           // prevent setting height too small
             height = getHeight();
+        }
         centerOnScreen(width, height);
-
     }
 
     public void centerOnScreen(int width, int height) {
@@ -138,49 +130,38 @@ public class InventoryRequest extends JFrame implements ActionListener, WindowLi
 
     @Override
     public void windowActivated(WindowEvent arg0) {
-
     }
 
     @Override
     public void windowClosed(WindowEvent arg0) {
-
-
     }
 
     @Override
     public void windowClosing(WindowEvent arg0) {
-
     }
 
     @Override
     public void windowDeactivated(WindowEvent arg0) {
-
     }
 
     @Override
     public void windowDeiconified(WindowEvent arg0) {
-
     }
 
     @Override
     public void windowIconified(WindowEvent arg0) {
-
     }
 
     @Override
     public void windowOpened(WindowEvent arg0) {
-
     }
 
 
     @Override
     public void actionPerformed(ActionEvent e) {
 
-
         if (e.getSource() == jbtInventoryRequest) {
             SwingWorker inventoryWorker = new SwingWorker() {
-
-                //private String archiveId = jtfDownloadField.getText().trim();
 
                 @Override
                 protected Object doInBackground() throws Exception {
@@ -220,7 +201,7 @@ public class InventoryRequest extends JFrame implements ActionListener, WindowLi
 
                         Boolean success = waitForJob(irClient, irVault, thisJobId);
 
-                        while (success == false) {
+                        while (!success) {
                             Thread.sleep(WAIT_TIME);
                             success = waitForJob(irClient, irVault, thisJobId);
                         }
@@ -299,7 +280,6 @@ public class InventoryRequest extends JFrame implements ActionListener, WindowLi
             inventoryReady = djResult.getCompleted();
         } catch (Exception e) {
         }
-        ;
 
         return inventoryReady;
     }
@@ -318,7 +298,6 @@ public class InventoryRequest extends JFrame implements ActionListener, WindowLi
         int lx = (int) (screen.getWidth() * 3 / 8);
         int ly = (int) (screen.getHeight() * 3 / 8);
         f.setLocation(lx, ly);
-    } // centerFrame
-
+    }
 
 }

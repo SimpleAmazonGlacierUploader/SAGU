@@ -34,29 +34,21 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.File;
 
-class AmazonDownloadRequest extends JFrame implements ActionListener,
-        WindowListener {
-
-    private static final long serialVersionUID = 1L;
+class AmazonDownloadRequest extends JFrame implements ActionListener, WindowListener {
 
     public static final String DOWNLOAD_NOTICE = "<html><body><br>Amazon stores your data as a stream of data by archive ID.<br>This information can be found in your log file.<br><br>>> Ensure that Amazon SQS and SNS messaging services are enabled in your AWS console.<br><br>>> Verify that the server and vault on the previous page match the archive<br> you are attmpting to retrieve and enter the archive ID.<br>>> You will then be prompted to select the file name and the location where <br>you would like to save the data.<br>>> Once you click the 'retrieve' button it will take approximately 4 hours <br>for Amazon to process your request.<br>>> Once your files have been prepared your download will begin automatically.<br>>> You will be notified when your download has completed successfully.<br><br> WARNING: <br>Closing the program during a retrieval request will cancel your download.</body><html>";
 
-    // define instance variables
-    String dlCode;
+    private JTextField jtfDownloadField;
+    private JButton jbtDownload, jbtBack;
 
-    JTextField jtfDownloadField;
-    JButton jbtDownload, jbtBack;
+    private AmazonGlacierClient dlClient;
+    private BasicAWSCredentials dlCredentials;
+    private int locationChoice;
+    private String dlVault;
 
-    AmazonGlacierClient dlClient;
-    BasicAWSCredentials dlCredentials;
-    int locationChoice;
-    String dlVault;
+    private JFileChooser fc = new JFileChooser();
 
-    JFileChooser fc = new JFileChooser();
-
-    ContextMenuMouseListener rmb = new ContextMenuMouseListener();
-
-    String archiveId;
+    private String archiveId;
 
     // Constructor
     public AmazonDownloadRequest(AmazonGlacierClient client, String vaultName,
@@ -65,8 +57,6 @@ class AmazonDownloadRequest extends JFrame implements ActionListener,
 
         int width = 200;
         int height = 170;
-
-        int thisRegion = region;
 
         Color wc = Color.WHITE;
 
@@ -77,7 +67,7 @@ class AmazonDownloadRequest extends JFrame implements ActionListener,
 
         JLabel label1 = new JLabel("ArchiveID to Download from " + dlVault
                 + " in server region "
-                + SimpleGlacierUploader.getRegion(thisRegion) + ":");
+                + SimpleGlacierUploader.getRegion(region) + ":");
         jtfDownloadField = new JTextField(100);
         JLabel label2 = new JLabel(DOWNLOAD_NOTICE);
         jbtDownload = new JButton("Request Download");
@@ -94,7 +84,7 @@ class AmazonDownloadRequest extends JFrame implements ActionListener,
         JPanel p2 = new JPanel();
         p2.setLayout(new BorderLayout());
         p2.add(jtfDownloadField, BorderLayout.NORTH);
-        jtfDownloadField.addMouseListener(rmb);
+        jtfDownloadField.addMouseListener(new ContextMenuMouseListener());
         jtfDownloadField.setFocusable(true);
         p2.add(label2, BorderLayout.CENTER);
         label2.setHorizontalAlignment(JLabel.CENTER);
@@ -151,32 +141,26 @@ class AmazonDownloadRequest extends JFrame implements ActionListener,
 
     @Override
     public void windowActivated(WindowEvent arg0) {
-
     }
 
     @Override
     public void windowClosed(WindowEvent arg0) {
-
     }
 
     @Override
     public void windowClosing(WindowEvent arg0) {
-
     }
 
     @Override
     public void windowDeactivated(WindowEvent arg0) {
-
     }
 
     @Override
     public void windowDeiconified(WindowEvent arg0) {
-
     }
 
     @Override
     public void windowIconified(WindowEvent arg0) {
-
     }
 
     @Override
