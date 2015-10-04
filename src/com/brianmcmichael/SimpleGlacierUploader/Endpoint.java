@@ -18,33 +18,28 @@
 
 package com.brianmcmichael.SimpleGlacierUploader;
 
-public enum Endpoint 
-{
-	USEASTNVA ("us-east-1"), 
-	USWESTOR ("us-west-2"), 
-	USWESTNCA ("us-west-1"), 
-	EUIRELAND ("eu-west-1"), 
-	APTOKYO ("ap-northeast-1");
-	
-	private Endpoint(String endpoint)
-	{
-		this.endpoint = endpoint;
-	}
-	
-	private final String endpoint;
-	
-	public String getGlacerEndpoint()
-	{
-		return "https://glacier." + endpoint + ".amazonaws.com/";
-	}
-	
-	public String getSQSEndpoint()
-	{
-		return "https://sqs." + endpoint + ".amazonaws.com/";
-	}
-	
-	public String getSNSEndpoint()
-	{
-		return "https://sns." + endpoint + ".amazonaws.com/";
-	}
+public enum Endpoint {
+    USEASTNVA("us-east-1"),
+    USWESTOR("us-west-2"),
+    USWESTNCA("us-west-1"),
+    EUIRELAND("eu-west-1"),
+    APTOKYO("ap-northeast-1");
+
+    private Endpoint(String endpoint) {
+        this.endpoint = endpoint;
+    }
+
+    private final String endpoint;
+
+    public String getGlacerEndpoint() {
+        return "https://glacier." + endpoint + ".amazonaws.com/";
+    }
+
+    public String getSQSEndpoint() {
+        return "https://sqs." + endpoint + ".amazonaws.com/";
+    }
+
+    public String getSNSEndpoint() {
+        return "https://sns." + endpoint + ".amazonaws.com/";
+    }
 }

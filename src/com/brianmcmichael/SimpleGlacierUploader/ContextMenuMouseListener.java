@@ -18,17 +18,14 @@
 
 package com.brianmcmichael.SimpleGlacierUploader;
 
-import java.awt.Toolkit;
+import javax.swing.*;
+import javax.swing.text.JTextComponent;
+import java.awt.*;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.JPopupMenu;
-import javax.swing.text.JTextComponent;
 
 public class ContextMenuMouseListener extends MouseAdapter {
     private JPopupMenu popup = new JPopupMenu();
@@ -42,20 +39,24 @@ public class ContextMenuMouseListener extends MouseAdapter {
     private JTextComponent textComponent;
     private String savedString = "";
     private Actions lastActionSelected;
-    
+
     private static final long serialVersionUID = 1L;
 
-    private enum Actions { UNDO, CUT, COPY, PASTE, SELECT_ALL };
+    private enum Actions {
+        UNDO, CUT, COPY, PASTE, SELECT_ALL
+    }
+
+    ;
 
     public ContextMenuMouseListener() {
         undoAction = new AbstractAction("Undo") {
 
-			@Override
+            @Override
             public void actionPerformed(ActionEvent ae) {
-                    textComponent.setText("");
-                    textComponent.replaceSelection(savedString);
+                textComponent.setText("");
+                textComponent.replaceSelection(savedString);
 
-                    lastActionSelected = Actions.UNDO;
+                lastActionSelected = Actions.UNDO;
             }
         };
 
@@ -64,7 +65,7 @@ public class ContextMenuMouseListener extends MouseAdapter {
 
         cutAction = new AbstractAction("Cut") {
 
-			@Override
+            @Override
             public void actionPerformed(ActionEvent ae) {
                 lastActionSelected = Actions.CUT;
                 savedString = textComponent.getText();

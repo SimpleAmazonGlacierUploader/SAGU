@@ -20,48 +20,47 @@ package com.brianmcmichael.SimpleGlacierUploader;
 
 public class UserOptions {
 
-	private String accessKey;
-	private char[] secretKey;
-	private Endpoint serverLocation;
-	private String vault;
-	
-	public UserOptions(String accessKey, char[] secretKey, Endpoint serverLocation, String vaultName)
-	{
-		this.setAccessKey(accessKey);
-		this.setSecretKey(secretKey);
-		this.setServerLocation(serverLocation);
-		this.setVault(vaultName);
-	}
+    private String accessKey;
+    private char[] secretKey;
+    private Endpoint serverLocation;
+    private String vault;
 
-	public String getAccessKey() {
-		return accessKey;
-	}
+    public UserOptions(String accessKey, char[] secretKey, Endpoint serverLocation, String vaultName) {
+        this.setAccessKey(accessKey);
+        this.setSecretKey(secretKey);
+        this.setServerLocation(serverLocation);
+        this.setVault(vaultName);
+    }
 
-	public void setAccessKey(String accessKey) {
-		this.accessKey = accessKey;
-	}
+    public String getAccessKey() {
+        return accessKey;
+    }
 
-	public char[] getSecretKey() {
-		return secretKey;
-	}
+    public void setAccessKey(String accessKey) {
+        this.accessKey = accessKey;
+    }
 
-	public void setSecretKey(char[] secretKey) {
-		this.secretKey = secretKey;
-	}
+    public char[] getSecretKey() {
+        return secretKey;
+    }
 
-	public Endpoint getServerLocation() {
-		return serverLocation;
-	}
+    public void setSecretKey(char[] secretKey) {
+        this.secretKey = secretKey;
+    }
 
-	public void setServerLocation(Endpoint serverLocation) {
-		this.serverLocation = serverLocation;
-	}
+    public Endpoint getServerLocation() {
+        return serverLocation;
+    }
 
-	public String getVault() {
-		return vault;
-	}
+    public void setServerLocation(Endpoint serverLocation) {
+        this.serverLocation = serverLocation;
+    }
 
-	public void setVault(String vault) {
-		this.vault = vault;
-	}
+    public String getVault() {
+        return vault;
+    }
+
+    public void setVault(String vault) {
+        this.vault = vault;
+    }
 }

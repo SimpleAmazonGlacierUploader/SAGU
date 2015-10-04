@@ -18,48 +18,41 @@
 
 package com.brianmcmichael.SimpleGlacierUploader;
 
-import java.awt.BorderLayout;
+import javax.swing.*;
+import java.awt.*;
 
-import javax.swing.JFrame;
-import javax.swing.JProgressBar;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.swing.SwingUtilities;
+public class UploadWindow extends JFrame {
 
-public class UploadWindow  extends JFrame {
-	
-	private JTextArea uploadText = new JTextArea();
-	
-	private JScrollPane uploadScroll = new JScrollPane(uploadText);
-	private JProgressBar totalProgressBar = new JProgressBar(0, 100);
-	
-	public UploadWindow()
-	{
-		setTitle("Uploading");
-		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		final JProgressBar dumJProgressBar = new JProgressBar(JProgressBar.HORIZONTAL);
-			dumJProgressBar.setIndeterminate(true);
-		add(dumJProgressBar, BorderLayout.NORTH);
-		add(uploadScroll, BorderLayout.CENTER);
-		add(totalProgressBar, BorderLayout.SOUTH);
-		setSize(500, 400);
-		uploadText.setEditable(false);
-		setLocationRelativeTo(null);
-		setVisible(true);
-	}
-	
-	public void addToLog(String text) {
-		uploadText.append(text);
-	}
-	
-	public void updateProgress(final int percentage) {
-		SwingUtilities.invokeLater(new Runnable() {
-			
-			@Override
-			public void run()
-			{
-				totalProgressBar.setValue(percentage);				
-			}
-		});
-	}
+    private JTextArea uploadText = new JTextArea();
+
+    private JScrollPane uploadScroll = new JScrollPane(uploadText);
+    private JProgressBar totalProgressBar = new JProgressBar(0, 100);
+
+    public UploadWindow() {
+        setTitle("Uploading");
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        final JProgressBar dumJProgressBar = new JProgressBar(JProgressBar.HORIZONTAL);
+        dumJProgressBar.setIndeterminate(true);
+        add(dumJProgressBar, BorderLayout.NORTH);
+        add(uploadScroll, BorderLayout.CENTER);
+        add(totalProgressBar, BorderLayout.SOUTH);
+        setSize(500, 400);
+        uploadText.setEditable(false);
+        setLocationRelativeTo(null);
+        setVisible(true);
+    }
+
+    public void addToLog(String text) {
+        uploadText.append(text);
+    }
+
+    public void updateProgress(final int percentage) {
+        SwingUtilities.invokeLater(new Runnable() {
+
+            @Override
+            public void run() {
+                totalProgressBar.setValue(percentage);
+            }
+        });
+    }
 }
