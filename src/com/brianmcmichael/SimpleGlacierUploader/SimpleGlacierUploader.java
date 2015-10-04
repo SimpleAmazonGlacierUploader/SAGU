@@ -52,11 +52,6 @@ import java.util.Properties;
 
 public class SimpleGlacierUploader extends Frame implements ActionListener {
 
-    // Call properties
-    Properties applicationProps = new Properties();
-
-    // static identfiers
-    private static final long serialVersionUID = 11041980L;
     private static final String versionNumber = "0.74.7";
     private static final String logFileNamelog = "Glacier.log";
     private static final String logFileNametxt = "Glacier.txt";
@@ -72,241 +67,188 @@ public class SimpleGlacierUploader extends Frame implements ActionListener {
     private static final String regionFour = "EU (Ireland)";
     private static final String regionFive = "Asia Pacific (Tokyo)";
 
-    public static final String curDir = System.getProperty("user.dir");
-
     // Error messages
     private static final String NO_DIRECTORIES_ERROR = "Directories, folders, and packages are not supported. \nPlease compress this into a single archive (such as a .zip) and try uploading again.";
     private static final String LOG_CREATION_ERROR = "There was an error creating the log.";
-    // private static final String FILE_TOO_BIG_ERROR =
-    // "Files over 4GB are currently unsupported. \nYou may want to split your upload into multiple archives. \nAmazon recommends files of 100mb at a time.";
     private static final String LOG_WRITE_ERROR = "There was an error writing to the log.";
 
     // Other Strings
-    public static final String DOWNLOAD_STRING = "Download Archive";
-    public static final String INVENTORY_REQUEST_STRING = "Request Inventory";
-    public static final String COPYRIGHT_STRING = "Simple Amazon Glacier Uploader\nVersion "
+    private static final String DOWNLOAD_STRING = "Download Archive";
+    private static final String INVENTORY_REQUEST_STRING = "Request Inventory";
+    private static final String COPYRIGHT_STRING = "Simple Amazon Glacier Uploader\nVersion "
             + versionNumber + "\n �2012-2015 Brian McMichael";
-    public static final String UPDATE_STRING = "Check for Update";
-    public static final String UPDATE_SITE_STRING = "http://simpleglacieruploader.brianmcmichael.com/";
-    public static final String ABOUT_WINDOW_STRING = ""
+    private static final String UPDATE_STRING = "Check for Update";
+    private static final String ABOUT_WINDOW_STRING = ""
             + COPYRIGHT_STRING
             + "\n\nReport errors or direct correspondence to: brian@brianmcmichael.com\n\nSimple Amazon Glacier Uploader is free software. \nYour feedback is appreciated.\nThis program is not any way affiliated with Amazon Web Services or Amazon.com.";
-    public static final String URL_STRING = "http://simpleglacieruploader.brianmcmichael.com/";
-    public static final String AWS_SITE_STRING = "Get AWS Credentials";
+    private static final String URL_STRING = "http://simpleglacieruploader.brianmcmichael.com/";
+    private static final String AWS_SITE_STRING = "Get AWS Credentials";
+
     public static final String ACCESS_LABEL = "Access Key: ";
 
+    private static final String curDir = System.getProperty("user.dir");
+
     // Config override
-    public static final int SOCKET_TIMEOUT = 1000000;
-    public static final int MAX_RETRIES = 6;
+    private static final int SOCKET_TIMEOUT = 1000000;
+    private static final int MAX_RETRIES = 6;
 
-    // Set Colors
-    Color wc = Color.WHITE;
-    Color rc = Color.RED;
-    Color bc = Color.BLACK;
+    private Properties applicationProps = new Properties();
 
-    // Set ints
-    int width = 200;
-    int height = 170;
-    int fileInt = 0;
+    private Color wc = Color.WHITE;
 
-    // set longs
-    long max_file_size = 4294967296L;
+    private int width = 200;
+    private int height = 170;
 
-    // parts for progress bar
-    static JFrame frmMain;
-    static Container pane;
-    static JButton btnDo;
-    static JProgressBar barDo;
-
-    // Data handling variables
-    DataOutputStream output;
-
-    // Call Amazon Client
-    AmazonGlacierClient client;
+    private AmazonGlacierClient client;
 
     // Right mouse click context listener
-    ContextMenuMouseListener rmb = new ContextMenuMouseListener();
+    private ContextMenuMouseListener rmb = new ContextMenuMouseListener();
 
     // File array for multiupload
-    File[] multiFiles;
+    private File[] multiFiles;
 
-    // Set Fonts
-    Font f3 = new Font("Helvetica", Font.BOLD, 20);
-    Font f4 = new Font("Helvetica", Font.PLAIN, 11);
+    private Font f3 = new Font("Helvetica", Font.BOLD, 20);
 
-    // Set dimension
-    Dimension buttonDimension = new Dimension(180, 27);
+    private Dimension buttonDimension = new Dimension(180, 27);
 
     // Set Graphics
-    URL xIconUrl = getClass().getResource("/smallx.png");
-    ImageIcon xIcon = new ImageIcon(Toolkit.getDefaultToolkit().getImage(
-            xIconUrl));
-    URL downIconUrl = getClass().getResource("/arrowDown.png");
-    ImageIcon downIcon = new ImageIcon(Toolkit.getDefaultToolkit().getImage(
-            downIconUrl));
-    URL exitIconUrl = getClass().getResource("/powerButton.png");
-    ImageIcon exitIcon = new ImageIcon(Toolkit.getDefaultToolkit().getImage(
-            exitIconUrl));
-    URL logIconUrl = getClass().getResource("/logKey.png");
-    ImageIcon logIcon = new ImageIcon(Toolkit.getDefaultToolkit().getImage(
-            logIconUrl));
-    URL toolsIconUrl = getClass().getResource("/tools.png");
-    ImageIcon toolsIcon = new ImageIcon(Toolkit.getDefaultToolkit().getImage(
-            toolsIconUrl));
-    URL saveIconUrl = getClass().getResource("/floppy.png");
-    ImageIcon saveIcon = new ImageIcon(Toolkit.getDefaultToolkit().getImage(
-            saveIconUrl));
-    URL logViewIconUrl = getClass().getResource("/logView.png");
-    ImageIcon logViewIcon = new ImageIcon(Toolkit.getDefaultToolkit().getImage(
-            logViewIconUrl));
-    URL updateIconUrl = getClass().getResource("/paper.png");
-    ImageIcon updateIcon = new ImageIcon(Toolkit.getDefaultToolkit().getImage(
-            updateIconUrl));
-    URL userUrl = getClass().getResource("/littleguy.png");
-    ImageIcon userIcon = new ImageIcon(Toolkit.getDefaultToolkit().getImage(
-            userUrl));
-    URL logoUrl = getClass().getResource("/SAGU.png");
-    JLabel logoLabel = new JLabel(new ImageIcon(Toolkit.getDefaultToolkit()
-            .getImage(logoUrl)));
+    private URL xIconUrl = getClass().getResource("/smallx.png");
+    private ImageIcon xIcon = new ImageIcon(Toolkit.getDefaultToolkit().getImage(xIconUrl));
+    private URL downIconUrl = getClass().getResource("/arrowDown.png");
+    private ImageIcon downIcon = new ImageIcon(Toolkit.getDefaultToolkit().getImage(downIconUrl));
+    private URL exitIconUrl = getClass().getResource("/powerButton.png");
+    private ImageIcon exitIcon = new ImageIcon(Toolkit.getDefaultToolkit().getImage(exitIconUrl));
+    private URL logIconUrl = getClass().getResource("/logKey.png");
+    private ImageIcon logIcon = new ImageIcon(Toolkit.getDefaultToolkit().getImage(logIconUrl));
+    private URL toolsIconUrl = getClass().getResource("/tools.png");
+    private ImageIcon toolsIcon = new ImageIcon(Toolkit.getDefaultToolkit().getImage(toolsIconUrl));
+    private URL saveIconUrl = getClass().getResource("/floppy.png");
+    private ImageIcon saveIcon = new ImageIcon(Toolkit.getDefaultToolkit().getImage(saveIconUrl));
+    private URL logViewIconUrl = getClass().getResource("/logView.png");
+    private ImageIcon logViewIcon = new ImageIcon(Toolkit.getDefaultToolkit().getImage(logViewIconUrl));
+    private URL updateIconUrl = getClass().getResource("/paper.png");
+    private ImageIcon updateIcon = new ImageIcon(Toolkit.getDefaultToolkit().getImage(updateIconUrl));
+    private URL userUrl = getClass().getResource("/littleguy.png");
+    private ImageIcon userIcon = new ImageIcon(Toolkit.getDefaultToolkit().getImage(userUrl));
+    private URL logoUrl = getClass().getResource("/SAGU.png");
+    private JLabel logoLabel = new JLabel(new ImageIcon(Toolkit.getDefaultToolkit().getImage(logoUrl)));
 
-    File uploadFile = null;
+    private JPanel mainPanel = new JPanel();
 
-    JPanel mainPanel = new JPanel();
+    private JPanel o1 = new JPanel();
 
-    JPanel o1 = new JPanel();
+    private JPanel p1 = new JPanel();
+    private JPanel p2 = new JPanel();
+    private JPanel p3 = new JPanel();
 
-    JPanel p1 = new JPanel();
-    JPanel p2 = new JPanel();
-    JPanel p3 = new JPanel();
+    private JMenuBar menuBar = new JMenuBar();
+    private JMenu fileMenu = new JMenu("File");
+    private JMenuItem saveFileMnu = new JMenuItem("Export Log", saveIcon);
+    private JMenuItem exitApplicationMnu = new JMenuItem("Exit", exitIcon);
+    private JMenu retrieveMenu = new JMenu("Retrieve");
+    private JMenuItem getAWSCredentialsLinkMnu = new JMenuItem(AWS_SITE_STRING, userIcon);
+    private JMenuItem downloadFileMnu = new JMenuItem(DOWNLOAD_STRING, downIcon);
+    private JMenu viewMenu = new JMenu("View");
+    private JMenuItem viewLog = new JMenuItem("View Log", logViewIcon);
+    private JCheckBoxMenuItem logCheckMenuItem = new JCheckBoxMenuItem("Logging On/Off", logIcon);
+    private JRadioButtonMenuItem logLogRadio = new JRadioButtonMenuItem(".log");
+    private JRadioButtonMenuItem logTxtRadio = new JRadioButtonMenuItem(".txt");
+    private JRadioButtonMenuItem logCsvRadio = new JRadioButtonMenuItem(".csv");
+    private JRadioButtonMenuItem logYamlRadio = new JRadioButtonMenuItem(".yaml");
+    private ButtonGroup logFileGroup = new ButtonGroup();
+    private JMenu deleteMenu = new JMenu("Delete");
+    private JMenuItem deleteArchiveMnu = new JMenuItem("Delete Archive", xIcon);
+    private JMenu helpMenu = new JMenu("Help");
+    private JMenuItem updateMnu = new JMenuItem(UPDATE_STRING, updateIcon);
+    private JMenuItem aboutMnu = new JMenuItem("About", toolsIcon);
 
-    JMenuBar menuBar = new JMenuBar();
-    JMenu fileMenu = new JMenu("File");
-    JMenuItem saveFileMnu = new JMenuItem("Export Log", saveIcon);
-    JMenuItem exitApplicationMnu = new JMenuItem("Exit", exitIcon);
-    JMenu retrieveMenu = new JMenu("Retrieve");
-    JMenuItem getAWSCredentialsLinkMnu = new JMenuItem(AWS_SITE_STRING,
-            userIcon);
-    JMenuItem downloadFileMnu = new JMenuItem(DOWNLOAD_STRING, downIcon);
-    JMenu viewMenu = new JMenu("View");
-    JMenuItem viewLog = new JMenuItem("View Log", logViewIcon);
-    JCheckBoxMenuItem logCheckMenuItem = new JCheckBoxMenuItem(
-            "Logging On/Off", logIcon);
-    JRadioButtonMenuItem logLogRadio = new JRadioButtonMenuItem(".log");
-    JRadioButtonMenuItem logTxtRadio = new JRadioButtonMenuItem(".txt");
-    JRadioButtonMenuItem logCsvRadio = new JRadioButtonMenuItem(".csv");
-    JRadioButtonMenuItem logYamlRadio = new JRadioButtonMenuItem(".yaml");
-    ButtonGroup logFileGroup = new ButtonGroup();
-    JMenu deleteMenu = new JMenu("Delete");
-    JMenuItem deleteArchiveMnu = new JMenuItem("Delete Archive", xIcon);
-    JMenu helpMenu = new JMenu("Help");
-    JMenuItem updateMnu = new JMenuItem(UPDATE_STRING, updateIcon);
-    JMenuItem aboutMnu = new JMenuItem("About", toolsIcon);
+    private JPanel titlePanel = new JPanel();
+    private JLabel titleLabel = new JLabel("Simple Amazon Glacier Uploader " + versionNumber);
 
-    JPanel titlePanel = new JPanel();
-    JLabel titleLabel = new JLabel("Simple Amazon Glacier Uploader "
-            + versionNumber);
+    private JPanel credentialsPanel = new JPanel(new GridLayout(4, 1, 10, 10));
+    private JHyperlinkLabel accessLabel = new JHyperlinkLabel(ACCESS_LABEL); // v0.3
+    private JTextField accessField = new JTextField(21);
+    private JLabel secretLabel = new JLabel("Secret Key: ");
+    private JPasswordField secretField = new JPasswordField(41);
 
-    JPanel credentialsPanel = new JPanel(new GridLayout(4, 1, 10, 10));
-    JHyperlinkLabel accessLabel = new JHyperlinkLabel(ACCESS_LABEL); // v0.3
-    JTextField accessField = new JTextField(21);
-    JLabel secretLabel = new JLabel("Secret Key: ");
-    JPasswordField secretField = new JPasswordField(41);
+    private JPanel locationPanel = new JPanel();
+    private JComboBox locationChoice = new JComboBox();
+    private JButton loginButton = new JButton("Refresh Vaults");
 
-    JPanel locationPanel = new JPanel();
-    JLabel locationName = new JLabel("Upload Location: ");
-    JComboBox locationChoice = new JComboBox();
-    JButton loginButton = new JButton("Refresh Vaults");
+    private JPanel vaultPanel = new JPanel();
+    private JComboBox vaultSelector = new JComboBox();
+    private JTextField vaultField = new JTextField(15);
+    private JButton newVaultButton = new JButton("Create Vault");
 
-    JPanel vaultPanel = new JPanel();
-    JHyperlinkLabel vaultSelectLabel = new JHyperlinkLabel("Select Existing:"); // v0.3
-    JComboBox vaultSelector = new JComboBox();
-    JHyperlinkLabel vaultName = new JHyperlinkLabel("Vault Name: "); // v0.3
-    JTextField vaultField = new JTextField(15);
-    JButton newVaultButton = new JButton("Create Vault");
+    private JPanel logoPanel = new JPanel();
 
-    JPanel logoPanel = new JPanel();
+    private JPanel logPanel = new JPanel();
+    private JButton logButton = new JButton("View Log");
+    private JButton downloadRequestButton = new JButton(DOWNLOAD_STRING);
+    private JButton inventoryRequestButton = new JButton(INVENTORY_REQUEST_STRING);
+    private JButton checkUpdateButton = new JButton(UPDATE_STRING);
 
-    JPanel logPanel = new JPanel();
-    JButton logButton = new JButton("View Log");
-    JButton downloadRequestButton = new JButton(DOWNLOAD_STRING);
-    JButton inventoryRequestButton = new JButton(INVENTORY_REQUEST_STRING);
-    JButton checkUpdateButton = new JButton(UPDATE_STRING);
+    private JPanel selectionsPanel = new JPanel();
+    private JButton selectFileButton = new JButton("Select File");
+    private JButton clearButton = new JButton("Clear");
 
-    JPanel selectionsPanel = new JPanel();
-    JButton selectFileButton = new JButton("Select File");
-    JButton clearButton = new JButton("Clear");
+    private JPanel fileDropPanel = new JPanel();
+    private JTextArea ddText = new JTextArea();
+    private JScrollPane ddScroll = new JScrollPane(ddText);
 
-    JPanel fileDropPanel = new JPanel();
-    JTextArea ddText = new JTextArea();
-    JScrollPane ddScroll = new JScrollPane(ddText);
+    private FileDrop fileDropHere = new FileDrop(ddText, new FileDrop.Listener() {
 
-    FileDrop fileDropHere = new FileDrop(ddText, /* dragBorder, */
-            new FileDrop.Listener() {
-
-                File thisFile = null;
-
-                public void filesDropped(java.io.File[] files) {
-                    ddText.setEditable(false);
-                    File[] goodFiles = new File[files.length];
-                    {
-
-                        int j = 0;
-                        for (int i = 0; i < files.length; i++) {
-                            if (files[i].isDirectory() == true) {
-                                try {
-                                    ddText.append("Unable to upload: "
-                                            + files[i].getCanonicalPath() + "\n");
-                                } // end try
-                                catch (java.io.IOException e) {
-                                }
-                                JOptionPane.showMessageDialog(null,
-                                        NO_DIRECTORIES_ERROR, "Error",
-                                        JOptionPane.ERROR_MESSAGE);
-                                files[i] = null;
-                            } else {
-                                try {
-                                    ddText.append(files[i].getCanonicalPath() + "\n");
-                                } // end try
-                                catch (java.io.IOException e) {
-                                }
-                            }
-                        } // end for: through each dropped file
-                    }
-                    files = removeNullFile(files);
-                    if (multiFiles != null) {
-                        multiFiles = concatFileArray(multiFiles, files);
+        public void filesDropped(java.io.File[] files) {
+            ddText.setEditable(false);
+            {
+                for (int i = 0; i < files.length; i++) {
+                    if (files[i].isDirectory()) {
+                        try {
+                            ddText.append("Unable to upload: " + files[i].getCanonicalPath() + "\n");
+                        } catch (java.io.IOException e) {
+                        }
+                        JOptionPane.showMessageDialog(null,
+                                NO_DIRECTORIES_ERROR, "Error",
+                                JOptionPane.ERROR_MESSAGE);
+                        files[i] = null;
                     } else {
-                        multiFiles = files;
+                        try {
+                            ddText.append(files[i].getCanonicalPath() + "\n");
+                        } catch (java.io.IOException e) {
+                        }
                     }
+                } // end for: through each dropped file
+            }
+            files = removeNullFile(files);
+            if (multiFiles != null) {
+                multiFiles = concatFileArray(multiFiles, files);
+            } else {
+                multiFiles = files;
+            }
 
-                    if (multiFiles.length == 0) {
+            if (multiFiles.length == 0) {
+                uploadButton.setText("Select File(s)");
+            } else if (multiFiles.length == 1) {
+                uploadButton.setText("Upload File");
+            } else if (multiFiles.length > 1) {
+                uploadButton.setText("Upload Files");
+            }
+        }
+    });
 
-                        uploadButton.setText("Select File(s)");
-                    } else if (multiFiles.length == 1) {
-                        uploadButton.setText("Upload File");
-                    } else if (multiFiles.length > 1) {
-                        uploadButton.setText("Upload Files");
-                    }
-                }
-            }); // end filesDropped
+    private JButton uploadButton = new JButton("Upload");
 
-    JButton uploadButton = new JButton("Upload");
+    private JPanel copyrightPanel = new JPanel();
 
-    JPanel copyrightPanel = new JPanel();
-    JLabel copyrightLabel = new JLabel(COPYRIGHT_STRING);
-    JHyperlinkLabel updateLink = new JHyperlinkLabel("\tCheck for Update");
+    private JFileChooser fc = new JFileChooser();
 
-    // Set FileChooser
-    JFileChooser fc = new JFileChooser();
-
-    public SimpleGlacierUploader() {
+    private SimpleGlacierUploader() {
         this.setLayout(new BorderLayout());
 
         mainPanel.setLayout(new BorderLayout());
         o1.setLayout(new GridLayout(1, 3, 10, 10));
         p1.setLayout(new GridLayout(3, 1, 3, 3));
 
-        // p2.setLayout(new GridLayout(8,1,10,10));
         p2.setLayout(new BorderLayout());
         p3.setLayout(new BorderLayout());
 
@@ -315,8 +257,7 @@ public class SimpleGlacierUploader extends Frame implements ActionListener {
         titleLabel.setFont(f3);
 
         credentialsPanel.setBackground(wc);
-        credentialsPanel.setBorder(BorderFactory
-                .createTitledBorder("AWS Credentials"));
+        credentialsPanel.setBorder(BorderFactory.createTitledBorder("AWS Credentials"));
         credentialsPanel.add(accessLabel);
         credentialsPanel.add(accessField);
         accessField.addMouseListener(rmb);
@@ -327,8 +268,7 @@ public class SimpleGlacierUploader extends Frame implements ActionListener {
         secretField.setPreferredSize(buttonDimension);
 
         locationPanel.setBackground(wc);
-        locationPanel.setBorder(BorderFactory
-                .createTitledBorder("Server Location"));
+        locationPanel.setBorder(BorderFactory.createTitledBorder("Server Location"));
         locationPanel.add(locationChoice);
         locationChoice.setPreferredSize(buttonDimension);
         locationChoice.setBackground(wc);
@@ -344,8 +284,7 @@ public class SimpleGlacierUploader extends Frame implements ActionListener {
         loginButton.setPreferredSize(buttonDimension);
 
         vaultPanel.setBackground(wc);
-        vaultPanel.setBorder(BorderFactory
-                .createTitledBorder("Vault Selection"));
+        vaultPanel.setBorder(BorderFactory.createTitledBorder("Vault Selection"));
         vaultPanel.add(vaultSelector);
         vaultSelector.setBackground(wc);
         vaultSelector.addActionListener(this);
@@ -385,7 +324,6 @@ public class SimpleGlacierUploader extends Frame implements ActionListener {
         selectFileButton.setBackground(wc);
         selectFileButton.addActionListener(this);
         selectFileButton.setPreferredSize(new Dimension(110, 27));
-        // fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
         selectionsPanel.add(clearButton);
         clearButton.setBackground(wc);
         clearButton.addActionListener(this);
@@ -393,8 +331,7 @@ public class SimpleGlacierUploader extends Frame implements ActionListener {
 
         fileDropPanel.setBackground(wc);
         fileDropPanel.setLayout(new BorderLayout());
-        fileDropPanel.setBorder(BorderFactory
-                .createTitledBorder("Drag and Drop Files"));
+        fileDropPanel.setBorder(BorderFactory.createTitledBorder("Drag and Drop Files"));
         fileDropPanel.add(ddScroll, BorderLayout.CENTER);
         ddText.setEditable(false);
         ddScroll.setSize(180, 300);
@@ -510,12 +447,13 @@ public class SimpleGlacierUploader extends Frame implements ActionListener {
         }
 
         pack();
-        if (width < getWidth()) // prevent setting width too small
+        if (width < getWidth()) { // prevent setting width too small
             width = getWidth();
-        if (height < getHeight()) // prevent setting height too small
+        }
+        if (height < getHeight()) { // prevent setting height too small
             height = getHeight();
+        }
         centerOnScreen(width, height);
-
     }
 
     public void setLogFileType(int intype) {
@@ -569,44 +507,26 @@ public class SimpleGlacierUploader extends Frame implements ActionListener {
 
     public static File getLogFilenamePath(int filepath) {
         if (filepath == 0) {
-            File logFile = new File(curDir
-                    + System.getProperty("file.separator") + logFileNamelog);
-            return logFile;
+            return new File(curDir + System.getProperty("file.separator") + logFileNamelog);
         }
         if (filepath == 1) {
-            File logFile = new File(curDir
-                    + System.getProperty("file.separator") + logFileNametxt);
-            return logFile;
+            return new File(curDir + System.getProperty("file.separator") + logFileNametxt);
         }
         if (filepath == 2) {
-            File logFile = new File(curDir
-                    + System.getProperty("file.separator") + logFileNamecsv);
-            return logFile;
+            return new File(curDir + System.getProperty("file.separator") + logFileNamecsv);
         }
         if (filepath == 3) {
-            File logFile = new File(curDir
-                    + System.getProperty("file.separator") + logFileNameyaml);
-            return logFile;
+            return new File(curDir + System.getProperty("file.separator") + logFileNameyaml);
         }
         if (filepath == 4) {
-            File logFile = new File(curDir
-                    + System.getProperty("file.separator") + logFileNameerr);
-            return logFile;
+            return new File(curDir + System.getProperty("file.separator") + logFileNameerr);
         } else {
-            File logFile = new File(curDir
-                    + System.getProperty("file.separator") + logFileNamelog);
-            return logFile;
+            return new File(curDir + System.getProperty("file.separator") + logFileNamelog);
         }
-    }
-
-    public static String getFileProperties() {
-        return "" + fileProperties;
     }
 
     public static File getFilePropertiesPath() {
-        File propsFile = new File(curDir + System.getProperty("file.separator")
-                + fileProperties);
-        return propsFile;
+        return new File(curDir + System.getProperty("file.separator") + fileProperties);
     }
 
     private void SaveCurrentProperties(String accessString,
@@ -619,16 +539,13 @@ public class SimpleGlacierUploader extends Frame implements ActionListener {
             applicationProps.setProperty("accessKey", accessString);
             applicationProps.setProperty("secretKey", secretString);
             applicationProps.setProperty("vaultKey", vaultString);
-            applicationProps.setProperty("locationSet",
-                    Integer.toString(selectedIndex));
-            applicationProps.setProperty("logType",
-                    convertSimple(getLogFileType()));
+            applicationProps.setProperty("locationSet", Integer.toString(selectedIndex));
+            applicationProps.setProperty("logType", convertSimple(getLogFileType()));
             applicationProps.store(out, "Properties");
             out.close();
         } catch (FileNotFoundException e1) {
         } catch (IOException e1) {
         }
-
     }
 
     public static String convertSimple(int i) {
@@ -748,23 +665,17 @@ public class SimpleGlacierUploader extends Frame implements ActionListener {
     }
 
     public void clearFile() {
-        uploadFile = null;
         uploadButton.setText("Upload File(s)");
         ddText.setText("");
     }
 
-    public void repopulateVaults(String accessString, String secretString,
-                                 int regionInt) {
+    public void repopulateVaults(String accessString, String secretString, int regionInt) {
 
         int newLoc = locationChoice.getSelectedIndex();
 
-        if (((accessField.getText().trim().equals("")) == true)
-                || (secretField.getText().trim().equals("")) == true) {
+        if (accessField.getText().trim().equals("") || secretField.getText().trim().equals("")) {
         } else {
-            AmazonGlacierClient newVaultCheckClient = new AmazonGlacierClient();
-            newVaultCheckClient = makeClient(accessString, secretString, newLoc);
-            // BasicAWSCredentials credentials = new
-            // BasicAWSCredentials(accessString,secretString);
+            AmazonGlacierClient newVaultCheckClient = makeClient(accessString, secretString, newLoc);
 
             String marker = null;
             vaultSelector.removeAllItems();
@@ -801,40 +712,6 @@ public class SimpleGlacierUploader extends Frame implements ActionListener {
         this.setBounds(left, top, width, height);
     }
 
-    void centerFrame(JFrame f) {
-        // Need the toolkit to get info on system.
-        Toolkit tk = Toolkit.getDefaultToolkit();
-
-        // Get the screen dimensions.
-        Dimension screen = tk.getScreenSize();
-
-        // Make the frame 1/4th size of screen.
-        int fw = (int) (screen.getWidth() / 4);
-        int fh = (int) (screen.getWidth() / 4);
-        f.setSize(fw, fh);
-
-        // And place it in center of screen.
-        int lx = (int) (screen.getWidth() * 3 / 8);
-        int ly = (int) (screen.getHeight() * 3 / 8);
-        f.setLocation(lx, ly);
-    } // centerFrame
-
-    void centerDefineFrame(JFrame f, int width, int height) {
-
-        Toolkit tk = Toolkit.getDefaultToolkit();
-
-        // Get the screen dimensions.
-        Dimension screen = tk.getScreenSize();
-
-        // Set frame size
-        f.setSize(width, height);
-
-        // And place it in center of screen.
-        int lx = (int) (screen.getWidth() * 3 / 8);
-        int ly = (int) (screen.getHeight() * 3 / 8);
-        f.setLocation(lx, ly);
-    } // centerFrame
-
     public static String getRegion(int reg) {
         String regString;
 
@@ -866,7 +743,7 @@ public class SimpleGlacierUploader extends Frame implements ActionListener {
         for (File fle : a)
             if (fle != null)
                 removed.add(fle);
-        return removed.toArray(new File[0]);
+        return removed.toArray(new File[removed.size()]);
     }
 
     public File[] concatFileArray(File[] A, File[] B) {
@@ -879,15 +756,10 @@ public class SimpleGlacierUploader extends Frame implements ActionListener {
 
     public AmazonGlacierClient makeClient(String accessorString,
                                           String secretiveString, int region) {
-        // AmazonGlacierClient client;
-        BasicAWSCredentials credentials = new BasicAWSCredentials(
-                accessorString, secretiveString);
+        BasicAWSCredentials credentials = new BasicAWSCredentials(accessorString, secretiveString);
         client = new AmazonGlacierClient(credentials);
-        // int locInt = locationChoice.getSelectedIndex();
         Endpoints ep = new Endpoints(region);
-        // String endpointUrl = ep.Endpoint(region);
         client.setEndpoint(ep.Endpoint());
-
         return client;
     }
 
@@ -907,21 +779,17 @@ public class SimpleGlacierUploader extends Frame implements ActionListener {
         int regionInt = getServerRegion();
 
         if (e.getSource() == newVaultButton && checkAWSFields()) {
-            AmazonGlacierClient newVaultClient = new AmazonGlacierClient();
-            newVaultClient = makeClient(accessString, secretString, regionInt);
+            AmazonGlacierClient newVaultClient = makeClient(accessString, secretString, regionInt);
             AddVaultFrame avf = new AddVaultFrame(newVaultClient, regionInt);
             avf.setVisible(true);
-
         }
         if (e.getSource() == vaultSelector) {
             if (vaultSelector.getSelectedItem() != null) {
                 if (vaultSelector.getSelectedIndex() == 0) {
                     vaultField.setText("");
                 } else {
-                    vaultField.setText(vaultSelector.getSelectedItem()
-                            .toString());
+                    vaultField.setText(vaultSelector.getSelectedItem().toString());
                 }
-            } else {
             }
         }
         if (e.getSource() == loginButton) {
@@ -934,21 +802,16 @@ public class SimpleGlacierUploader extends Frame implements ActionListener {
             JHyperlinkLabel.OpenURI(URL_STRING);
         }
         if (e.getSource() == saveFileMnu) {
-            FileDialog fd = new FileDialog(new Frame(), "Save...",
-                    FileDialog.SAVE);
+            FileDialog fd = new FileDialog(new Frame(), "Save...", FileDialog.SAVE);
             fd.setFile("Glacier.txt");
             fd.setDirectory(curDir);
             fd.setLocation(50, 50);
             fd.setVisible(true);
-            // fd.show();
-            String filePath = "" + fd.getDirectory()
-                    + System.getProperty("file.separator") + fd.getFile();
+            String filePath = "" + fd.getDirectory() + System.getProperty("file.separator") + fd.getFile();
 
             File outFile = new File(filePath);
 
-            if ((outFile.equals("") == false)
-                    && (outFile.equals("null") == false)
-                    && ((outFile == null) == false)) {
+            if (!outFile.equals("") && !outFile.equals("null")) {
 
                 try {
                     FileReader fr = new FileReader(getLogFilenamePath(0));
@@ -959,11 +822,11 @@ public class SimpleGlacierUploader extends Frame implements ActionListener {
                     int count = 0;
                     boolean moreLines = true;
 
-                    String ln1 = "";
-                    String ln2 = "";
-                    String ln3 = "";
+                    String ln1;
+                    String ln2;
+                    String ln3;
 
-                    while (moreLines == true) {
+                    while (moreLines) {
                         ln1 = br.readLine();
                         ln2 = br.readLine();
                         ln3 = br.readLine();
@@ -1022,41 +885,30 @@ public class SimpleGlacierUploader extends Frame implements ActionListener {
         }
         if (e.getSource() == deleteArchiveMnu) {
             if (checkAllFields()) {
-                AmazonGlacierClient newDeleteClient = new AmazonGlacierClient();
-                newDeleteClient = makeClient(accessString, secretString,
-                        regionInt);
-                DeleteArchiveFrame daf = new DeleteArchiveFrame(
-                        newDeleteClient, vaultString, regionInt);
+                AmazonGlacierClient newDeleteClient = makeClient(accessString, secretString, regionInt);
+                DeleteArchiveFrame daf = new DeleteArchiveFrame(newDeleteClient, vaultString, regionInt);
                 daf.setVisible(true);
             }
         }
         if (e.getSource() == inventoryRequestButton) {
             if (checkAllFields()) {
-                AmazonGlacierClient newInventoryClient = new AmazonGlacierClient();
-                newInventoryClient = makeClient(accessString, secretString,
-                        regionInt);
-                InventoryRequest ir = new InventoryRequest(newInventoryClient,
-                        vaultString, regionInt);
+                AmazonGlacierClient newInventoryClient = makeClient(accessString, secretString, regionInt);
+                InventoryRequest ir = new InventoryRequest(newInventoryClient, vaultString, regionInt);
                 ir.setVisible(true);
             }
         }
         if (e.getSource() == downloadRequestButton
                 || e.getSource() == downloadFileMnu) {
             if (checkAllFields()) {
-                AmazonGlacierClient newDownloadClient = new AmazonGlacierClient();
-                newDownloadClient = makeClient(accessString, secretString,
-                        regionInt);
-                BasicAWSCredentials credentials = new BasicAWSCredentials(
-                        accessString, secretString);
-                AmazonDownloadRequest adr = new AmazonDownloadRequest(
-                        newDownloadClient, vaultString, regionInt, credentials);
+                AmazonGlacierClient newDownloadClient = makeClient(accessString, secretString, regionInt);
+                BasicAWSCredentials credentials = new BasicAWSCredentials(accessString, secretString);
+                AmazonDownloadRequest adr = new AmazonDownloadRequest(newDownloadClient, vaultString, regionInt, credentials);
                 adr.setVisible(true);
             }
         }
 
         if (e.getSource() == aboutMnu) {
-            JOptionPane.showMessageDialog(null, ABOUT_WINDOW_STRING, "About",
-                    JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(null, ABOUT_WINDOW_STRING, "About", JOptionPane.INFORMATION_MESSAGE);
         }
 
         if (e.getSource() == clearButton) {
@@ -1074,35 +926,20 @@ public class SimpleGlacierUploader extends Frame implements ActionListener {
 
             if (returnVal == JFileChooser.APPROVE_OPTION) {
                 if (fc.getSelectedFile().isFile()) {
-                    /*
-                     * Removed for v. 0.72 if (fc.getSelectedFile().length() >
-					 * max_file_size == true) {
-					 * JOptionPane.showMessageDialog(null,
-					 * FILE_TOO_BIG_ERROR,"Error",JOptionPane.ERROR_MESSAGE);
-					 * try { //ddText.setForeground(rc); ddText.append(
-					 * "Unable to upload: " +
-					 * fc.getSelectedFile().getCanonicalPath() + "\n" ); } //
-					 * end try catch( java.io.IOException g ) {} } else {
-					 */
                     File[] thisFile = new File[1];
                     thisFile[0] = fc.getSelectedFile();
                     try {
                         ddText.append(thisFile[0].getCanonicalPath() + "\n");
-                    } // end try
-                    catch (java.io.IOException f) {
+                    } catch (java.io.IOException f) {
                     }
                     if (multiFiles != null) {
                         multiFiles = concatFileArray(multiFiles, thisFile);
                     } else {
                         multiFiles = thisFile;
                     }
-
-                    // }
                 } else {
-                    JOptionPane.showMessageDialog(null, NO_DIRECTORIES_ERROR,
-                            "Error", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(null, NO_DIRECTORIES_ERROR, "Error", JOptionPane.ERROR_MESSAGE);
                 }
-            } else {
             }
 
         }
@@ -1119,7 +956,6 @@ public class SimpleGlacierUploader extends Frame implements ActionListener {
                     protected Object doInBackground() throws Exception {
                         String accessString = getAccessField();
                         String secretString = getSecretField();
-                        // String vaultString = getVaultField();
                         String vaultName = getVaultField();
                         File[] uploadFileBatch = multiFiles;
 
@@ -1158,33 +994,23 @@ public class SimpleGlacierUploader extends Frame implements ActionListener {
                                 client = new AmazonGlacierClient(credentials,
                                         config);
                                 Endpoints ep = new Endpoints(locInt);
-                                // String endpointUrl = ep.Endpoint(locInt);
                                 client.setEndpoint(ep.Endpoint());
                                 String locationUpped = ep.Location();
                                 String thisFile = uploadFileBatch[i]
                                         .getCanonicalPath();
                                 String cleanFile = regexClean(thisFile);
 
-                                // char emptyChar = 0xFFFA;
-                                // String thisCleanFile =
-                                // thisFile.valueOf(emptyChar).replaceAll("\\p{C}",
-                                // "?");
-
                                 try {
 
-                                    ArchiveTransferManager atm = new ArchiveTransferManager(
-                                            client, credentials);
+                                    ArchiveTransferManager atm = new ArchiveTransferManager(client, credentials);
 
-                                    String fileLength = Long
-                                            .toString(uploadFileBatch[i]
-                                                    .length());
+                                    String fileLength = Long.toString(uploadFileBatch[i].length());
 
                                     uw.setTitle("(" + (i + 1) + "/"
                                             + uploadFileBatch.length + ")"
                                             + " Uploading: " + thisFile);
 
-                                    UploadResult result = atm.upload(vaultName,
-                                            cleanFile, uploadFileBatch[i]);
+                                    UploadResult result = atm.upload(vaultName, cleanFile, uploadFileBatch[i]);
 
                                     uw.addToLog("Done: " + thisFile + "\n");
 
@@ -1235,82 +1061,40 @@ public class SimpleGlacierUploader extends Frame implements ActionListener {
 
                                             Date d = new Date();
 
-                                            String thisResult = result
-                                                    .getArchiveId();
+                                            String thisResult = result.getArchiveId();
 
-                                            plainOutputLog
-                                                    .write(System
-                                                            .getProperty("line.separator"));
-                                            plainOutputLog
-                                                    .write(" | ArchiveID: "
-                                                            + thisResult + " ");
-                                            plainOutputLog
-                                                    .write(System
-                                                            .getProperty("line.separator"));
-                                            plainOutputLog.write(" | File: "
-                                                    + thisFile + " ");
-                                            plainOutputLog.write(" | Bytes: "
-                                                    + fileLength + " ");
-                                            plainOutputLog.write(" | Vault: "
-                                                    + vaultName + " ");
-                                            plainOutputLog
-                                                    .write(" | Location: "
-                                                            + locationUpped
-                                                            + " ");
-                                            plainOutputLog.write(" | Date: "
-                                                    + d.toString() + " ");
-                                            plainOutputLog.write(" | Hash: "
-                                                    + treeHash + " ");
-                                            plainOutputLog
-                                                    .write(System
-                                                            .getProperty("line.separator"));
+                                            plainOutputLog.write(System.getProperty("line.separator"));
+                                            plainOutputLog.write(" | ArchiveID: " + thisResult + " ");
+                                            plainOutputLog.write(System.getProperty("line.separator"));
+                                            plainOutputLog.write(" | File: " + thisFile + " ");
+                                            plainOutputLog.write(" | Bytes: " + fileLength + " ");
+                                            plainOutputLog.write(" | Vault: " + vaultName + " ");
+                                            plainOutputLog.write(" | Location: " + locationUpped + " ");
+                                            plainOutputLog.write(" | Date: " + d.toString() + " ");
+                                            plainOutputLog.write(" | Hash: " + treeHash + " ");
+                                            plainOutputLog.write(System.getProperty("line.separator"));
                                             plainOutputLog.close();
 
-                                            plainOutputTxt
-                                                    .write(System
-                                                            .getProperty("line.separator"));
-                                            plainOutputTxt
-                                                    .write(" | ArchiveID: "
-                                                            + thisResult + " ");
-                                            plainOutputTxt
-                                                    .write(System
-                                                            .getProperty("line.separator"));
-                                            plainOutputTxt.write(" | File: "
-                                                    + thisFile + " ");
-                                            plainOutputTxt.write(" | Bytes: "
-                                                    + fileLength + " ");
-                                            plainOutputTxt.write(" | Vault: "
-                                                    + vaultName + " ");
-                                            plainOutputTxt
-                                                    .write(" | Location: "
-                                                            + locationUpped
-                                                            + " ");
-                                            plainOutputTxt.write(" | Date: "
-                                                    + d.toString() + " ");
-                                            plainOutputTxt.write(" | Hash: "
-                                                    + treeHash + " ");
-                                            plainOutputTxt
-                                                    .write(System
-                                                            .getProperty("line.separator"));
+                                            plainOutputTxt.write(System.getProperty("line.separator"));
+                                            plainOutputTxt.write(" | ArchiveID: " + thisResult + " ");
+                                            plainOutputTxt.write(System.getProperty("line.separator"));
+                                            plainOutputTxt.write(" | File: " + thisFile + " ");
+                                            plainOutputTxt.write(" | Bytes: " + fileLength + " ");
+                                            plainOutputTxt.write(" | Vault: " + vaultName + " ");
+                                            plainOutputTxt.write(" | Location: " + locationUpped + " ");
+                                            plainOutputTxt.write(" | Date: " + d.toString() + " ");
+                                            plainOutputTxt.write(" | Hash: " + treeHash + " ");
+                                            plainOutputTxt.write(System.getProperty("line.separator"));
                                             plainOutputTxt.close();
 
-                                            plainOutputCsv.write(""
-                                                    + thisResult + ",");
-                                            plainOutputCsv.write("" + thisFile
-                                                    + ",");
-                                            plainOutputCsv.write(""
-                                                    + fileLength + ",");
-                                            plainOutputCsv.write("" + vaultName
-                                                    + ",");
-                                            plainOutputCsv.write(""
-                                                    + locationUpped + ",");
-                                            plainOutputCsv.write(""
-                                                    + d.toString() + ",");
-                                            plainOutputCsv.write("" + treeHash
-                                                    + ",");
-                                            plainOutputCsv
-                                                    .write(System
-                                                            .getProperty("line.separator"));
+                                            plainOutputCsv.write("" + thisResult + ",");
+                                            plainOutputCsv.write("" + thisFile + ",");
+                                            plainOutputCsv.write("" + fileLength + ",");
+                                            plainOutputCsv.write("" + vaultName + ",");
+                                            plainOutputCsv.write("" + locationUpped + ",");
+                                            plainOutputCsv.write("" + d.toString() + ",");
+                                            plainOutputCsv.write("" + treeHash + ",");
+                                            plainOutputCsv.write(System.getProperty("line.separator"));
                                             plainOutputCsv.close();
 
                                             plainOutputYaml.write(System.getProperty("line.separator"));
@@ -1331,27 +1115,13 @@ public class SimpleGlacierUploader extends Frame implements ActionListener {
                                             plainOutputYaml.close();
 
                                             uploadList
-                                                    .add("Successfully uploaded "
-                                                            + thisFile
-                                                            + " to vault "
-                                                            + vaultName
-                                                            + " at "
-                                                            + locationUpped
-                                                            + ". Bytes: "
-                                                            + fileLength
+                                                    .add("Successfully uploaded " + thisFile
+                                                            + " to vault " + vaultName
+                                                            + " at " + locationUpped
+                                                            + ". Bytes: " + fileLength
                                                             + ". ArchiveID Logged.\n");
                                         }
 
-                                        // v0.4 logging code
-                                        // output.writeUTF("ArchiveID: " +
-                                        // thisResult + " ");
-                                        // output.writeUTF(" | File: " +
-                                        // thisFile + " ");
-                                        // output.writeUTF(" | Vault: "
-                                        // +vaultName + " ");
-                                        // output.writeUTF(" | Location: " +
-                                        // locationUpped + " ");
-                                        // output.writeUTF(" | Date: "+d.toString()+"\n\n");
                                         catch (IOException c) {
                                             JOptionPane.showMessageDialog(null,
                                                     LOG_WRITE_ERROR,
@@ -1362,14 +1132,13 @@ public class SimpleGlacierUploader extends Frame implements ActionListener {
                                         }
 
                                     } else {
-                                        JOptionPane
-                                                .showMessageDialog(
-                                                        null,
-                                                        "Upload Complete!\nArchive ID: "
-                                                                + result.getArchiveId()
-                                                                + "\nIt may take some time for Amazon to update the inventory.",
-                                                        "Uploaded",
-                                                        JOptionPane.INFORMATION_MESSAGE);
+                                        JOptionPane.showMessageDialog(
+                                                null,
+                                                "Upload Complete!\nArchive ID: "
+                                                        + result.getArchiveId()
+                                                        + "\nIt may take some time for Amazon to update the inventory.",
+                                                "Uploaded",
+                                                JOptionPane.INFORMATION_MESSAGE);
                                         multiFiles = null;
                                         uw.dispose();
                                     }
@@ -1380,8 +1149,7 @@ public class SimpleGlacierUploader extends Frame implements ActionListener {
                                     if (logCheckMenuItem.isSelected()) {
                                         writeToErrorLog(h, thisFile);
                                     }
-                                    JOptionPane.showMessageDialog(null, "" + h,
-                                            "Error", JOptionPane.ERROR_MESSAGE);
+                                    JOptionPane.showMessageDialog(null, "" + h, "Error", JOptionPane.ERROR_MESSAGE);
                                     uw.dispose();
 
                                 }
@@ -1435,12 +1203,9 @@ public class SimpleGlacierUploader extends Frame implements ActionListener {
                         try {
                             Date d = new Date();
 
-                            errorOutputLog.write(System
-                                    .getProperty("line.separator"));
-                            errorOutputLog.write("" + d.toString() + ": \""
-                                    + thisFile + "\" *ERROR* " + thisError);
-                            errorOutputLog.write(System
-                                    .getProperty("line.separator"));
+                            errorOutputLog.write(System.getProperty("line.separator"));
+                            errorOutputLog.write("" + d.toString() + ": \"" + thisFile + "\" *ERROR* " + thisError);
+                            errorOutputLog.write(System.getProperty("line.separator"));
 
                         } catch (Exception badLogWrite) {
                             JOptionPane.showMessageDialog(null,
@@ -1449,47 +1214,16 @@ public class SimpleGlacierUploader extends Frame implements ActionListener {
                             System.exit(1);
                         }
                     }
-
                 };
                 uploadWorker.execute();
-
             }
-
-        } else {
         }
     }
 
-    public class UseFileDialog {
-        public String loadFile(Frame f, String title, String defDir,
-                               String fileType) {
-            FileDialog fd = new FileDialog(f, title, FileDialog.LOAD);
-            fd.setFile(fileType);
-            fd.setDirectory(defDir);
-            fd.setLocation(50, 50);
-            fd.setVisible(true);
-            // fd.show();
-            return fd.getFile();
-        }
-
-        public String saveFile(Frame f, String title, String defDir,
-                               String fileType) {
-            FileDialog fd = new FileDialog(f, title, FileDialog.SAVE);
-            fd.setFile(fileType);
-            fd.setDirectory(defDir);
-            fd.setLocation(50, 50);
-            fd.setVisible(true);
-            // fd.show();
-            return fd.getFile();
-        }
-    }
-
-    // Main Class
     public static void main(String[] args) throws Exception {
         SimpleGlacierUploader g = new SimpleGlacierUploader();
         g.setBounds(300, 300, 650, 475);
         g.setTitle("Simple Amazon Glacier Uploader " + versionNumber);
-        // g.setIconImage(Toolkit.getDefaultToolkit().getImage("/glaciericon.png"));
         g.setVisible(true);
-
-    } // end of main
+    }
 }

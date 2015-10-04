@@ -33,26 +33,14 @@ import java.awt.event.WindowListener;
 
 class AddVaultFrame extends JFrame implements ActionListener, WindowListener {
 
-    private static final long serialVersionUID = 1L;
+    private JTextField jtfAddField;
+    private JButton jbtAdd, jbtBack;
 
-    //define instance variables
-    String addCode;
-
-    JTextField jtfAddField;
-    JButton jbtAdd, jbtBack;
-
-    AmazonGlacierClient addClient;
-    int locationChoice;
-    String addVault;
-
-    ContextMenuMouseListener rmb = new ContextMenuMouseListener();
+    private AmazonGlacierClient addClient;
 
     //Constructor
     public AddVaultFrame(AmazonGlacierClient client, int region) {
         super("Add Vault");
-
-        AmazonGlacierClient newVaultClient = client;
-        int thisRegion = region;
 
         int width = 200;
         int height = 170;
@@ -61,7 +49,7 @@ class AddVaultFrame extends JFrame implements ActionListener, WindowListener {
 
         this.addClient = client;
 
-        JLabel label1 = new JLabel("Name of Vault to add to " + SimpleGlacierUploader.getRegion(thisRegion) + ":");
+        JLabel label1 = new JLabel("Name of Vault to add to " + SimpleGlacierUploader.getRegion(region) + ":");
         jtfAddField = new JTextField(30);
         jbtAdd = new JButton("Add");
         jbtBack = new JButton("Back");
@@ -75,7 +63,7 @@ class AddVaultFrame extends JFrame implements ActionListener, WindowListener {
         JPanel p2 = new JPanel();
         p2.setLayout(new FlowLayout());
         p2.add(jtfAddField);
-        jtfAddField.addMouseListener(rmb);
+        jtfAddField.addMouseListener(new ContextMenuMouseListener());
         jtfAddField.setFocusable(true);
         p2.setBackground(wc);
 
@@ -99,10 +87,12 @@ class AddVaultFrame extends JFrame implements ActionListener, WindowListener {
 
         // Prepare for display
         pack();
-        if (width < getWidth())                // prevent setting width too small
+        if (width < getWidth()) {             // prevent setting width too small
             width = getWidth();
-        if (height < getHeight())            // prevent setting height too small
+        }
+        if (height < getHeight()) {           // prevent setting height too small
             height = getHeight();
+        }
         centerOnScreen(width, height);
         jtfAddField.setText("");
         jtfAddField.requestFocus();
@@ -128,45 +118,32 @@ class AddVaultFrame extends JFrame implements ActionListener, WindowListener {
 
     @Override
     public void windowActivated(WindowEvent arg0) {
-
-
     }
 
     @Override
     public void windowClosed(WindowEvent arg0) {
-
-
     }
 
     @Override
     public void windowClosing(WindowEvent arg0) {
-
-
     }
 
     @Override
     public void windowDeactivated(WindowEvent arg0) {
-
-
     }
 
     @Override
     public void windowDeiconified(WindowEvent arg0) {
-
-
     }
 
     @Override
     public void windowIconified(WindowEvent arg0) {
-
-
     }
 
     @Override
     public void windowOpened(WindowEvent arg0) {
         jtfAddField.setText("");
         jtfAddField.requestFocus();
-
     }
 
     @Override

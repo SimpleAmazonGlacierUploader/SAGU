@@ -40,13 +40,9 @@ public class ContextMenuMouseListener extends MouseAdapter {
     private String savedString = "";
     private Actions lastActionSelected;
 
-    private static final long serialVersionUID = 1L;
-
     private enum Actions {
         UNDO, CUT, COPY, PASTE, SELECT_ALL
     }
-
-    ;
 
     public ContextMenuMouseListener() {
         undoAction = new AbstractAction("Undo") {

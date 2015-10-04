@@ -25,7 +25,7 @@ public enum Endpoint {
     EUIRELAND("eu-west-1"),
     APTOKYO("ap-northeast-1");
 
-    private Endpoint(String endpoint) {
+    Endpoint(String endpoint) {
         this.endpoint = endpoint;
     }
 

@@ -54,14 +54,11 @@ public class JHyperlinkLabel extends JLabel {
     public class HyperlinkLabelMouseAdapter extends MouseAdapter {
         @Override
         public void mouseClicked(MouseEvent e) {
-            //System.out.println(getText());
 
             if (getText().equals(SimpleGlacierUploader.ACCESS_LABEL)) {
                 OpenURI("https://portal.aws.amazon.com/gp/aws/securityCredentials");
             } else if (getText().equals("Vault Name: ")) {
                 OpenURI("https://console.aws.amazon.com/glacier/home");
-            } else if (getText().equals(" View Log")) {
-                //OpenURI(""+SimpleGlacierUploader.getLogFilenamePath(getLogFileType()).toURI());
             } else if (getText().equals("Check for Update")) {
                 OpenURI("http://simpleglacieruploader.brianmcmichael.com/");
             }

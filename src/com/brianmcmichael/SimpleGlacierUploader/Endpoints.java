@@ -22,12 +22,6 @@ public class Endpoints {
 
     private int endpt;
 
-    /*
-    public Endpoints()
-    {
-        this.setEndpt(0);
-    }
-    */
     public Endpoints(int currentEndpoint) {
         this.setEndpt(currentEndpoint);
     }
