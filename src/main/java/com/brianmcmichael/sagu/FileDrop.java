@@ -1,4 +1,4 @@
-package com.brianmcmichael.SimpleGlacierUploader;
+package com.brianmcmichael.sagu;
 
 import java.awt.datatransfer.DataFlavor;
 import java.io.*;

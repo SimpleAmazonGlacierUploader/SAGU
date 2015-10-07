@@ -16,13 +16,12 @@
 //    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //////////////////////////////////////////////////////////////////////////////////
 
-package com.brianmcmichael.SimpleGlacierUploader;
+package com.brianmcmichael.sagu;
 
 import com.amazonaws.AmazonClientException;
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.glacier.AmazonGlacierClient;
-import com.amazonaws.services.glacier.model.CreateVaultRequest;
-import com.amazonaws.services.glacier.model.CreateVaultResult;
+import com.amazonaws.services.glacier.model.DeleteArchiveRequest;
 
 import javax.swing.*;
 import java.awt.*;
@@ -31,27 +30,29 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 
-class AddVaultFrame extends JFrame implements ActionListener, WindowListener {
+class DeleteArchiveFrame extends JFrame implements ActionListener, WindowListener {
 
-    private JTextField jtfAddField;
-    private JButton jbtAdd, jbtBack;
+    private JTextField jtfDeleteField;
+    private JButton jbtDelete, jbtBack;
 
-    private AmazonGlacierClient addClient;
+    private AmazonGlacierClient deleteClient;
+    private String deleteVault;
 
     //Constructor
-    public AddVaultFrame(AmazonGlacierClient client, int region) {
-        super("Add Vault");
+    public DeleteArchiveFrame(AmazonGlacierClient client, String vaultName, int region) {
+        super("Delete Archive");
 
         int width = 200;
         int height = 170;
 
         Color wc = Color.WHITE;
 
-        this.addClient = client;
+        deleteClient = client;
+        deleteVault = vaultName;
 
-        JLabel label1 = new JLabel("Name of Vault to add to " + SimpleGlacierUploader.getRegion(region) + ":");
-        jtfAddField = new JTextField(30);
-        jbtAdd = new JButton("Add");
+        JLabel label1 = new JLabel("ArchiveID to Delete from " + SimpleGlacierUploader.getRegion(region) + ":");
+        jtfDeleteField = new JTextField(100);
+        jbtDelete = new JButton("Delete");
         jbtBack = new JButton("Back");
 
         JPanel p1 = new JPanel();
@@ -62,16 +63,16 @@ class AddVaultFrame extends JFrame implements ActionListener, WindowListener {
 
         JPanel p2 = new JPanel();
         p2.setLayout(new FlowLayout());
-        p2.add(jtfAddField);
-        jtfAddField.addMouseListener(new ContextMenuMouseListener());
-        jtfAddField.setFocusable(true);
+        p2.add(jtfDeleteField);
+        jtfDeleteField.addMouseListener(new ContextMenuMouseListener());
+        jtfDeleteField.setFocusable(true);
         p2.setBackground(wc);
 
         JPanel p3 = new JPanel();
         p3.setLayout(new FlowLayout());
-        p3.add(jbtAdd);
-        jbtAdd.addActionListener(this);
-        jbtAdd.setBackground(wc);
+        p3.add(jbtDelete);
+        jbtDelete.addActionListener(this);
+        jbtDelete.setBackground(wc);
         p3.add(jbtBack);
         jbtBack.addActionListener(this);
         jbtBack.setBackground(wc);
@@ -79,6 +80,7 @@ class AddVaultFrame extends JFrame implements ActionListener, WindowListener {
 
         JPanel p4 = new JPanel();
         p4.setLayout(new BorderLayout());
+        p4.setBackground(wc);
         p4.add(p1, BorderLayout.NORTH);
         p4.add(p2, BorderLayout.CENTER);
         p4.add(p3, BorderLayout.SOUTH);
@@ -87,18 +89,15 @@ class AddVaultFrame extends JFrame implements ActionListener, WindowListener {
 
         // Prepare for display
         pack();
-        if (width < getWidth()) {             // prevent setting width too small
+        if (width < getWidth())                // prevent setting width too small
             width = getWidth();
-        }
-        if (height < getHeight()) {           // prevent setting height too small
+        if (height < getHeight())            // prevent setting height too small
             height = getHeight();
-        }
         centerOnScreen(width, height);
-        jtfAddField.setText("");
-        jtfAddField.requestFocus();
+        jtfDeleteField.setText("");
+        jtfDeleteField.requestFocus();
 
     }
-
 
     public void centerOnScreen(int width, int height) {
         int top, left, x, y;
@@ -142,43 +141,43 @@ class AddVaultFrame extends JFrame implements ActionListener, WindowListener {
 
     @Override
     public void windowOpened(WindowEvent arg0) {
-        jtfAddField.setText("");
-        jtfAddField.requestFocus();
+        jtfDeleteField.setText("");
+        jtfDeleteField.requestFocus();
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (e.getSource() == jbtAdd) {
-            if ((jtfAddField.getText().trim().equals(""))) {
-                JOptionPane.showMessageDialog(null, "Enter the name of the vault to add.", "Error", JOptionPane.ERROR_MESSAGE);
+        if (e.getSource() == jbtDelete) {
+            if ((jtfDeleteField.getText().trim().equals(""))) {
+                JOptionPane.showMessageDialog(null, "Enter the Archive ID of the file to be deleted.", "Error", JOptionPane.ERROR_MESSAGE);
             } else {
 
                 try {
-                    String vaultToAdd = jtfAddField.getText().trim();
+                    String archiveId = jtfDeleteField.getText().trim();
 
-                    //TODO Limit to valid chars
+                    //Banish the extra chars printed in early logs.
+                    String sendThis = archiveId.replaceAll("[^\\p{Print}]", "");
 
-                    // Add the archive.
+                    String vaultName = deleteVault;
 
-                    CreateVaultRequest cvreq = new CreateVaultRequest(vaultToAdd);
+                    // Delete the archive.
+                    deleteClient.deleteArchive(new DeleteArchiveRequest()
+                            .withVaultName(vaultName)
+                            .withArchiveId(sendThis));
 
-                    CreateVaultResult cvres = new CreateVaultResult();
-                    cvres = addClient.createVault(cvreq);
-
-                    JOptionPane.showMessageDialog(null, "Added vault successfully.", "Success", JOptionPane.INFORMATION_MESSAGE);
-                    this.dispose();
+                    JOptionPane.showMessageDialog(null, "Deleted archive successfully.", "Success", JOptionPane.INFORMATION_MESSAGE);
 
                 } catch (AmazonServiceException k) {
-                    JOptionPane.showMessageDialog(null, "The server returned an error.", "Error", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(null, "The server returned an error. Wait 24 hours after submitting an archive to attempt a delete. Also check that correct location of archive has been set on the previous page.", "Error", JOptionPane.ERROR_MESSAGE);
+                    System.out.println("" + k);
                 } catch (AmazonClientException i) {
                     JOptionPane.showMessageDialog(null, "Client Error. Check that all fields are correct. Archive not deleted.", "Error", JOptionPane.ERROR_MESSAGE);
-
                 } catch (Exception j) {
-                    JOptionPane.showMessageDialog(null, "Vault not Added. Unspecified Error.", "Error", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(null, "Archive not deleted. Unspecified Error.", "Error", JOptionPane.ERROR_MESSAGE);
                 }
 
-                jtfAddField.setText("");
-                jtfAddField.requestFocus();
+                jtfDeleteField.setText("");
+                jtfDeleteField.requestFocus();
             }
 
         } else if (e.getSource() == jbtBack) {
@@ -189,6 +188,5 @@ class AddVaultFrame extends JFrame implements ActionListener, WindowListener {
         }
 
     }
-
 
 }
