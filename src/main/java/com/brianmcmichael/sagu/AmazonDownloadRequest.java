@@ -67,7 +67,7 @@ class AmazonDownloadRequest extends JFrame implements ActionListener, WindowList
 
         JLabel label1 = new JLabel("ArchiveID to Download from " + dlVault
                 + " in server region "
-                + SimpleGlacierUploader.getRegion(region) + ":");
+                + Endpoint.getTitleByIndex(region) + ":");
         jtfDownloadField = new JTextField(100);
         JLabel label2 = new JLabel(DOWNLOAD_NOTICE);
         jbtDownload = new JButton("Request Download");
@@ -223,16 +223,13 @@ class AmazonDownloadRequest extends JFrame implements ActionListener, WindowList
                                         + outFile.toString());
                                 downloadFrame.setVisible(true);
 
-                                Endpoints notificationEP = new Endpoints(
-                                        locationChoice);
+                                final Endpoint endpoint = Endpoint.getByIndex(locationChoice);
 
-                                AmazonSQSClient dlSQS = new AmazonSQSClient(
-                                        dlCredentials);
-                                AmazonSNSClient dlSNS = new AmazonSNSClient(
-                                        dlCredentials);
+                                AmazonSQSClient dlSQS = new AmazonSQSClient(dlCredentials);
+                                AmazonSNSClient dlSNS = new AmazonSNSClient(dlCredentials);
 
-                                dlSQS.setEndpoint(notificationEP.sqsEndpoint());
-                                dlSNS.setEndpoint(notificationEP.snsEndpoint());
+                                dlSQS.setEndpoint(endpoint.getSQSEndpoint());
+                                dlSNS.setEndpoint(endpoint.getSNSEndpoint());
 
                                 // ArchiveTransferManager atm = new
                                 // ArchiveTransferManager(dlClient,

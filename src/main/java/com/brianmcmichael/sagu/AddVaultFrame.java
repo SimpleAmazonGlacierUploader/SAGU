@@ -49,7 +49,7 @@ class AddVaultFrame extends JFrame implements ActionListener, WindowListener {
 
         this.addClient = client;
 
-        JLabel label1 = new JLabel("Name of Vault to add to " + SimpleGlacierUploader.getRegion(region) + ":");
+        JLabel label1 = new JLabel("Name of Vault to add to " + Endpoint.getTitleByIndex(region) + ":");
         jtfAddField = new JTextField(30);
         jbtAdd = new JButton("Add");
         jbtBack = new JButton("Back");

@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>GlacierUploader</groupId>
     <artifactId>GlacierUploader</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.74.7-SNAPSHOT</version>
     <name>SAGU</name>
     <description>Simple Amazon Glacier Uploader</description>
 
@@ -53,6 +53,24 @@
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-core</artifactId>
             <version>2.2.2</version>
+        </dependency>
+        <dependency>
+            <groupId>org.testng</groupId>
+            <artifactId>testng</artifactId>
+            <version>6.9.6</version>
+            <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <artifactId>junit</artifactId>
+                    <groupId>junit</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest-all</artifactId>
+            <version>1.3</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 </project>
