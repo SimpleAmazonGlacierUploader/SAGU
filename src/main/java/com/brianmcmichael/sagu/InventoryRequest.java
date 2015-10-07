@@ -63,7 +63,8 @@ public class InventoryRequest extends JFrame implements ActionListener, WindowLi
         this.irVault = thisVault;
         this.irRegion = thisRegion;
 
-        JLabel label1 = new JLabel("Request Archive Inventory from " + irVault + " in server region " + SimpleGlacierUploader.getRegion(irRegion) + ":");
+        JLabel label1 = new JLabel("Request Archive Inventory from " + irVault + " in server region " +
+                Endpoint.getTitleByIndex(irRegion) + ":");
         JLabel label2 = new JLabel(DOWNLOAD_NOTICE);
         jbtInventoryRequest = new JButton("Request Inventory");
         jbtBack = new JButton("Back");

@@ -50,7 +50,7 @@ class DeleteArchiveFrame extends JFrame implements ActionListener, WindowListene
         deleteClient = client;
         deleteVault = vaultName;
 
-        JLabel label1 = new JLabel("ArchiveID to Delete from " + SimpleGlacierUploader.getRegion(region) + ":");
+        JLabel label1 = new JLabel("ArchiveID to Delete from " + Endpoint.getTitleByIndex(region) + ":");
         jtfDeleteField = new JTextField(100);
         jbtDelete = new JButton("Delete");
         jbtBack = new JButton("Back");

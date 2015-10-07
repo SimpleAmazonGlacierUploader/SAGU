@@ -60,13 +60,6 @@ public class SimpleGlacierUploader extends Frame implements ActionListener {
     private static final String logFileNameerr = "GlacierErrors.txt";
     private static final String fileProperties = "SAGU.properties";
 
-    // Server Region Strings
-    private static final String regionOne = "US East (Northern Virginia)";
-    private static final String regionTwo = "US West (Oregon)";
-    private static final String regionThree = "US West (Northern California)";
-    private static final String regionFour = "EU (Ireland)";
-    private static final String regionFive = "Asia Pacific (Tokyo)";
-
     // Error messages
     private static final String NO_DIRECTORIES_ERROR = "Directories, folders, and packages are not supported. \nPlease compress this into a single archive (such as a .zip) and try uploading again.";
     private static final String LOG_CREATION_ERROR = "There was an error creating the log.";
@@ -172,11 +165,11 @@ public class SimpleGlacierUploader extends Frame implements ActionListener {
     private JPasswordField secretField = new JPasswordField(41);
 
     private JPanel locationPanel = new JPanel();
-    private JComboBox locationChoice = new JComboBox();
+    private JComboBox<String> locationChoice = new JComboBox<String>();
     private JButton loginButton = new JButton("Refresh Vaults");
 
     private JPanel vaultPanel = new JPanel();
-    private JComboBox vaultSelector = new JComboBox();
+    private JComboBox<String> vaultSelector = new JComboBox<String>();
     private JTextField vaultField = new JTextField(15);
     private JButton newVaultButton = new JButton("Create Vault");
 
@@ -272,11 +265,7 @@ public class SimpleGlacierUploader extends Frame implements ActionListener {
         locationPanel.add(locationChoice);
         locationChoice.setPreferredSize(buttonDimension);
         locationChoice.setBackground(wc);
-        locationChoice.addItem(regionOne);
-        locationChoice.addItem(regionTwo);
-        locationChoice.addItem(regionThree);
-        locationChoice.addItem(regionFour);
-        locationChoice.addItem(regionFive);
+        Endpoint.populateComboBox(locationChoice);
         locationChoice.addActionListener(this);
         locationPanel.add(loginButton);
         loginButton.addActionListener(this);
@@ -712,32 +701,6 @@ public class SimpleGlacierUploader extends Frame implements ActionListener {
         this.setBounds(left, top, width, height);
     }
 
-    public static String getRegion(int reg) {
-        String regString;
-
-        switch (reg) {
-            case 0:
-                regString = regionOne;
-                break;
-            case 1:
-                regString = regionTwo;
-                break;
-            case 2:
-                regString = regionThree;
-                break;
-            case 3:
-                regString = regionFour;
-                break;
-            case 4:
-                regString = regionFive;
-                break;
-            default:
-                regString = regionOne;
-                break;
-        }
-        return regString;
-    }
-
     public File[] removeNullFile(File[] a) {
         ArrayList<File> removed = new ArrayList<File>();
         for (File fle : a)
@@ -755,11 +718,10 @@ public class SimpleGlacierUploader extends Frame implements ActionListener {
     }
 
     public AmazonGlacierClient makeClient(String accessorString,
-                                          String secretiveString, int region) {
+                                          String secretiveString, int regionIndex) {
         BasicAWSCredentials credentials = new BasicAWSCredentials(accessorString, secretiveString);
         client = new AmazonGlacierClient(credentials);
-        Endpoints ep = new Endpoints(region);
-        client.setEndpoint(ep.Endpoint());
+        client.setEndpoint(Endpoint.getByIndex(regionIndex).getGlacierEndpoint());
         return client;
     }
 
@@ -989,15 +951,12 @@ public class SimpleGlacierUploader extends Frame implements ActionListener {
                                 config.setSocketTimeout(SOCKET_TIMEOUT);
                                 config.setMaxErrorRetry(MAX_RETRIES);
 
-                                BasicAWSCredentials credentials = new BasicAWSCredentials(
-                                        accessString, secretString);
-                                client = new AmazonGlacierClient(credentials,
-                                        config);
-                                Endpoints ep = new Endpoints(locInt);
-                                client.setEndpoint(ep.Endpoint());
-                                String locationUpped = ep.Location();
-                                String thisFile = uploadFileBatch[i]
-                                        .getCanonicalPath();
+                                BasicAWSCredentials credentials = new BasicAWSCredentials(accessString, secretString);
+                                client = new AmazonGlacierClient(credentials, config);
+                                final Endpoint endpoint = Endpoint.getByIndex(locInt);
+                                client.setEndpoint(endpoint.getGlacierEndpoint());
+                                String locationUpped = endpoint.name();
+                                String thisFile = uploadFileBatch[i].getCanonicalPath();
                                 String cleanFile = regexClean(thisFile);
 
                                 try {
