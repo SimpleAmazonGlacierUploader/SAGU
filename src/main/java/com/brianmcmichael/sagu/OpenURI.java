@@ -16,30 +16,36 @@
 //    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //////////////////////////////////////////////////////////////////////////////////
 
-package com.brianmcmichael.SimpleGlacierUploader;
+package com.brianmcmichael.sagu;
 
-public enum Endpoint {
-    USEASTNVA("us-east-1"),
-    USWESTOR("us-west-2"),
-    USWESTNCA("us-west-1"),
-    EUIRELAND("eu-west-1"),
-    APTOKYO("ap-northeast-1");
+import java.awt.Desktop;
+import java.net.URI;
 
-    Endpoint(String endpoint) {
-        this.endpoint = endpoint;
-    }
+public class OpenURI {
 
-    private final String endpoint;
+    public static void open(String url) {
+        if (!Desktop.isDesktopSupported()) {
+            System.err.println("Desktop is not supported (fatal)");
+            System.exit(1);
+        }
 
-    public String getGlacerEndpoint() {
-        return "https://glacier." + endpoint + ".amazonaws.com/";
-    }
+        if (url.length() == 0) {
+            System.out.println("Usage: OpenURI [URI [URI ... ]]");
+            System.exit(0);
+        }
 
-    public String getSQSEndpoint() {
-        return "https://sqs." + endpoint + ".amazonaws.com/";
-    }
+        Desktop desktop = Desktop.getDesktop();
 
-    public String getSNSEndpoint() {
-        return "https://sns." + endpoint + ".amazonaws.com/";
+        if (!desktop.isSupported(Desktop.Action.BROWSE)) {
+            System.err.println("Desktop doesn't support the browse action (fatal)");
+            System.exit(1);
+        }
+
+        try {
+            URI uri = new URI(url);
+            desktop.browse(uri);
+        } catch (Exception e) {
+            System.err.println(e.getMessage());
+        }
     }
 }

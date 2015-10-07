@@ -17,7 +17,7 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 
-package com.brianmcmichael.SimpleGlacierUploader;
+package com.brianmcmichael.sagu;
 
 import javax.swing.*;
 import java.awt.*;
