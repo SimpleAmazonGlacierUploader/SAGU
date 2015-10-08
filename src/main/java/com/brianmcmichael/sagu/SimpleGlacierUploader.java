@@ -36,7 +36,6 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -50,14 +49,16 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Properties;
 
+import static java.awt.Color.*;
+
 public class SimpleGlacierUploader extends Frame implements ActionListener {
 
     private static final String versionNumber = "0.74.7";
-    private static final String logFileNamelog = "Glacier.log";
-    private static final String logFileNametxt = "Glacier.txt";
-    private static final String logFileNamecsv = "Glacier.csv";
-    private static final String logFileNameyaml = "Glacier.yaml";
-    private static final String logFileNameerr = "GlacierErrors.txt";
+    private static final String logFileNameLog = "Glacier.log";
+    private static final String logFileNameTxt = "Glacier.txt";
+    private static final String logFileNameCsv = "Glacier.csv";
+    private static final String logFileNameYaml = "Glacier.yaml";
+    private static final String logFileNameErr = "GlacierErrors.txt";
     private static final String fileProperties = "SAGU.properties";
 
     // Error messages
@@ -87,8 +88,6 @@ public class SimpleGlacierUploader extends Frame implements ActionListener {
 
     private Properties applicationProps = new Properties();
 
-    private Color wc = Color.WHITE;
-
     private int width = 200;
     private int height = 170;
 
@@ -99,8 +98,6 @@ public class SimpleGlacierUploader extends Frame implements ActionListener {
 
     // File array for multiupload
     private File[] multiFiles;
-
-    private Font f3 = new Font("Helvetica", Font.BOLD, 20);
 
     private Dimension buttonDimension = new Dimension(180, 27);
 
@@ -245,11 +242,12 @@ public class SimpleGlacierUploader extends Frame implements ActionListener {
         p2.setLayout(new BorderLayout());
         p3.setLayout(new BorderLayout());
 
-        titlePanel.setBackground(wc);
+        titlePanel.setBackground(WHITE);
         titlePanel.add(titleLabel);
+        final Font f3 = new Font("Helvetica", Font.BOLD, 20);
         titleLabel.setFont(f3);
 
-        credentialsPanel.setBackground(wc);
+        credentialsPanel.setBackground(WHITE);
         credentialsPanel.setBorder(BorderFactory.createTitledBorder("AWS Credentials"));
         credentialsPanel.add(accessLabel);
         credentialsPanel.add(accessField);
@@ -260,22 +258,22 @@ public class SimpleGlacierUploader extends Frame implements ActionListener {
         secretField.addMouseListener(rmb);
         secretField.setPreferredSize(buttonDimension);
 
-        locationPanel.setBackground(wc);
+        locationPanel.setBackground(WHITE);
         locationPanel.setBorder(BorderFactory.createTitledBorder("Server Location"));
         locationPanel.add(locationChoice);
         locationChoice.setPreferredSize(buttonDimension);
-        locationChoice.setBackground(wc);
+        locationChoice.setBackground(WHITE);
         Endpoint.populateComboBox(locationChoice);
         locationChoice.addActionListener(this);
         locationPanel.add(loginButton);
         loginButton.addActionListener(this);
-        loginButton.setBackground(wc);
+        loginButton.setBackground(WHITE);
         loginButton.setPreferredSize(buttonDimension);
 
-        vaultPanel.setBackground(wc);
+        vaultPanel.setBackground(WHITE);
         vaultPanel.setBorder(BorderFactory.createTitledBorder("Vault Selection"));
         vaultPanel.add(vaultSelector);
-        vaultSelector.setBackground(wc);
+        vaultSelector.setBackground(WHITE);
         vaultSelector.addActionListener(this);
         vaultSelector.setPreferredSize(buttonDimension);
         vaultPanel.add(vaultField);
@@ -283,126 +281,126 @@ public class SimpleGlacierUploader extends Frame implements ActionListener {
         vaultField.setPreferredSize(buttonDimension);
         vaultPanel.add(newVaultButton);
         newVaultButton.addActionListener(this);
-        newVaultButton.setBackground(wc);
+        newVaultButton.setBackground(WHITE);
         newVaultButton.setPreferredSize(buttonDimension);
 
-        logoPanel.setBackground(wc);
+        logoPanel.setBackground(WHITE);
         logoPanel.add(logoLabel);
 
-        logPanel.setBackground(wc);
+        logPanel.setBackground(WHITE);
         logPanel.setBorder(BorderFactory.createTitledBorder("Options"));
         logPanel.add(logButton);
-        logButton.setBackground(wc);
+        logButton.setBackground(WHITE);
         logButton.addActionListener(this);
         logButton.setPreferredSize(buttonDimension);
         logPanel.add(downloadRequestButton);
-        downloadRequestButton.setBackground(wc);
+        downloadRequestButton.setBackground(WHITE);
         downloadRequestButton.addActionListener(this);
         downloadRequestButton.setPreferredSize(buttonDimension);
         logPanel.add(inventoryRequestButton);
-        inventoryRequestButton.setBackground(wc);
+        inventoryRequestButton.setBackground(WHITE);
         inventoryRequestButton.addActionListener(this);
         inventoryRequestButton.setPreferredSize(buttonDimension);
         logPanel.add(checkUpdateButton);
-        checkUpdateButton.setBackground(wc);
+        checkUpdateButton.setBackground(WHITE);
         checkUpdateButton.addActionListener(this);
         checkUpdateButton.setPreferredSize(buttonDimension);
 
-        selectionsPanel.setBackground(wc);
+        selectionsPanel.setBackground(WHITE);
         selectionsPanel.add(selectFileButton);
-        selectFileButton.setBackground(wc);
+        selectFileButton.setBackground(WHITE);
         selectFileButton.addActionListener(this);
         selectFileButton.setPreferredSize(new Dimension(110, 27));
         selectionsPanel.add(clearButton);
-        clearButton.setBackground(wc);
+        clearButton.setBackground(WHITE);
         clearButton.addActionListener(this);
         clearButton.setPreferredSize(new Dimension(70, 27));
 
-        fileDropPanel.setBackground(wc);
+        fileDropPanel.setBackground(WHITE);
         fileDropPanel.setLayout(new BorderLayout());
         fileDropPanel.setBorder(BorderFactory.createTitledBorder("Drag and Drop Files"));
         fileDropPanel.add(ddScroll, BorderLayout.CENTER);
         ddText.setEditable(false);
         ddScroll.setSize(180, 300);
 
-        p1.setBackground(wc);
+        p1.setBackground(WHITE);
         p1.add(credentialsPanel);
         p1.add(locationPanel);
         p1.add(vaultPanel);
 
-        p2.setBackground(wc);
+        p2.setBackground(WHITE);
         p2.add(logoPanel, BorderLayout.NORTH);
         p2.add(logPanel, BorderLayout.CENTER);
 
-        p3.setBackground(wc);
+        p3.setBackground(WHITE);
         p3.add(selectionsPanel, BorderLayout.NORTH);
         p3.add(fileDropPanel, BorderLayout.CENTER);
         p3.add(uploadButton, BorderLayout.SOUTH);
-        uploadButton.setBackground(wc);
+        uploadButton.setBackground(WHITE);
         uploadButton.addActionListener(this);
         p3.setBorder(BorderFactory.createTitledBorder("Uploads"));
 
-        o1.setBackground(wc);
+        o1.setBackground(WHITE);
         o1.add(p1);
         o1.add(p2);
         o1.add(p3);
 
         mainPanel.add(o1, BorderLayout.CENTER);
-        mainPanel.setBackground(wc);
+        mainPanel.setBackground(WHITE);
         mainPanel.add(menuBar, BorderLayout.NORTH);
         mainPanel.add(copyrightPanel, BorderLayout.SOUTH);
 
-        menuBar.setBackground(wc);
+        menuBar.setBackground(WHITE);
         menuBar.add(fileMenu);
-        fileMenu.setBackground(wc);
+        fileMenu.setBackground(WHITE);
         fileMenu.add(saveFileMnu);
-        saveFileMnu.setBackground(wc);
+        saveFileMnu.setBackground(WHITE);
         saveFileMnu.addActionListener(this);
         fileMenu.addSeparator();
         fileMenu.add(exitApplicationMnu);
-        exitApplicationMnu.setBackground(wc);
+        exitApplicationMnu.setBackground(WHITE);
         exitApplicationMnu.addActionListener(this);
         menuBar.add(retrieveMenu);
-        retrieveMenu.setBackground(wc);
+        retrieveMenu.setBackground(WHITE);
         retrieveMenu.add(getAWSCredentialsLinkMnu);
-        getAWSCredentialsLinkMnu.setBackground(wc);
+        getAWSCredentialsLinkMnu.setBackground(WHITE);
         getAWSCredentialsLinkMnu.addActionListener(this);
         retrieveMenu.add(downloadFileMnu);
-        downloadFileMnu.setBackground(wc);
+        downloadFileMnu.setBackground(WHITE);
         downloadFileMnu.addActionListener(this);
         menuBar.add(viewMenu);
-        viewMenu.setBackground(wc);
+        viewMenu.setBackground(WHITE);
         viewMenu.add(viewLog);
-        viewLog.setBackground(wc);
+        viewLog.setBackground(WHITE);
         viewLog.addActionListener(this);
         viewMenu.add(logCheckMenuItem);
-        logCheckMenuItem.setBackground(wc);
+        logCheckMenuItem.setBackground(WHITE);
         logCheckMenuItem.setSelected(true);
         viewMenu.addSeparator();
         viewMenu.add(logLogRadio);
-        logLogRadio.setBackground(wc);
+        logLogRadio.setBackground(WHITE);
         logLogRadio.setSelected(true);
         logFileGroup.add(logLogRadio);
         viewMenu.add(logTxtRadio);
         logFileGroup.add(logTxtRadio);
-        logTxtRadio.setBackground(wc);
+        logTxtRadio.setBackground(WHITE);
         viewMenu.add(logCsvRadio);
-        logCsvRadio.setBackground(wc);
+        logCsvRadio.setBackground(WHITE);
         logFileGroup.add(logCsvRadio);
         viewMenu.add(logYamlRadio);
-        logYamlRadio.setBackground(wc);
+        logYamlRadio.setBackground(WHITE);
         logFileGroup.add(logYamlRadio);
         menuBar.add(deleteMenu);
         deleteMenu.add(deleteArchiveMnu);
-        deleteArchiveMnu.setBackground(wc);
+        deleteArchiveMnu.setBackground(WHITE);
         deleteArchiveMnu.addActionListener(this);
         menuBar.add(helpMenu);
-        helpMenu.setBackground(wc);
+        helpMenu.setBackground(WHITE);
         helpMenu.add(updateMnu);
-        updateMnu.setBackground(wc);
+        updateMnu.setBackground(WHITE);
         updateMnu.addActionListener(this);
         helpMenu.add(aboutMnu);
-        aboutMnu.setBackground(wc);
+        aboutMnu.setBackground(WHITE);
         aboutMnu.addActionListener(this);
 
         add(mainPanel, BorderLayout.CENTER);
@@ -480,37 +478,23 @@ public class SimpleGlacierUploader extends Frame implements ActionListener {
         }
     }
 
-    public static String getLogFilename(int filename) {
-        switch (filename) {
-            case 0:
-            default:
-                return logFileNamelog;
-            case 1:
-                return logFileNametxt;
-            case 2:
-                return logFileNamecsv;
-            case 3:
-                return logFileNameyaml;
-        }
-    }
-
     public static File getLogFilenamePath(int filepath) {
         if (filepath == 0) {
-            return new File(curDir + System.getProperty("file.separator") + logFileNamelog);
+            return new File(curDir + System.getProperty("file.separator") + logFileNameLog);
         }
         if (filepath == 1) {
-            return new File(curDir + System.getProperty("file.separator") + logFileNametxt);
+            return new File(curDir + System.getProperty("file.separator") + logFileNameTxt);
         }
         if (filepath == 2) {
-            return new File(curDir + System.getProperty("file.separator") + logFileNamecsv);
+            return new File(curDir + System.getProperty("file.separator") + logFileNameCsv);
         }
         if (filepath == 3) {
-            return new File(curDir + System.getProperty("file.separator") + logFileNameyaml);
+            return new File(curDir + System.getProperty("file.separator") + logFileNameYaml);
         }
         if (filepath == 4) {
-            return new File(curDir + System.getProperty("file.separator") + logFileNameerr);
+            return new File(curDir + System.getProperty("file.separator") + logFileNameErr);
         } else {
-            return new File(curDir + System.getProperty("file.separator") + logFileNamelog);
+            return new File(curDir + System.getProperty("file.separator") + logFileNameLog);
         }
     }
 
@@ -658,12 +642,11 @@ public class SimpleGlacierUploader extends Frame implements ActionListener {
         ddText.setText("");
     }
 
-    public void repopulateVaults(String accessString, String secretString, int regionInt) {
+    public void repopulateVaults(String accessString, String secretString) {
 
         int newLoc = locationChoice.getSelectedIndex();
 
-        if (accessField.getText().trim().equals("") || secretField.getText().trim().equals("")) {
-        } else {
+        if (!(accessField.getText().trim().equals("") || secretField.getText().trim().equals(""))) {
             AmazonGlacierClient newVaultCheckClient = makeClient(accessString, secretString, newLoc);
 
             String marker = null;
@@ -755,7 +738,7 @@ public class SimpleGlacierUploader extends Frame implements ActionListener {
             }
         }
         if (e.getSource() == loginButton) {
-            repopulateVaults(accessString, secretString, regionInt);
+            repopulateVaults(accessString, secretString);
         }
         if (e.getSource() == exitApplicationMnu) {
             System.exit(0);
@@ -880,7 +863,7 @@ public class SimpleGlacierUploader extends Frame implements ActionListener {
         }
 
         if (e.getSource() == locationChoice) {
-            repopulateVaults(accessString, secretString, regionInt);
+            repopulateVaults(accessString, secretString);
         }
 
         if (e.getSource() == selectFileButton) {
