@@ -29,7 +29,9 @@ public enum Endpoint {
     US_WEST_OREGON("us-west-2", "US West (Oregon)"),
     US_WEST_NCALIFORNIA("us-west-1", "US West (Northern California)"),
     EU_WEST_IRELAND("eu-west-1", "EU (Ireland)"),
-    AP_NORTHEAST_TOKYO("ap-northeast-1", "Asia Pacific (Tokyo)");
+    AP_NORTHEAST_TOKYO("ap-northeast-1", "Asia Pacific (Tokyo)"),
+    AP_SOUTHEAST_SYDNEY("ap-southeast-2", "Asia Pacific (Sydney)"),
+    EU_CENTRAL_FRANKFURT("eu-central-1", "EU (Frankfurt)");
 
     private final String id;
     private final String title;
