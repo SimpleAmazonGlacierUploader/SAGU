@@ -1418,8 +1418,17 @@ public class SimpleGlacierUploader extends Frame implements ActionListener {
 							}
 							uw.dispose();
 
+							// Move the actual results string to a JTextArea
+							JTextArea uploadCompleteMsg = new JTextArea("Upload Complete! \n" + sb);
+							uploadCompleteMsg.setLineWrap(true);
+							uploadCompleteMsg.setWrapStyleWord(true);
+							uploadCompleteMsg.setEditable(false);
+							
+							// Put the JTextArea in a JScollPane and present that in the JOptionPane
+							JScrollPane uploadCompleteScroll = new JScrollPane(uploadCompleteMsg);
+							uploadCompleteScroll.setPreferredSize( new Dimension( 500, 400 ) );
 							JOptionPane.showMessageDialog(null,
-									"Upload Complete! \n" + sb, "Uploaded",
+									uploadCompleteScroll, "Uploaded",
 									JOptionPane.INFORMATION_MESSAGE);
 							// Close the JProgressBar
 							multiFiles = null;
