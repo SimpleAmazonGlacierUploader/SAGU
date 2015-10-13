@@ -86,10 +86,11 @@ public class SimpleGlacierUploader extends Frame implements ActionListener {
 
 	// static identfiers
 	private static final long serialVersionUID = 11041980L;
-	private static final String versionNumber = "0.74.6";
+	private static final String versionNumber = "0.74.7";
 	private static final String logFileNamelog = "Glacier.log";
 	private static final String logFileNametxt = "Glacier.txt";
 	private static final String logFileNamecsv = "Glacier.csv";
+	private static final String logFileNameyaml = "Glacier.yaml";
 	private static final String logFileNameerr = "GlacierErrors.txt";
 	private static final String fileProperties = "SAGU.properties";
 
@@ -113,7 +114,7 @@ public class SimpleGlacierUploader extends Frame implements ActionListener {
 	public static final String DOWNLOAD_STRING = "Download Archive";
 	public static final String INVENTORY_REQUEST_STRING = "Request Inventory";
 	public static final String COPYRIGHT_STRING = "Simple Amazon Glacier Uploader\nVersion "
-			+ versionNumber + "\n ©2012-2013 Brian McMichael";
+			+ versionNumber + "\n Â©2012-2014 Brian McMichael";
 	public static final String UPDATE_STRING = "Check for Update";
 	public static final String UPDATE_SITE_STRING = "http://simpleglacieruploader.brianmcmichael.com/";
 	public static final String ABOUT_WINDOW_STRING = ""
@@ -222,6 +223,7 @@ public class SimpleGlacierUploader extends Frame implements ActionListener {
 	JRadioButtonMenuItem logLogRadio = new JRadioButtonMenuItem(".log");
 	JRadioButtonMenuItem logTxtRadio = new JRadioButtonMenuItem(".txt");
 	JRadioButtonMenuItem logCsvRadio = new JRadioButtonMenuItem(".csv");
+	JRadioButtonMenuItem logYamlRadio = new JRadioButtonMenuItem(".yaml");
 	ButtonGroup logFileGroup = new ButtonGroup();
 	JMenu deleteMenu = new JMenu("Delete");
 	JMenuItem deleteArchiveMnu = new JMenuItem("Delete Archive", xIcon);
@@ -492,6 +494,9 @@ public class SimpleGlacierUploader extends Frame implements ActionListener {
 		viewMenu.add(logCsvRadio);
 		logCsvRadio.setBackground(wc);
 		logFileGroup.add(logCsvRadio);
+		viewMenu.add(logYamlRadio);
+		logYamlRadio.setBackground(wc);
+		logFileGroup.add(logYamlRadio);
 		menuBar.add(deleteMenu);
 		deleteMenu.add(deleteArchiveMnu);
 		deleteArchiveMnu.setBackground(wc);
@@ -545,43 +550,52 @@ public class SimpleGlacierUploader extends Frame implements ActionListener {
 	}
 
 	public void setLogFileType(int intype) {
-		if ((intype == 0) == true) {
-			logLogRadio.setSelected(true);
-		} else if ((intype == 1) == true) {
-			logTxtRadio.setSelected(true);
-		} else if ((intype == 0) == true) {
-			logCsvRadio.setSelected(true);
-		} else {
-			logLogRadio.setSelected(true);
+		switch (intype) {
+		  case 0:
+		  default:
+		    logLogRadio.setSelected(true);
+		    break;
+		  case 1:
+		    logTxtRadio.setSelected(true);
+		    break;
+		  case 2:
+		    logCsvRadio.setSelected(true);
+		    break;
+		  case 3:
+		    logYamlRadio.setSelected(true);
+		    break;
 		}
 	}
 
 	public int getLogFileType() {
-		if (logLogRadio.isSelected() == true) {
+		if (logLogRadio.isSelected()) {
 			return 0;
 		}
-		if (logTxtRadio.isSelected() == true) {
+		if (logTxtRadio.isSelected()) {
 			return 1;
 		}
-		if (logCsvRadio.isSelected() == true) {
+		if (logCsvRadio.isSelected()) {
 			return 2;
+		}
+		if (logYamlRadio.isSelected()) {
+			return 3;
 		} else {
 			return 0;
 		}
 	}
 
 	public static String getLogFilename(int filename) {
-		if (filename == 0) {
-			return "" + logFileNamelog;
-		}
-		if (filename == 1) {
-			return "" + logFileNametxt;
-		}
-		if (filename == 2) {
-			return "" + logFileNamecsv;
-		} else {
-			return "" + logFileNamelog;
-		}
+		switch (filename) {
+		  case 0:
+		  default:
+		    return logFileNamelog;		    
+		  case 1:
+		    return logFileNametxt;		    
+		  case 2:
+		    return logFileNamecsv;		    
+		  case 3:
+		    return logFileNameyaml;		   
+		}		
 	}
 
 	public static File getLogFilenamePath(int filepath) {
@@ -601,6 +615,11 @@ public class SimpleGlacierUploader extends Frame implements ActionListener {
 			return logFile;
 		}
 		if (filepath == 3) {
+			File logFile = new File(curDir
+					+ System.getProperty("file.separator") + logFileNameyaml);
+			return logFile;
+		}
+		if (filepath == 4) {
 			File logFile = new File(curDir
 					+ System.getProperty("file.separator") + logFileNameerr);
 			return logFile;
@@ -1023,9 +1042,14 @@ public class SimpleGlacierUploader extends Frame implements ActionListener {
 		}
 
 		if (e.getSource() == viewLog || e.getSource() == logButton) {
-			JHyperlinkLabel.OpenURI(""
-					+ SimpleGlacierUploader
-							.getLogFilenamePath(getLogFileType()).toURI());
+			File f = SimpleGlacierUploader.getLogFilenamePath(getLogFileType());
+			if (f.exists()) {				
+				JHyperlinkLabel.OpenURI("" + f.toURI());
+			} else {
+				JOptionPane.showMessageDialog(null,
+						"Log file " + f.getName() + " does not exist.", "Error",
+						JOptionPane.ERROR_MESSAGE);
+			}
 		}
 		if (e.getSource() == deleteArchiveMnu) {
 			if (checkAllFields()) {
@@ -1204,6 +1228,7 @@ public class SimpleGlacierUploader extends Frame implements ActionListener {
 									Writer plainOutputLog = null;
 									Writer plainOutputTxt = null;
 									Writer plainOutputCsv = null;
+									Writer plainOutputYaml = null;
 
 									// write to file
 									if (logCheckMenuItem.isSelected()) {
@@ -1223,6 +1248,11 @@ public class SimpleGlacierUploader extends Frame implements ActionListener {
 													new FileWriter(
 															getLogFilenamePath(2),
 															true));
+											plainOutputYaml = new BufferedWriter(
+													new FileWriter(
+															getLogFilenamePath(3),
+															true));
+																						
 
 										} catch (IOException ex) {
 											JOptionPane.showMessageDialog(null,
@@ -1314,6 +1344,16 @@ public class SimpleGlacierUploader extends Frame implements ActionListener {
 													.write(System
 															.getProperty("line.separator"));
 											plainOutputCsv.close();
+																		
+											plainOutputYaml.write(System.getProperty("line.separator"));
+											plainOutputYaml.write("-  ArchiveID: \"" + thisResult + "\"" + System.getProperty("line.separator"));
+											plainOutputYaml.write("   File:      \"" + thisFile + "\"" + System.getProperty("line.separator"));
+											plainOutputYaml.write("   Bytes:     \"" + fileLength + "\"" + System.getProperty("line.separator"));
+											plainOutputYaml.write("   Vault:     \"" + vaultName + "\"" + System.getProperty("line.separator"));
+											plainOutputYaml.write("   Location:  \"" + locationUpped + "\"" + System.getProperty("line.separator"));
+											plainOutputYaml.write("   Date:      \"" + d.toString() + "\"" + System.getProperty("line.separator"));
+											plainOutputYaml.write("   Hash:      \"" + treeHash + "\"" + System.getProperty("line.separator"));											
+											plainOutputYaml.close();
 
 											uploadList
 													.add("Successfully uploaded "
@@ -1401,7 +1441,7 @@ public class SimpleGlacierUploader extends Frame implements ActionListener {
 						Writer errorOutputLog = null;
 						try {
 							errorOutputLog = new BufferedWriter(new FileWriter(
-									getLogFilenamePath(3), true));
+									getLogFilenamePath(4), true));
 						} catch (Exception badLogCreate) {
 							JOptionPane.showMessageDialog(null,
 									LOG_CREATION_ERROR, "IO Error",
