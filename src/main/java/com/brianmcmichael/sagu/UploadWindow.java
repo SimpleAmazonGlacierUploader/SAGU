@@ -23,7 +23,9 @@ import java.awt.*;
 
 public class UploadWindow extends JFrame {
 
-    private JTextArea uploadText = new JTextArea();
+	private static final long serialVersionUID = 1L;
+
+	private JTextArea uploadText = new JTextArea();
 
     private JScrollPane uploadScroll = new JScrollPane(uploadText);
     private JProgressBar totalProgressBar = new JProgressBar(0, 100);

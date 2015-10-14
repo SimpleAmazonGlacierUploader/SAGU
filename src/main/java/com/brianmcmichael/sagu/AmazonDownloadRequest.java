@@ -36,7 +36,9 @@ import java.io.File;
 
 class AmazonDownloadRequest extends JFrame implements ActionListener, WindowListener {
 
-    public static final String DOWNLOAD_NOTICE = "<html><body><br>Amazon stores your data as a stream of data by archive ID.<br>This information can be found in your log file.<br><br>>> Ensure that Amazon SQS and SNS messaging services are enabled in your AWS console.<br><br>>> Verify that the server and vault on the previous page match the archive<br> you are attmpting to retrieve and enter the archive ID.<br>>> You will then be prompted to select the file name and the location where <br>you would like to save the data.<br>>> Once you click the 'retrieve' button it will take approximately 4 hours <br>for Amazon to process your request.<br>>> Once your files have been prepared your download will begin automatically.<br>>> You will be notified when your download has completed successfully.<br><br> WARNING: <br>Closing the program during a retrieval request will cancel your download.</body><html>";
+	private static final long serialVersionUID = 1L;
+
+	public static final String DOWNLOAD_NOTICE = "<html><body><br>Amazon stores your data as a stream of data by archive ID.<br>This information can be found in your log file.<br><br>>> Ensure that Amazon SQS and SNS messaging services are enabled in your AWS console.<br><br>>> Verify that the server and vault on the previous page match the archive<br> you are attmpting to retrieve and enter the archive ID.<br>>> You will then be prompted to select the file name and the location where <br>you would like to save the data.<br>>> Once you click the 'retrieve' button it will take approximately 4 hours <br>for Amazon to process your request.<br>>> Once your files have been prepared your download will begin automatically.<br>>> You will be notified when your download has completed successfully.<br><br> WARNING: <br>Closing the program during a retrieval request will cancel your download.</body><html>";
 
     private JTextField jtfDownloadField;
     private JButton jbtDownload, jbtBack;
@@ -179,13 +181,12 @@ class AmazonDownloadRequest extends JFrame implements ActionListener, WindowList
                         "Enter the Archive ID of the file to be requested.",
                         "Error", JOptionPane.ERROR_MESSAGE);
             } else {
-                SwingWorker downloadWorker = new SwingWorker() {
+                SwingWorker<Object, Void> downloadWorker = new SwingWorker<Object, Void>() {
 
-                    private String archiveId = jtfDownloadField.getText()
-                            .trim();
+                    private String archiveId = jtfDownloadField.getText().trim();
 
                     @Override
-                    protected Object doInBackground() throws Exception {
+                    protected Void doInBackground() throws Exception {
 
                         // Create dumb progressbar
                         JFrame downloadFrame = new JFrame("Downloading");
@@ -201,7 +202,6 @@ class AmazonDownloadRequest extends JFrame implements ActionListener, WindowList
                         }
                         centerDefineFrame(downloadFrame, 300, 50);
 
-                        String archiveId = jtfDownloadField.getText().trim();
                         try {
                             String vaultName = dlVault;
 

@@ -47,7 +47,9 @@ public class ContextMenuMouseListener extends MouseAdapter {
     public ContextMenuMouseListener() {
         undoAction = new AbstractAction("Undo") {
 
-            @Override
+			private static final long serialVersionUID = 1L;
+
+			@Override
             public void actionPerformed(ActionEvent ae) {
                 textComponent.setText("");
                 textComponent.replaceSelection(savedString);
@@ -61,7 +63,9 @@ public class ContextMenuMouseListener extends MouseAdapter {
 
         cutAction = new AbstractAction("Cut") {
 
-            @Override
+			private static final long serialVersionUID = 1L;
+
+			@Override
             public void actionPerformed(ActionEvent ae) {
                 lastActionSelected = Actions.CUT;
                 savedString = textComponent.getText();
@@ -73,7 +77,9 @@ public class ContextMenuMouseListener extends MouseAdapter {
 
         copyAction = new AbstractAction("Copy") {
 
-            @Override
+			private static final long serialVersionUID = 1L;
+
+			@Override
             public void actionPerformed(ActionEvent ae) {
                 lastActionSelected = Actions.COPY;
                 textComponent.copy();
@@ -84,7 +90,9 @@ public class ContextMenuMouseListener extends MouseAdapter {
 
         pasteAction = new AbstractAction("Paste") {
 
-            @Override
+			private static final long serialVersionUID = 1L;
+
+			@Override
             public void actionPerformed(ActionEvent ae) {
                 lastActionSelected = Actions.PASTE;
                 savedString = textComponent.getText();
@@ -97,7 +105,9 @@ public class ContextMenuMouseListener extends MouseAdapter {
 
         selectAllAction = new AbstractAction("Select All") {
 
-            @Override
+			private static final long serialVersionUID = 1L;
+
+			@Override
             public void actionPerformed(ActionEvent ae) {
                 lastActionSelected = Actions.SELECT_ALL;
                 textComponent.selectAll();

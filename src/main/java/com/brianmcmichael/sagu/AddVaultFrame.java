@@ -32,8 +32,9 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 
 class AddVaultFrame extends JFrame implements ActionListener, WindowListener {
-
-    private JTextField jtfAddField;
+    
+	private static final long serialVersionUID = 1L;
+	private JTextField jtfAddField;
     private JButton jbtAdd, jbtBack;
 
     private AmazonGlacierClient addClient;
@@ -162,16 +163,15 @@ class AddVaultFrame extends JFrame implements ActionListener, WindowListener {
 
                     CreateVaultRequest cvreq = new CreateVaultRequest(vaultToAdd);
 
-                    CreateVaultResult cvres = new CreateVaultResult();
-                    cvres = addClient.createVault(cvreq);
+                    CreateVaultResult cvres = addClient.createVault(cvreq);
 
-                    JOptionPane.showMessageDialog(null, "Added vault successfully.", "Success", JOptionPane.INFORMATION_MESSAGE);
+                    JOptionPane.showMessageDialog(null, "Added vault " + cvres.toString() + " successfully.", "Success", JOptionPane.INFORMATION_MESSAGE);
                     this.dispose();
 
                 } catch (AmazonServiceException k) {
                     JOptionPane.showMessageDialog(null, "The server returned an error.", "Error", JOptionPane.ERROR_MESSAGE);
                 } catch (AmazonClientException i) {
-                    JOptionPane.showMessageDialog(null, "Client Error. Check that all fields are correct. Archive not deleted.", "Error", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(null, "Client Error. Check that all fields are correct. Archive not added.", "Error", JOptionPane.ERROR_MESSAGE);
 
                 } catch (Exception j) {
                     JOptionPane.showMessageDialog(null, "Vault not Added. Unspecified Error.", "Error", JOptionPane.ERROR_MESSAGE);

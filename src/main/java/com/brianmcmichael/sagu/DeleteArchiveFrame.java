@@ -32,7 +32,8 @@ import java.awt.event.WindowListener;
 
 class DeleteArchiveFrame extends JFrame implements ActionListener, WindowListener {
 
-    private JTextField jtfDeleteField;
+	private static final long serialVersionUID = 1L;
+	private JTextField jtfDeleteField;
     private JButton jbtDelete, jbtBack;
 
     private AmazonGlacierClient deleteClient;

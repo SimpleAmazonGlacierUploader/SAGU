@@ -25,7 +25,9 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 public class JHyperlinkLabel extends JLabel {
-    private Color underlineColor = null;
+
+	private static final long serialVersionUID = 1L;
+	private Color underlineColor = null;
 
     public JHyperlinkLabel(String label) {
         super(label);

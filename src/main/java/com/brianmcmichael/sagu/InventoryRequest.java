@@ -40,7 +40,8 @@ import java.util.Date;
 
 public class InventoryRequest extends JFrame implements ActionListener, WindowListener {
 
-    public static final String DOWNLOAD_NOTICE = "<html><body><br>Your data is stored on Glacier Servers by ArchiveID.<br>This function requests a list of Glacier ArchiveID's within a particular vault.<br><br>>> Verify that the server and vault on the previous page match the vault<br> you are attmpting to obtain the inventory from.<br>>> Once you click the 'retrieve' button it will take approximately 4 hours <br>for Amazon to process your request.<br>>> Once your files have been prepared your download will begin automatically.<br>>> You will be notified when your inventory had been retrieved successfully.<br><br> WARNING: <br>Closing the program during a retrieval request will cancel your download.</body><html>";
+	private static final long serialVersionUID = 1L;
+	public static final String DOWNLOAD_NOTICE = "<html><body><br>Your data is stored on Glacier Servers by ArchiveID.<br>This function requests a list of Glacier ArchiveID's within a particular vault.<br><br>>> Verify that the server and vault on the previous page match the vault<br> you are attmpting to obtain the inventory from.<br>>> Once you click the 'retrieve' button it will take approximately 4 hours <br>for Amazon to process your request.<br>>> Once your files have been prepared your download will begin automatically.<br>>> You will be notified when your inventory had been retrieved successfully.<br><br> WARNING: <br>Closing the program during a retrieval request will cancel your download.</body><html>";
     public static final String curDir = System.getProperty("user.dir");
 
     private AmazonGlacierClient irClient;
@@ -162,7 +163,7 @@ public class InventoryRequest extends JFrame implements ActionListener, WindowLi
     public void actionPerformed(ActionEvent e) {
 
         if (e.getSource() == jbtInventoryRequest) {
-            SwingWorker inventoryWorker = new SwingWorker() {
+            SwingWorker<Object, Void> inventoryWorker = new SwingWorker<Object, Void>() {
 
                 @Override
                 protected Object doInBackground() throws Exception {

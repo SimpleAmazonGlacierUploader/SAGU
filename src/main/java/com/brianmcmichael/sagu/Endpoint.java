@@ -21,7 +21,7 @@ package com.brianmcmichael.sagu;
 import javax.swing.*;
 
 /**
- * Amazon Endpoint(Region) helper enum. It preserves stable indexes of it's values.
+ * Amazon Endpoint(Region) helper enum. It preserves stable indexes of its values.
  */
 public enum Endpoint {
 
@@ -72,7 +72,6 @@ public enum Endpoint {
             comboBox.addItem(endpoint.getTitle());
         }
     }
-
 
     /**
      * Get address of Glacier in this Endpoint(Region).

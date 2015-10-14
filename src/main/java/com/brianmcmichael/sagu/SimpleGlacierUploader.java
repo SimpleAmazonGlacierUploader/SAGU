@@ -53,7 +53,8 @@ import static java.awt.Color.*;
 
 public class SimpleGlacierUploader extends Frame implements ActionListener {
 
-    private static final String versionNumber = "0.74.7";
+	private static final long serialVersionUID = 1L;
+	private static final String versionNumber = "0.74.7";
     private static final String logFileNameLog = "Glacier.log";
     private static final String logFileNameTxt = "Glacier.txt";
     private static final String logFileNameCsv = "Glacier.csv";
@@ -185,8 +186,9 @@ public class SimpleGlacierUploader extends Frame implements ActionListener {
     private JPanel fileDropPanel = new JPanel();
     private JTextArea ddText = new JTextArea();
     private JScrollPane ddScroll = new JScrollPane(ddText);
+    {
 
-    private FileDrop fileDropHere = new FileDrop(ddText, new FileDrop.Listener() {
+    new FileDrop(ddText, new FileDrop.Listener() {
 
         public void filesDropped(java.io.File[] files) {
             ddText.setEditable(false);
@@ -225,6 +227,7 @@ public class SimpleGlacierUploader extends Frame implements ActionListener {
             }
         }
     });
+    }
 
     private JButton uploadButton = new JButton("Upload");
 
@@ -527,13 +530,13 @@ public class SimpleGlacierUploader extends Frame implements ActionListener {
 
     public boolean checkAWSFields() {
         boolean passBool = false;
-
+        
         if ((accessField.getText().trim().equals(""))
-                || (secretField.getText().trim().equals(""))) {
+                || (secretField.getPassword().toString().trim().equals(""))) {
             if ((accessField.getText().trim().equals(""))) {
                 accessField.setFocusable(true);
                 accessField.requestFocus();
-            } else if ((secretField.getText().trim().equals(""))) {
+            } else if ((secretField.getPassword().toString().trim().equals(""))) {
                 secretField.setFocusable(true);
                 secretField.requestFocus();
             }
@@ -543,7 +546,7 @@ public class SimpleGlacierUploader extends Frame implements ActionListener {
                     JOptionPane.ERROR_MESSAGE);
             passBool = false;
         } else if ((accessField.getText().trim().length() != 20)
-                || (secretField.getText().trim().length() != 40)) {
+                || (secretField.getPassword().toString().trim().length() != 40)) {
             if (accessField.getText().trim().length() != 20) {
                 accessField.setFocusable(true);
                 accessField.requestFocus();
@@ -551,7 +554,7 @@ public class SimpleGlacierUploader extends Frame implements ActionListener {
                         "Your AWS Access Key does not appear to be valid.",
                         "Error", JOptionPane.ERROR_MESSAGE);
                 passBool = false;
-            } else if (secretField.getText().trim().length() != 40) {
+            } else if (secretField.getPassword().toString().trim().length() != 40) {
                 secretField.setFocusable(true);
                 secretField.requestFocus();
                 JOptionPane.showMessageDialog(null,
@@ -570,11 +573,11 @@ public class SimpleGlacierUploader extends Frame implements ActionListener {
 
         if ((accessField.getText().trim().equals(""))
                 || vaultField.getText().trim().equals("")
-                || (secretField.getText().trim().equals(""))) {
+                || (secretField.getPassword().toString().trim().equals(""))) {
             if ((accessField.getText().trim().equals(""))) {
                 accessField.setFocusable(true);
                 accessField.requestFocus();
-            } else if ((secretField.getText().trim().equals(""))) {
+            } else if ((secretField.getPassword().toString().trim().equals(""))) {
                 secretField.setFocusable(true);
                 secretField.requestFocus();
             } else if ((vaultField.getText().trim().equals(""))) {
@@ -586,7 +589,7 @@ public class SimpleGlacierUploader extends Frame implements ActionListener {
                     JOptionPane.ERROR_MESSAGE);
             passBool = false;
         } else if ((accessField.getText().trim().length() != 20)
-                || (secretField.getText().trim().length() != 40)) {
+                || (secretField.getPassword().toString().trim().length() != 40)) {
             if (accessField.getText().trim().length() != 20) {
                 accessField.setFocusable(true);
                 accessField.requestFocus();
@@ -594,7 +597,7 @@ public class SimpleGlacierUploader extends Frame implements ActionListener {
                         "Your AWS Access Key does not appear to be valid.",
                         "Error", JOptionPane.ERROR_MESSAGE);
                 passBool = false;
-            } else if (secretField.getText().trim().length() != 40) {
+            } else if (secretField.getPassword().toString().trim().length() != 40) {
                 secretField.setFocusable(true);
                 secretField.requestFocus();
                 JOptionPane.showMessageDialog(null,
@@ -629,8 +632,8 @@ public class SimpleGlacierUploader extends Frame implements ActionListener {
         return accessField.getText().trim();
     }
 
-    public String getSecretField() {
-        return secretField.getText().trim();
+    private String getSecretField() {
+        return secretField.getPassword().toString().trim();
     }
 
     public int getServerRegion() {
@@ -646,7 +649,7 @@ public class SimpleGlacierUploader extends Frame implements ActionListener {
 
         int newLoc = locationChoice.getSelectedIndex();
 
-        if (!(accessField.getText().trim().equals("") || secretField.getText().trim().equals(""))) {
+        if (!(accessField.getText().trim().equals("") || secretField.getPassword().toString().trim().equals(""))) {
             AmazonGlacierClient newVaultCheckClient = makeClient(accessString, secretString, newLoc);
 
             String marker = null;
@@ -895,7 +898,7 @@ public class SimpleGlacierUploader extends Frame implements ActionListener {
                 SaveCurrentProperties(accessString, secretString, vaultString,
                         locationChoice.getSelectedIndex());
 
-                SwingWorker uploadWorker = new SwingWorker() {
+                SwingWorker<Object, Void> uploadWorker = new SwingWorker<Object, Void>() {
 
                     @Override
                     protected Object doInBackground() throws Exception {
