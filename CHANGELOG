@@ -1,8 +1,10 @@
-2014/01/14 - Version 0.74.7
+2015/10/13 - Version 0.74.7
 
 -Implemented logging to the well parsable YAML format
 -Error Message is displayed if log file to open does not exist
 -Code enhancements courtesy Fensterbank
+-Additional endpoints and refactorings by liry17
+-Fixes by richardneish and philosophicles
 
 2013/08/02 - Version 0.74.6
 
