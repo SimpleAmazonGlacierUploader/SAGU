@@ -3,7 +3,7 @@
 -Implemented logging to the well parsable YAML format
 -Error Message is displayed if log file to open does not exist
 -Code enhancements courtesy Fensterbank
--Additional endpoints and refactorings by liry17
+-Additional endpoints and refactorings by Libor Rysavy
 -Fixes by richardneish and philosophicles
 
 2013/08/02 - Version 0.74.6
