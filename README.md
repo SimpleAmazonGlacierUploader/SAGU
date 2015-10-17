@@ -24,3 +24,11 @@ GNU General Public License Version 3. See [LICENSE](LICENSE)
 
 ### Additional License Information
 Contains images from Silk Icon Set v.1.3 (http://www.famfamfam.com/lab/icons/silk/)
+
+### How-tos
+##### Build runnable JAR including all dependencies
+```
+mvn clean package assembly:single
+```
+
+Resulting archive: `target/GlacierUploader-*-jar-with-dependencies.jar`
