@@ -8,6 +8,46 @@
     <name>SAGU</name>
     <description>Simple Amazon Glacier Uploader</description>
 
+    <licenses>
+        <license>
+            <name>GNU General Public License Version 3</name>
+            <url>https://opensource.org/licenses/gpl-3.0</url>
+        </license>
+    </licenses>
+
+    <scm>
+        <url>git@github.com:brianmcmichael/SAGU.git</url>
+    </scm>
+
+    <developers>
+        <developer>
+            <name>Brian L. McMichael</name>
+            <url>https://github.com/brianmcmichael</url>
+        </developer>
+        <developer>
+            <name>Libor Rysavy</name>
+            <url>https://github.com/liry</url>
+        </developer>
+    </developers>
+    <contributors>
+        <contributor>
+            <name>Mark A. Greenwood</name>
+            <url>https://github.com/greenwoodma</url>
+        </contributor>
+        <contributor>
+            <name>Frédéric Bolvin</name>
+            <url>https://github.com/Fensterbank</url>
+        </contributor>
+        <contributor>
+            <name>Richard Neish</name>
+            <url>https://github.com/richardneish</url>
+        </contributor>
+        <contributor>
+            <name>Stuart Cuthbertson</name>
+            <url>https://github.com/philosophicles</url>
+        </contributor>
+    </contributors>
+
     <properties>
         <targetJdk>1.8</targetJdk>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
