@@ -46,3 +46,9 @@ local.properties
 
 # PDT-specific
 .buildpath
+
+### OSX template
+.DS_Store
+
+# Thumbnails
+._*
