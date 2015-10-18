@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>GlacierUploader</groupId>
     <artifactId>GlacierUploader</artifactId>
-    <version>0.74.7-SNAPSHOT</version>
+    <version>0.75.0-SNAPSHOT</version>
     <name>SAGU</name>
     <description>Simple Amazon Glacier Uploader</description>
 

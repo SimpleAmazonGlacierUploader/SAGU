@@ -1,3 +1,7 @@
+TBD - Version 0.75.0
+
+-Upgrade to Java version 8
+
 2015/10/13 - Version 0.74.7
 
 -Implemented logging to the well parsable YAML format
