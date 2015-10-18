@@ -55,12 +55,13 @@ import static java.lang.String.format;
 public class SimpleGlacierUploader extends Frame implements ActionListener {
 
 	private static final long serialVersionUID = 1L;
-	private static final String logFileNameLog = "Glacier.log";
-    private static final String logFileNameTxt = "Glacier.txt";
-    private static final String logFileNameCsv = "Glacier.csv";
-    private static final String logFileNameYaml = "Glacier.yaml";
-    private static final String logFileNameErr = "GlacierErrors.txt";
-    private static final String fileProperties = "SAGU.properties";
+
+	private static final String LOG_FILE_NAME_LOG = "Glacier.log";
+    private static final String LOG_FILE_NAME_TXT = "Glacier.txt";
+    private static final String LOG_FILE_NAME_CSV = "Glacier.csv";
+    private static final String LOG_FILE_NAME_YAML = "Glacier.yaml";
+    private static final String LOG_FILE_NAME_ERR = "GlacierErrors.txt";
+    private static final String PROPERTIES_FILE_NAME = "SAGU.properties";
 
     // Error messages
     private static final String NO_DIRECTORIES_ERROR = "Directories, folders, and packages are not supported. \nPlease compress this into a single archive (such as a .zip) and try uploading again.";
@@ -86,7 +87,7 @@ public class SimpleGlacierUploader extends Frame implements ActionListener {
 
     public static final String ACCESS_LABEL = "Access Key: ";
 
-    private static final String curDir = System.getProperty("user.dir");
+    private static final String CUR_DIR = System.getProperty("user.dir");
 
     // Config override
     private static final int SOCKET_TIMEOUT = 1000000;
@@ -497,26 +498,26 @@ public class SimpleGlacierUploader extends Frame implements ActionListener {
 
     public static File getLogFilenamePath(int filepath) {
         if (filepath == 0) {
-            return new File(curDir + System.getProperty("file.separator") + logFileNameLog);
+            return new File(CUR_DIR + System.getProperty("file.separator") + LOG_FILE_NAME_LOG);
         }
         if (filepath == 1) {
-            return new File(curDir + System.getProperty("file.separator") + logFileNameTxt);
+            return new File(CUR_DIR + System.getProperty("file.separator") + LOG_FILE_NAME_TXT);
         }
         if (filepath == 2) {
-            return new File(curDir + System.getProperty("file.separator") + logFileNameCsv);
+            return new File(CUR_DIR + System.getProperty("file.separator") + LOG_FILE_NAME_CSV);
         }
         if (filepath == 3) {
-            return new File(curDir + System.getProperty("file.separator") + logFileNameYaml);
+            return new File(CUR_DIR + System.getProperty("file.separator") + LOG_FILE_NAME_YAML);
         }
         if (filepath == 4) {
-            return new File(curDir + System.getProperty("file.separator") + logFileNameErr);
+            return new File(CUR_DIR + System.getProperty("file.separator") + LOG_FILE_NAME_ERR);
         } else {
-            return new File(curDir + System.getProperty("file.separator") + logFileNameLog);
+            return new File(CUR_DIR + System.getProperty("file.separator") + LOG_FILE_NAME_LOG);
         }
     }
 
     public static File getFilePropertiesPath() {
-        return new File(curDir + System.getProperty("file.separator") + fileProperties);
+        return new File(CUR_DIR + System.getProperty("file.separator") + PROPERTIES_FILE_NAME);
     }
 
     private void SaveCurrentProperties(String accessString,
@@ -766,7 +767,7 @@ public class SimpleGlacierUploader extends Frame implements ActionListener {
         if (e.getSource() == saveFileMnu) {
             FileDialog fd = new FileDialog(new Frame(), "Save...", FileDialog.SAVE);
             fd.setFile("Glacier.txt");
-            fd.setDirectory(curDir);
+            fd.setDirectory(CUR_DIR);
             fd.setLocation(50, 50);
             fd.setVisible(true);
             String filePath = "" + fd.getDirectory() + System.getProperty("file.separator") + fd.getFile();

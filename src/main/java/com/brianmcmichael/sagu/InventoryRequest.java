@@ -42,7 +42,7 @@ public class InventoryRequest extends JFrame implements ActionListener, WindowLi
 
 	private static final long serialVersionUID = 1L;
 	public static final String DOWNLOAD_NOTICE = "<html><body><br>Your data is stored on Glacier Servers by ArchiveID.<br>This function requests a list of Glacier ArchiveID's within a particular vault.<br><br>>> Verify that the server and vault on the previous page match the vault<br> you are attmpting to obtain the inventory from.<br>>> Once you click the 'retrieve' button it will take approximately 4 hours <br>for Amazon to process your request.<br>>> Once your files have been prepared your download will begin automatically.<br>>> You will be notified when your inventory had been retrieved successfully.<br><br> WARNING: <br>Closing the program during a retrieval request will cancel your download.</body><html>";
-    public static final String curDir = System.getProperty("user.dir");
+    public static final String CUR_DIR = System.getProperty("user.dir");
 
     private AmazonGlacierClient irClient;
     private String irVault;
@@ -218,7 +218,7 @@ public class InventoryRequest extends JFrame implements ActionListener, WindowLi
 
                         String fileName = irVault + fileDate + ".txt";
 
-                        String filePath = "" + curDir + System.getProperty("file.separator") + fileName;
+                        String filePath = "" + CUR_DIR + System.getProperty("file.separator") + fileName;
 
                         FileWriter fileStream = new FileWriter(filePath);
 
