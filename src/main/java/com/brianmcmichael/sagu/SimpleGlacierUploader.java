@@ -49,13 +49,13 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Properties;
 
-import static java.awt.Color.*;
+import static java.awt.Color.WHITE;
+import static java.lang.String.format;
 
 public class SimpleGlacierUploader extends Frame implements ActionListener {
 
 	private static final long serialVersionUID = 1L;
-	private static final String versionNumber = "0.74.7";
-    private static final String logFileNameLog = "Glacier.log";
+	private static final String logFileNameLog = "Glacier.log";
     private static final String logFileNameTxt = "Glacier.txt";
     private static final String logFileNameCsv = "Glacier.csv";
     private static final String logFileNameYaml = "Glacier.yaml";
@@ -70,12 +70,17 @@ public class SimpleGlacierUploader extends Frame implements ActionListener {
     // Other Strings
     private static final String DOWNLOAD_STRING = "Download Archive";
     private static final String INVENTORY_REQUEST_STRING = "Request Inventory";
-    private static final String COPYRIGHT_STRING = "Simple Amazon Glacier Uploader\nVersion "
-            + versionNumber + "\n �2012-2015 Brian McMichael";
+    private static final String TITLE = "Simple Amazon Glacier Uploader";
+    private static final String VERSION_PATTERN = "Version %s";
+    private static final String COPYRIGHT = "©2012-2015 Brian McMichael";
     private static final String UPDATE_STRING = "Check for Update";
-    private static final String ABOUT_WINDOW_STRING = ""
-            + COPYRIGHT_STRING
-            + "\n\nReport errors or direct correspondence to: brian@brianmcmichael.com\n\nSimple Amazon Glacier Uploader is free software. \nYour feedback is appreciated.\nThis program is not any way affiliated with Amazon Web Services or Amazon.com.";
+    private static final String ABOUT_PATTERN = TITLE + "\n" +
+            VERSION_PATTERN + "\n" +
+            COPYRIGHT + "\n\n" +
+            "Report errors or direct correspondence to: brian@brianmcmichael.com\n\n" +
+            TITLE + " is free software.\n" +
+            "Your feedback is appreciated.\n" +
+            "This program is not any way affiliated with Amazon Web Services or Amazon.com.";
     private static final String URL_STRING = "http://simpleglacieruploader.brianmcmichael.com/";
     private static final String AWS_SITE_STRING = "Get AWS Credentials";
 
@@ -86,6 +91,9 @@ public class SimpleGlacierUploader extends Frame implements ActionListener {
     // Config override
     private static final int SOCKET_TIMEOUT = 1000000;
     private static final int MAX_RETRIES = 6;
+
+
+    private String versionNumber;
 
     private Properties applicationProps = new Properties();
 
@@ -154,7 +162,7 @@ public class SimpleGlacierUploader extends Frame implements ActionListener {
     private JMenuItem aboutMnu = new JMenuItem("About", toolsIcon);
 
     private JPanel titlePanel = new JPanel();
-    private JLabel titleLabel = new JLabel("Simple Amazon Glacier Uploader " + versionNumber);
+    private JLabel titleLabel = new JLabel(TITLE + " " + versionNumber);
 
     private JPanel credentialsPanel = new JPanel(new GridLayout(4, 1, 10, 10));
     private JHyperlinkLabel accessLabel = new JHyperlinkLabel(ACCESS_LABEL); // v0.3
@@ -436,6 +444,8 @@ public class SimpleGlacierUploader extends Frame implements ActionListener {
         } catch (IOException e1) {
         }
 
+        versionNumber = SAGUUtils.loadVersionNumber();
+
         pack();
         if (width < getWidth()) { // prevent setting width too small
             width = getWidth();
@@ -444,6 +454,10 @@ public class SimpleGlacierUploader extends Frame implements ActionListener {
             height = getHeight();
         }
         centerOnScreen(width, height);
+    }
+
+    public String getVersionNumber() {
+        return versionNumber;
     }
 
     public void setLogFileType(int intype) {
@@ -856,7 +870,8 @@ public class SimpleGlacierUploader extends Frame implements ActionListener {
         }
 
         if (e.getSource() == aboutMnu) {
-            JOptionPane.showMessageDialog(null, ABOUT_WINDOW_STRING, "About", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(null, format(ABOUT_PATTERN, versionNumber), "About",
+                    JOptionPane.INFORMATION_MESSAGE);
         }
 
         if (e.getSource() == clearButton) {
@@ -1168,7 +1183,7 @@ public class SimpleGlacierUploader extends Frame implements ActionListener {
     public static void main(String[] args) throws Exception {
         SimpleGlacierUploader g = new SimpleGlacierUploader();
         g.setBounds(300, 300, 650, 475);
-        g.setTitle("Simple Amazon Glacier Uploader " + versionNumber);
+        g.setTitle(TITLE  + " " + g.getVersionNumber());
         g.setVisible(true);
     }
 }
