@@ -37,9 +37,7 @@ import java.awt.event.WindowEvent;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -47,7 +45,6 @@ import java.io.Writer;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Properties;
 
 import static java.awt.Color.WHITE;
 import static java.lang.String.format;
@@ -61,7 +58,6 @@ public class SimpleGlacierUploader extends Frame implements ActionListener {
     private static final String LOG_FILE_NAME_CSV = "Glacier.csv";
     private static final String LOG_FILE_NAME_YAML = "Glacier.yaml";
     private static final String LOG_FILE_NAME_ERR = "GlacierErrors.txt";
-    private static final String PROPERTIES_FILE_NAME = "SAGU.properties";
 
     // Error messages
     private static final String NO_DIRECTORIES_ERROR = "Directories, folders, and packages are not supported. \nPlease compress this into a single archive (such as a .zip) and try uploading again.";
@@ -96,7 +92,7 @@ public class SimpleGlacierUploader extends Frame implements ActionListener {
 
     private String versionNumber;
 
-    private Properties applicationProps = new Properties();
+    private final AppProperties appProperties;
 
     private int width = 200;
     private int height = 170;
@@ -425,25 +421,12 @@ public class SimpleGlacierUploader extends Frame implements ActionListener {
         });
 
         // Load properties from last invocation
-        FileInputStream in;
-        try {
-            in = new FileInputStream(getFilePropertiesPath());
-            applicationProps.load(in);
-            accessField.setText(applicationProps.getProperty("accessKey"));
-            secretField.setText(applicationProps.getProperty("secretKey"));
-            vaultField.setText(applicationProps.getProperty("vaultKey"));
-            locationChoice.setSelectedIndex(Integer.parseInt(applicationProps
-                    .getProperty("locationSet")));
-            if (applicationProps.getProperty("logType") == null) {
-                setLogFileType(0);
-            } else {
-                setLogFileType(Integer.parseInt(applicationProps
-                        .getProperty("logType")));
-            }
-            in.close();
-        } catch (FileNotFoundException e1) {
-        } catch (IOException e1) {
-        }
+        appProperties = new AppProperties();
+        accessField.setText(appProperties.getAccessKey());
+        secretField.setText(appProperties.getSecretKey());
+        vaultField.setText(appProperties.getVaultKey());
+        locationChoice.setSelectedIndex(appProperties.getLocationIndex());
+        setLogFileType(appProperties.getLogTypeIndex());
 
         versionNumber = SAGUUtils.loadVersionNumber();
 
@@ -516,36 +499,9 @@ public class SimpleGlacierUploader extends Frame implements ActionListener {
         }
     }
 
-    public static File getFilePropertiesPath() {
-        return new File(CUR_DIR + System.getProperty("file.separator") + PROPERTIES_FILE_NAME);
-    }
-
-    private void SaveCurrentProperties(String accessString,
-                                       String secretString, String vaultString, int selectedIndex) {
-
-        FileOutputStream out;
-        try {
-            out = new FileOutputStream(getFilePropertiesPath());
-
-            applicationProps.setProperty("accessKey", accessString);
-            applicationProps.setProperty("secretKey", secretString);
-            applicationProps.setProperty("vaultKey", vaultString);
-            applicationProps.setProperty("locationSet", Integer.toString(selectedIndex));
-            applicationProps.setProperty("logType", convertSimple(getLogFileType()));
-            applicationProps.store(out, "Properties");
-            out.close();
-        } catch (FileNotFoundException e1) {
-        } catch (IOException e1) {
-        }
-    }
-
-    public static String convertSimple(int i) {
-        return "" + i;
-    }
-
     public boolean checkAWSFields() {
         boolean passBool = false;
-        
+
         if ((accessField.getText().trim().equals(""))
                 || (secretField.getPassword().toString().trim().equals(""))) {
             if ((accessField.getText().trim().equals(""))) {
@@ -662,7 +618,7 @@ public class SimpleGlacierUploader extends Frame implements ActionListener {
 
     public void repopulateVaults(String accessString, String secretString) {
 
-        int newLoc = locationChoice.getSelectedIndex();
+        int newLoc = getServerRegion();
 
         if (!(accessField.getText().trim().equals("") || secretField.getPassword().toString().trim().equals(""))) {
             AmazonGlacierClient newVaultCheckClient = makeClient(accessString, secretString, newLoc);
@@ -911,8 +867,8 @@ public class SimpleGlacierUploader extends Frame implements ActionListener {
         if (e.getSource() == uploadButton) {
             if ((checkAllFields()) && (checkForFile())) {
 
-                SaveCurrentProperties(accessString, secretString, vaultString,
-                        locationChoice.getSelectedIndex());
+                appProperties.saveProperties(accessString, secretString, vaultString, getServerRegion(),
+                        getLogFileType());
 
                 SwingWorker<Object, Void> uploadWorker = new SwingWorker<Object, Void>() {
 
@@ -931,7 +887,7 @@ public class SimpleGlacierUploader extends Frame implements ActionListener {
                             totalSize += f.length();
                         }
 
-                        int locInt = locationChoice.getSelectedIndex();
+                        int locInt = getServerRegion();
                         multiFiles = null;
                         clearFile();
                         UploadWindow uw = new UploadWindow();
