@@ -10,9 +10,12 @@ import org.testng.annotations.Test;
 
 import java.io.FileInputStream;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Collections;
 import java.util.Properties;
 
+import static java.util.Collections.singleton;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -36,6 +39,24 @@ public class AppPropertiesTest {
         assertThat(properties.getVaultKey(), is("TEST_VAULT"));
         assertThat(properties.getLogTypeIndex(), is(1));
         assertThat(properties.getLocationIndex(), is(3));
+    }
+
+    @Test
+    public void constructorShouldUseWorkingDirIfPropertiesPresentThere() throws Exception {
+        final AppProperties properties = new AppProperties(resourceDir, "");
+        assertThat(properties.getAccessKey(), is("TEST_ACCESS"));
+    }
+
+    @Test
+    public void constructorShouldUseHomeDirIfPropertiesNotInWorkingDir() throws Exception {
+        final Path working = Files.createTempDirectory("working");
+        final Path home = Files.createTempDirectory("home");
+        Files.createDirectory(Paths.get(home.toString(), ".sagu"));
+        final Path propFile = Files.createFile(Paths.get(home.toString(), ".sagu", "SAGU.properties"));
+        Files.write(propFile, singleton("accessKey=TEST"));
+
+        final AppProperties properties = new AppProperties(working.toString(), home.toString());
+        assertThat(properties.getAccessKey(), is("TEST"));
     }
 
     @Test

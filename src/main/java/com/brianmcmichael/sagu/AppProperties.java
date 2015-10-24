@@ -10,6 +10,8 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Properties;
 
 import static com.amazonaws.util.StringUtils.isNullOrEmpty;
@@ -21,20 +23,40 @@ import static com.amazonaws.util.StringUtils.isNullOrEmpty;
 public class AppProperties {
 
     private static final String PROPERTIES_FILE_NAME = "SAGU.properties";
+    private static final String SAGU_DIR = ".sagu";
     private static final String ACCESS_KEY = "accessKey";
     private static final String SECRET_KEY = "secretKey";
     private static final String VAULT_KEY = "vaultKey";
     private static final String LOCATION_INDEX = "locationSet";
     private static final String LOG_TYPE_INDEX = "logType";
+    public static final String SEPARATOR = System.getProperty("file.separator");
 
     private final Properties properties = new Properties();
     private final String dir;
 
     /**
-     * Loads properties from default path if the file is present there.
+     * Loads properties from working dir if the file is present there. If not, creates '.sagu' dir in home dir and
+     * loads/stores properties there.
      */
     public AppProperties() {
-        this(System.getProperty("user.dir"));
+        this(System.getProperty("user.dir"), System.getProperty("user.home"));
+    }
+
+    AppProperties(final String workingDir, final String homeDir) {
+        if (Files.exists(Paths.get(workingDir, PROPERTIES_FILE_NAME))) {
+            dir = workingDir;
+        } else {
+            final String saguDir = homeDir + SEPARATOR + SAGU_DIR;
+            if (!Files.exists(Paths.get(saguDir))) {
+                try {
+                    Files.createDirectory(Paths.get(saguDir));
+                } catch (IOException e) {
+                    throw new RuntimeException("Cannot create directory '%s' for properties and logs.", e);
+                }
+            }
+            dir = saguDir;
+        }
+        loadProperties();
     }
 
     /**
@@ -42,9 +64,12 @@ public class AppProperties {
      *
      * @param dir directory (path string) to load properties from
      */
-    public AppProperties(final String dir) {
+    AppProperties(final String dir) {
         this.dir = dir;
+        loadProperties();
+    }
 
+    private void loadProperties() {
         try {
             final FileInputStream in = new FileInputStream(getFilePropertiesPath());
             properties.load(in);
@@ -157,7 +182,7 @@ public class AppProperties {
 
 
     File getFilePropertiesPath() {
-        return new File(dir + System.getProperty("file.separator") + PROPERTIES_FILE_NAME);
+        return new File(dir + SEPARATOR + PROPERTIES_FILE_NAME);
     }
 
     private boolean setProperty(final String oldValue, final String newValue, final String propertyKey) {
