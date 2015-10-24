@@ -10,7 +10,6 @@ import org.testng.annotations.Test;
 
 import java.io.FileInputStream;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Properties;
 
@@ -22,19 +21,16 @@ public class AppPropertiesTest {
 
     private String propertiesResourcePath;
     private String resourceDir;
-    private AppProperties properties;
-    private AppProperties emptyProperties;
 
     @BeforeClass
     public void setUpClass() throws Exception {
         propertiesResourcePath = AppPropertiesTest.class.getResource("/SAGU.properties").getPath();
         resourceDir = Paths.get(propertiesResourcePath).getParent().toString();
-        properties = new AppProperties(resourceDir);
-        emptyProperties = new AppProperties();
     }
 
     @Test
     public void constructorShouldLoadPropertiesFile() throws Exception {
+        final AppProperties properties = new AppProperties(resourceDir);
         assertThat(properties.getAccessKey(), is("TEST_ACCESS"));
         assertThat(properties.getSecretKey(), is("TEST_SECRET"));
         assertThat(properties.getVaultKey(), is("TEST_VAULT"));
@@ -44,46 +40,97 @@ public class AppPropertiesTest {
 
     @Test
     public void getFilePropertiesPathShouldConcatDirAndFileName() throws Exception {
+        final AppProperties properties = new AppProperties(resourceDir);
         assertThat(properties.getFilePropertiesPath().getAbsolutePath(), is(propertiesResourcePath));
     }
 
     @Test
-    public void getLogTypeIndexShouldHaveZeroAsDefault() throws Exception {
+    public void gettersShouldHaveReturnSensibleDefault() throws Exception {
+        final String tempDir = Files.createTempDirectory("sagu-test-").toString();
+        final AppProperties emptyProperties = new AppProperties(tempDir);
+
         assertThat(emptyProperties.getLogTypeIndex(), is(0));
-    }
-
-    @Test
-    public void getLocationIndexShouldHaveZeroAsDefault() throws Exception {
         assertThat(emptyProperties.getLocationIndex(), is(0));
-    }
-
-    @Test
-    public void getVaultKeyShouldReturnNullWhenNotFound() throws Exception {
         assertThat(emptyProperties.getVaultKey(), is(nullValue()));
-    }
-
-    @Test
-    public void getSecretKeyShouldReturnNullWhenNotFound() throws Exception {
         assertThat(emptyProperties.getSecretKey(), is(nullValue()));
+        assertThat(emptyProperties.getAccessKey(), is(nullValue()));
     }
 
     @Test
-    public void getAccessKeyShouldReturnNullWhenNotFound() throws Exception {
-        assertThat(emptyProperties.getAccessKey(), is(nullValue()));
+    public void settersShouldChangeRightValuesAndReturnChangedFlag() throws Exception {
+        final AppProperties properties = new AppProperties(resourceDir);
+
+        assertThat(properties.setAccessKey("AC"), is(true));
+        assertThat(properties.setSecretKey("SE".toCharArray()), is(true));
+        assertThat(properties.setVaultKey("VA"), is(true));
+        assertThat(properties.setLocationIndex(1), is(true));
+        assertThat(properties.setLogTypeIndex(2), is(true));
+
+        assertThat(properties.getAccessKey(), is("AC"));
+        assertThat(properties.getSecretKey(), is("SE"));
+        assertThat(properties.getVaultKey(), is("VA"));
+        assertThat(properties.getLocationIndex(), is(1));
+        assertThat(properties.getLogTypeIndex(), is(2));
+
+        assertThat(properties.setAccessKey("AC"), is(false));
+        assertThat(properties.setSecretKey("SE".toCharArray()), is(false));
+        assertThat(properties.setVaultKey("VA"), is(false));
+        assertThat(properties.setLocationIndex(1), is(false));
+        assertThat(properties.setLogTypeIndex(2), is(false));
+    }
+
+    @Test
+    public void settersShouldSanitizeNulls() throws Exception {
+        final AppProperties properties = new AppProperties(resourceDir);
+
+        assertThat(properties.setAccessKey(null), is(true));
+        assertThat(properties.setSecretKey(null), is(true));
+        assertThat(properties.setVaultKey(null), is(true));
+
+        assertThat(properties.getAccessKey(), is(""));
+        assertThat(properties.getSecretKey(), is(""));
+        assertThat(properties.getVaultKey(), is(""));
+
+        assertThat(properties.setAccessKey(null), is(false));
+        assertThat(properties.setSecretKey(null), is(false));
+        assertThat(properties.setVaultKey(null), is(false));
+    }
+
+    @Test
+    public void settersShouldTrimStrings() throws Exception {
+        final AppProperties properties = new AppProperties(resourceDir);
+
+        assertThat(properties.setAccessKey(" AC "), is(true));
+        assertThat(properties.setSecretKey(" SE ".toCharArray()), is(true));
+        assertThat(properties.setVaultKey(" VA "), is(true));
+
+        assertThat(properties.getAccessKey(), is("AC"));
+        assertThat(properties.getSecretKey(), is("SE"));
+        assertThat(properties.getVaultKey(), is("VA"));
+
+        assertThat(properties.setAccessKey("AC"), is(false));
+        assertThat(properties.setSecretKey("SE".toCharArray()), is(false));
+        assertThat(properties.setVaultKey("VA"), is(false));
     }
 
     @Test
     public void savePropertiesShouldWriteThemToFile() throws Exception {
         final String tempDir = Files.createTempDirectory("sagu-test-").toString();
         final AppProperties tempProperties = new AppProperties(tempDir);
-        tempProperties.saveProperties("ACC", "SEC", "VAU", 1, 2);
+        tempProperties.setAccessKey("AC");
+        tempProperties.setSecretKey("SE".toCharArray());
+        tempProperties.setVaultKey("VA");
+        tempProperties.setLocationIndex(3);
+        tempProperties.setLogTypeIndex(4);
+        tempProperties.saveProperties();
 
         final Properties savedProp = new Properties();
         savedProp.load(new FileInputStream(tempDir + System.getProperty("file.separator") + "SAGU.properties"));
-        assertThat(savedProp.getProperty("accessKey"), is("ACC"));
-        assertThat(savedProp.getProperty("secretKey"), is("SEC"));
-        assertThat(savedProp.getProperty("vaultKey"), is("VAU"));
-        assertThat(savedProp.getProperty("locationSet"), is("1"));
-        assertThat(savedProp.getProperty("logType"), is("2"));
+        assertThat(savedProp.getProperty("accessKey"), is("AC"));
+        assertThat(savedProp.getProperty("secretKey"), is("SE"));
+        assertThat(savedProp.getProperty("vaultKey"), is("VA"));
+        assertThat(savedProp.getProperty("locationSet"), is("3"));
+        assertThat(savedProp.getProperty("logType"), is("4"));
     }
+
 }

@@ -12,6 +12,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Properties;
 
+import static com.amazonaws.util.StringUtils.isNullOrEmpty;
+
 /**
  * Application properties holder.
  * It's able to load them from file "SAGU.properties" and save them back.
@@ -19,6 +21,11 @@ import java.util.Properties;
 public class AppProperties {
 
     private static final String PROPERTIES_FILE_NAME = "SAGU.properties";
+    private static final String ACCESS_KEY = "accessKey";
+    private static final String SECRET_KEY = "secretKey";
+    private static final String VAULT_KEY = "vaultKey";
+    private static final String LOCATION_INDEX = "locationSet";
+    private static final String LOG_TYPE_INDEX = "logType";
 
     private final Properties properties = new Properties();
     private final String dir;
@@ -47,13 +54,10 @@ public class AppProperties {
         }
     }
 
-    public void saveProperties(final String accessString, final String secretString, final String vaultString,
-                               final int locationIndex, final int logFileType) {
-        properties.setProperty("accessKey", accessString);
-        properties.setProperty("secretKey", secretString);
-        properties.setProperty("vaultKey", vaultString);
-        properties.setProperty("locationSet", Integer.toString(locationIndex));
-        properties.setProperty("logType", Integer.toString(logFileType));
+    /**
+     * Saves properties to file
+     */
+    public void saveProperties() {
         FileOutputStream out;
         try {
             out = new FileOutputStream(getFilePropertiesPath());
@@ -68,10 +72,10 @@ public class AppProperties {
      * @return index of the log type
      */
     public int getLogTypeIndex() {
-        if (properties.getProperty("logType") == null) {
+        if (properties.getProperty(LOG_TYPE_INDEX) == null) {
             return 0;
         } else {
-            return Integer.parseInt(properties.getProperty("logType"));
+            return Integer.parseInt(properties.getProperty(LOG_TYPE_INDEX));
         }
     }
 
@@ -79,10 +83,10 @@ public class AppProperties {
      * @return location index
      */
     public int getLocationIndex() {
-        if (properties.getProperty("locationSet") == null) {
+        if (properties.getProperty(LOCATION_INDEX) == null) {
             return 0;
         } else {
-            return Integer.parseInt(properties.getProperty("locationSet"));
+            return Integer.parseInt(properties.getProperty(LOCATION_INDEX));
         }
     }
 
@@ -90,25 +94,79 @@ public class AppProperties {
      * @return vault key
      */
     public String getVaultKey() {
-        return properties.getProperty("vaultKey");
+        return properties.getProperty(VAULT_KEY);
     }
 
     /**
      * @return secret key
      */
     public String getSecretKey() {
-        return properties.getProperty("secretKey");
+        return properties.getProperty(SECRET_KEY);
     }
 
     /**
      * @return access key
      */
     public String getAccessKey() {
-        return properties.getProperty("accessKey");
+        return properties.getProperty(ACCESS_KEY);
     }
+
+    /**
+     * @param accessKey new access key to be set
+     * @return true if the value changed (new value is different from previous one)
+     */
+    public boolean setAccessKey(final String accessKey) {
+        return setProperty(getAccessKey(), accessKey, ACCESS_KEY);
+    }
+
+    /**
+     * @param secretKey new secret key to be set
+     * @return true if the value changed (new value is different from previous one)
+     */
+    public boolean setSecretKey(final char[] secretKey) {
+        char[] sanitized = secretKey;
+        if (secretKey == null) {
+            sanitized = new char[0];
+        }
+        return setProperty(getSecretKey(), String.valueOf(sanitized), SECRET_KEY);
+    }
+
+    /**
+     * @param vaultKey new vault key to be set
+     * @return true if the value changed (new value is different from previous one)
+     */
+    public boolean setVaultKey(final String vaultKey) {
+        return setProperty(getVaultKey(), vaultKey, VAULT_KEY);
+    }
+
+    /**
+     * @param locationIndex new location index to be set
+     * @return true if the value changed (new value is different from previous one)
+     */
+    public boolean setLocationIndex(final int locationIndex) {
+        return setProperty(properties.getProperty(LOCATION_INDEX), Integer.toString(locationIndex), LOCATION_INDEX);
+    }
+
+    /**
+     * @param logTypeIndex new log type index to be set
+     * @return true if the value changed (new value is different from previous one)
+     */
+    public boolean setLogTypeIndex(final int logTypeIndex) {
+        return setProperty(properties.getProperty(LOG_TYPE_INDEX), Integer.toString(logTypeIndex), LOG_TYPE_INDEX);
+    }
+
 
     File getFilePropertiesPath() {
         return new File(dir + System.getProperty("file.separator") + PROPERTIES_FILE_NAME);
     }
 
+    private boolean setProperty(final String oldValue, final String newValue, final String propertyKey) {
+        if (isNullOrEmpty(oldValue) && !isNullOrEmpty(newValue) ||
+                !isNullOrEmpty(oldValue) && !oldValue.equals(newValue)) {
+            properties.setProperty(propertyKey, newValue == null ? "" : newValue.trim());
+            return true;
+        } else {
+            return false;
+        }
+    }
 }

@@ -27,11 +27,15 @@ import com.amazonaws.services.glacier.model.ListVaultsRequest;
 import com.amazonaws.services.glacier.model.ListVaultsResult;
 import com.amazonaws.services.glacier.transfer.ArchiveTransferManager;
 import com.amazonaws.services.glacier.transfer.UploadResult;
+import com.brianmcmichael.sagu.ui.LogTypes;
+import com.brianmcmichael.sagu.ui.LogTypeListener;
+import com.brianmcmichael.sagu.ui.PropertiesFocusListener;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.BufferedReader;
@@ -147,11 +151,6 @@ public class SimpleGlacierUploader extends Frame implements ActionListener {
     private JMenu viewMenu = new JMenu("View");
     private JMenuItem viewLog = new JMenuItem("View Log", logViewIcon);
     private JCheckBoxMenuItem logCheckMenuItem = new JCheckBoxMenuItem("Logging On/Off", logIcon);
-    private JRadioButtonMenuItem logLogRadio = new JRadioButtonMenuItem(".log");
-    private JRadioButtonMenuItem logTxtRadio = new JRadioButtonMenuItem(".txt");
-    private JRadioButtonMenuItem logCsvRadio = new JRadioButtonMenuItem(".csv");
-    private JRadioButtonMenuItem logYamlRadio = new JRadioButtonMenuItem(".yaml");
-    private ButtonGroup logFileGroup = new ButtonGroup();
     private JMenu deleteMenu = new JMenu("Delete");
     private JMenuItem deleteArchiveMnu = new JMenuItem("Delete Archive", xIcon);
     private JMenu helpMenu = new JMenu("Help");
@@ -240,6 +239,8 @@ public class SimpleGlacierUploader extends Frame implements ActionListener {
 
     private JFileChooser fc = new JFileChooser();
 
+    private LogTypes logTypes;
+
     private SimpleGlacierUploader() {
         this.setLayout(new BorderLayout());
 
@@ -255,16 +256,39 @@ public class SimpleGlacierUploader extends Frame implements ActionListener {
         final Font f3 = new Font("Helvetica", Font.BOLD, 20);
         titleLabel.setFont(f3);
 
+        viewMenu.setBackground(WHITE);
+        viewMenu.add(viewLog);
+        viewLog.setBackground(WHITE);
+        viewLog.addActionListener(this);
+        viewMenu.add(logCheckMenuItem);
+        logCheckMenuItem.setBackground(WHITE);
+        logCheckMenuItem.setSelected(true);
+        viewMenu.addSeparator();
+
+        appProperties = new AppProperties();
+
+        logTypes = new LogTypes(viewMenu, appProperties.getLogTypeIndex());
+
+        final FocusListener propertiesFocusListener = new PropertiesFocusListener(appProperties, accessField,
+                secretField, vaultField, locationChoice);
+        final LogTypeListener logTypeListener = new LogTypeListener(appProperties, logTypes);
+
+        logTypes.addItemListener(logTypeListener);
+
         credentialsPanel.setBackground(WHITE);
         credentialsPanel.setBorder(BorderFactory.createTitledBorder("AWS Credentials"));
         credentialsPanel.add(accessLabel);
         credentialsPanel.add(accessField);
         accessField.addMouseListener(rmb);
         accessField.setPreferredSize(buttonDimension);
+        accessField.setText(appProperties.getAccessKey());
+        accessField.addFocusListener(propertiesFocusListener);
         credentialsPanel.add(secretLabel);
         credentialsPanel.add(secretField);
         secretField.addMouseListener(rmb);
         secretField.setPreferredSize(buttonDimension);
+        secretField.setText(appProperties.getSecretKey());
+        secretField.addFocusListener(propertiesFocusListener);
 
         locationPanel.setBackground(WHITE);
         locationPanel.setBorder(BorderFactory.createTitledBorder("Server Location"));
@@ -272,7 +296,9 @@ public class SimpleGlacierUploader extends Frame implements ActionListener {
         locationChoice.setPreferredSize(buttonDimension);
         locationChoice.setBackground(WHITE);
         Endpoint.populateComboBox(locationChoice);
+        locationChoice.setSelectedIndex(appProperties.getLocationIndex());
         locationChoice.addActionListener(this);
+        locationChoice.addFocusListener(propertiesFocusListener);
         locationPanel.add(loginButton);
         loginButton.addActionListener(this);
         loginButton.setBackground(WHITE);
@@ -287,6 +313,8 @@ public class SimpleGlacierUploader extends Frame implements ActionListener {
         vaultPanel.add(vaultField);
         vaultField.addActionListener(this);
         vaultField.setPreferredSize(buttonDimension);
+        vaultField.setText(appProperties.getVaultKey());
+        vaultField.addFocusListener(propertiesFocusListener);
         vaultPanel.add(newVaultButton);
         newVaultButton.addActionListener(this);
         newVaultButton.setBackground(WHITE);
@@ -377,27 +405,6 @@ public class SimpleGlacierUploader extends Frame implements ActionListener {
         downloadFileMnu.setBackground(WHITE);
         downloadFileMnu.addActionListener(this);
         menuBar.add(viewMenu);
-        viewMenu.setBackground(WHITE);
-        viewMenu.add(viewLog);
-        viewLog.setBackground(WHITE);
-        viewLog.addActionListener(this);
-        viewMenu.add(logCheckMenuItem);
-        logCheckMenuItem.setBackground(WHITE);
-        logCheckMenuItem.setSelected(true);
-        viewMenu.addSeparator();
-        viewMenu.add(logLogRadio);
-        logLogRadio.setBackground(WHITE);
-        logLogRadio.setSelected(true);
-        logFileGroup.add(logLogRadio);
-        viewMenu.add(logTxtRadio);
-        logFileGroup.add(logTxtRadio);
-        logTxtRadio.setBackground(WHITE);
-        viewMenu.add(logCsvRadio);
-        logCsvRadio.setBackground(WHITE);
-        logFileGroup.add(logCsvRadio);
-        viewMenu.add(logYamlRadio);
-        logYamlRadio.setBackground(WHITE);
-        logFileGroup.add(logYamlRadio);
         menuBar.add(deleteMenu);
         deleteMenu.add(deleteArchiveMnu);
         deleteArchiveMnu.setBackground(WHITE);
@@ -420,14 +427,6 @@ public class SimpleGlacierUploader extends Frame implements ActionListener {
             }
         });
 
-        // Load properties from last invocation
-        appProperties = new AppProperties();
-        accessField.setText(appProperties.getAccessKey());
-        secretField.setText(appProperties.getSecretKey());
-        vaultField.setText(appProperties.getVaultKey());
-        locationChoice.setSelectedIndex(appProperties.getLocationIndex());
-        setLogFileType(appProperties.getLogTypeIndex());
-
         versionNumber = SAGUUtils.loadVersionNumber();
 
         pack();
@@ -442,41 +441,6 @@ public class SimpleGlacierUploader extends Frame implements ActionListener {
 
     public String getVersionNumber() {
         return versionNumber;
-    }
-
-    public void setLogFileType(int intype) {
-        switch (intype) {
-            case 0:
-            default:
-                logLogRadio.setSelected(true);
-                break;
-            case 1:
-                logTxtRadio.setSelected(true);
-                break;
-            case 2:
-                logCsvRadio.setSelected(true);
-                break;
-            case 3:
-                logYamlRadio.setSelected(true);
-                break;
-        }
-    }
-
-    public int getLogFileType() {
-        if (logLogRadio.isSelected()) {
-            return 0;
-        }
-        if (logTxtRadio.isSelected()) {
-            return 1;
-        }
-        if (logCsvRadio.isSelected()) {
-            return 2;
-        }
-        if (logYamlRadio.isSelected()) {
-            return 3;
-        } else {
-            return 0;
-        }
     }
 
     public static File getLogFilenamePath(int filepath) {
@@ -793,7 +757,7 @@ public class SimpleGlacierUploader extends Frame implements ActionListener {
         }
 
         if (e.getSource() == viewLog || e.getSource() == logButton) {
-            File f = SimpleGlacierUploader.getLogFilenamePath(getLogFileType());
+            File f = SimpleGlacierUploader.getLogFilenamePath(logTypes.getSelectedIndex());
             if (f.exists()) {
                 JHyperlinkLabel.OpenURI("" + f.toURI());
             } else {
@@ -866,9 +830,6 @@ public class SimpleGlacierUploader extends Frame implements ActionListener {
 
         if (e.getSource() == uploadButton) {
             if ((checkAllFields()) && (checkForFile())) {
-
-                appProperties.saveProperties(accessString, secretString, vaultString, getServerRegion(),
-                        getLogFileType());
 
                 SwingWorker<Object, Void> uploadWorker = new SwingWorker<Object, Void>() {
 
