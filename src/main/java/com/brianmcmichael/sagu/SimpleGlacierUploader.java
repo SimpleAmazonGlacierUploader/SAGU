@@ -242,6 +242,11 @@ public class SimpleGlacierUploader extends Frame implements ActionListener {
     private LogTypes logTypes;
 
     private SimpleGlacierUploader() {
+        appProperties = new AppProperties();
+        initializeUI();
+    }
+
+    private void initializeUI() {
         this.setLayout(new BorderLayout());
 
         mainPanel.setLayout(new BorderLayout());
@@ -264,8 +269,6 @@ public class SimpleGlacierUploader extends Frame implements ActionListener {
         logCheckMenuItem.setBackground(WHITE);
         logCheckMenuItem.setSelected(true);
         viewMenu.addSeparator();
-
-        appProperties = new AppProperties();
 
         logTypes = new LogTypes(viewMenu, appProperties.getLogTypeIndex());
 
@@ -1098,10 +1101,16 @@ public class SimpleGlacierUploader extends Frame implements ActionListener {
         }
     }
 
+    AppProperties getAppProperties() {
+        return appProperties;
+    }
+
+    static SimpleGlacierUploader sagu;
+
     public static void main(String[] args) throws Exception {
-        SimpleGlacierUploader g = new SimpleGlacierUploader();
-        g.setBounds(300, 300, 650, 475);
-        g.setTitle(TITLE  + " " + g.getVersionNumber());
-        g.setVisible(true);
+        sagu = new SimpleGlacierUploader();
+        sagu.setBounds(300, 300, 650, 475);
+        sagu.setTitle(TITLE + " " + sagu.getVersionNumber());
+        sagu.setVisible(true);
     }
 }
