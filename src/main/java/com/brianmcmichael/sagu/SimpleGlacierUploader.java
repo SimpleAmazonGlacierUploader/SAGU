@@ -246,6 +246,11 @@ public class SimpleGlacierUploader extends Frame implements ActionListener {
         initializeUI();
     }
 
+    public SimpleGlacierUploader(final String propertiesDir) {
+        appProperties = new AppProperties(propertiesDir);
+        initializeUI();
+    }
+
     private void initializeUI() {
         this.setLayout(new BorderLayout());
 
@@ -1108,7 +1113,11 @@ public class SimpleGlacierUploader extends Frame implements ActionListener {
     static SimpleGlacierUploader sagu;
 
     public static void main(String[] args) throws Exception {
-        sagu = new SimpleGlacierUploader();
+        if (args != null && args.length == 2 && "--properties-dir".equals(args[0])) {
+            sagu = new SimpleGlacierUploader(args[1]);
+        } else {
+            sagu = new SimpleGlacierUploader();
+        }
         sagu.setBounds(300, 300, 650, 475);
         sagu.setTitle(TITLE + " " + sagu.getVersionNumber());
         sagu.setVisible(true);

@@ -64,7 +64,7 @@ public class AppProperties {
      *
      * @param dir directory (path string) to load properties from
      */
-    AppProperties(final String dir) {
+    public AppProperties(final String dir) {
         this.dir = dir;
         loadProperties();
     }
