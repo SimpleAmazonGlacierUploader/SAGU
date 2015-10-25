@@ -24,12 +24,13 @@ public class AppProperties {
 
     private static final String PROPERTIES_FILE_NAME = "SAGU.properties";
     private static final String SAGU_DIR = ".sagu";
+    private static final String SEPARATOR = System.getProperty("file.separator");
+    private static final String SAGU_HOME_DIR = System.getProperty("user.home") + SEPARATOR + SAGU_DIR;
     private static final String ACCESS_KEY = "accessKey";
     private static final String SECRET_KEY = "secretKey";
     private static final String VAULT_KEY = "vaultKey";
     private static final String LOCATION_INDEX = "locationSet";
     private static final String LOG_TYPE_INDEX = "logType";
-    public static final String SEPARATOR = System.getProperty("file.separator");
 
     private final Properties properties = new Properties();
     private final String dir;
@@ -39,22 +40,21 @@ public class AppProperties {
      * loads/stores properties there.
      */
     public AppProperties() {
-        this(System.getProperty("user.dir"), System.getProperty("user.home"));
+        this(System.getProperty("user.dir"), SAGU_HOME_DIR);
     }
 
-    AppProperties(final String workingDir, final String homeDir) {
+    AppProperties(final String workingDir, final String saguHomeDir) {
         if (Files.exists(Paths.get(workingDir, PROPERTIES_FILE_NAME))) {
             dir = workingDir;
         } else {
-            final String saguDir = homeDir + SEPARATOR + SAGU_DIR;
-            if (!Files.exists(Paths.get(saguDir))) {
+            if (!Files.exists(Paths.get(saguHomeDir))) {
                 try {
-                    Files.createDirectory(Paths.get(saguDir));
+                    Files.createDirectory(Paths.get(saguHomeDir));
                 } catch (IOException e) {
                     throw new RuntimeException("Cannot create directory '%s' for properties and logs.", e);
                 }
             }
-            dir = saguDir;
+            dir = saguHomeDir;
         }
         loadProperties();
     }
@@ -183,6 +183,10 @@ public class AppProperties {
 
     File getFilePropertiesPath() {
         return new File(dir + SEPARATOR + PROPERTIES_FILE_NAME);
+    }
+
+    String getDir() {
+        return dir;
     }
 
     private boolean setProperty(final String oldValue, final String newValue, final String propertyKey) {

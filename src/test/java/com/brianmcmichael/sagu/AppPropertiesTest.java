@@ -51,11 +51,12 @@ public class AppPropertiesTest {
     public void constructorShouldUseHomeDirIfPropertiesNotInWorkingDir() throws Exception {
         final Path working = Files.createTempDirectory("working");
         final Path home = Files.createTempDirectory("home");
-        Files.createDirectory(Paths.get(home.toString(), ".sagu"));
-        final Path propFile = Files.createFile(Paths.get(home.toString(), ".sagu", "SAGU.properties"));
+        final Path saguHome = Paths.get(home.toString(), ".sagu");
+        Files.createDirectory(saguHome);
+        final Path propFile = Files.createFile(Paths.get(saguHome.toString(), "SAGU.properties"));
         Files.write(propFile, singleton("accessKey=TEST"));
 
-        final AppProperties properties = new AppProperties(working.toString(), home.toString());
+        final AppProperties properties = new AppProperties(working.toString(), saguHome.toString());
         assertThat(properties.getAccessKey(), is("TEST"));
     }
 
