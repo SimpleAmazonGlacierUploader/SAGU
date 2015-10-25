@@ -107,16 +107,16 @@ public class LogTypesTest {
         final LogTypes logTypes = new LogTypes(menu, 0);
         final ItemListener listener = mock(ItemListener.class);
 
-        assertThat(logTypes.getLogRadio().getFocusListeners().length, is(1));
-        assertThat(logTypes.getTxtRadio().getFocusListeners().length, is(1));
-        assertThat(logTypes.getCsvRadio().getFocusListeners().length, is(1));
-        assertThat(logTypes.getYamlRadio().getFocusListeners().length, is(1));
+        assertThat(logTypes.getLogRadio().getItemListeners().length, is(0));
+        assertThat(logTypes.getTxtRadio().getItemListeners().length, is(0));
+        assertThat(logTypes.getCsvRadio().getItemListeners().length, is(0));
+        assertThat(logTypes.getYamlRadio().getItemListeners().length, is(0));
 
         logTypes.addItemListener(listener);
 
-        assertThat(logTypes.getLogRadio().getFocusListeners().length, is(2));
-        assertThat(logTypes.getTxtRadio().getFocusListeners().length, is(2));
-        assertThat(logTypes.getCsvRadio().getFocusListeners().length, is(2));
-        assertThat(logTypes.getYamlRadio().getFocusListeners().length, is(2));
+        assertThat(logTypes.getLogRadio().getItemListeners().length, is(1));
+        assertThat(logTypes.getTxtRadio().getItemListeners().length, is(1));
+        assertThat(logTypes.getCsvRadio().getItemListeners().length, is(1));
+        assertThat(logTypes.getYamlRadio().getItemListeners().length, is(1));
     }
 }
