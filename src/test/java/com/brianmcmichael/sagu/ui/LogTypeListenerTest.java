@@ -41,7 +41,7 @@ public class LogTypeListenerTest {
 
         listener.itemStateChanged(event);
 
-        verify(logTypes).selectLogType(2);
+        verify(properties).setLogTypeIndex(2);
         verify(properties).saveProperties();
     }
 
