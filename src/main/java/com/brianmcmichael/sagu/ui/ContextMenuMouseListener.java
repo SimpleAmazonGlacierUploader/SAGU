@@ -16,7 +16,7 @@
 //    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //////////////////////////////////////////////////////////////////////////////////
 
-package com.brianmcmichael.sagu;
+package com.brianmcmichael.sagu.ui;
 
 import javax.swing.*;
 import javax.swing.text.JTextComponent;

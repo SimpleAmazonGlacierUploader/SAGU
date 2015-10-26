@@ -1,4 +1,4 @@
-package com.brianmcmichael.sagu;
+package com.brianmcmichael.sagu.ui;
 
 import java.awt.datatransfer.DataFlavor;
 import java.io.*;

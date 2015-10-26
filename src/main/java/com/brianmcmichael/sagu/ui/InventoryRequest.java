@@ -16,12 +16,13 @@
 //    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //////////////////////////////////////////////////////////////////////////////////
 
-package com.brianmcmichael.sagu;
+package com.brianmcmichael.sagu.ui;
 
 import com.amazonaws.AmazonClientException;
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.glacier.AmazonGlacierClient;
 import com.amazonaws.services.glacier.model.*;
+import com.brianmcmichael.sagu.Endpoint;
 
 import javax.swing.*;
 import java.awt.*;
