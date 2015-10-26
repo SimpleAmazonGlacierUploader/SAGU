@@ -34,8 +34,8 @@ import com.brianmcmichael.sagu.ui.DeleteArchiveFrame;
 import com.brianmcmichael.sagu.ui.FileDrop;
 import com.brianmcmichael.sagu.ui.InventoryRequest;
 import com.brianmcmichael.sagu.ui.JHyperlinkLabel;
-import com.brianmcmichael.sagu.ui.LogTypes;
 import com.brianmcmichael.sagu.ui.LogTypeListener;
+import com.brianmcmichael.sagu.ui.LogTypes;
 import com.brianmcmichael.sagu.ui.PropertiesFocusListener;
 import com.brianmcmichael.sagu.ui.UploadWindow;
 
@@ -94,8 +94,6 @@ public class SAGU extends Frame implements ActionListener {
     private static final String AWS_SITE_STRING = "Get AWS Credentials";
 
     public static final String ACCESS_LABEL = "Access Key: ";
-
-    private static final String CUR_DIR = System.getProperty("user.dir");
 
     // Config override
     private static final int SOCKET_TIMEOUT = 1000000;
@@ -459,23 +457,23 @@ public class SAGU extends Frame implements ActionListener {
         return versionNumber;
     }
 
-    public static File getLogFilenamePath(int filepath) {
-        if (filepath == 0) {
-            return new File(CUR_DIR + System.getProperty("file.separator") + LOG_FILE_NAME_LOG);
+    public static File getLogFilenamePath(final int logType, final AppProperties properties) {
+        if (logType == 0) {
+            return new File(properties.getDir() + System.getProperty("file.separator") + LOG_FILE_NAME_LOG);
         }
-        if (filepath == 1) {
-            return new File(CUR_DIR + System.getProperty("file.separator") + LOG_FILE_NAME_TXT);
+        if (logType == 1) {
+            return new File(properties.getDir() + System.getProperty("file.separator") + LOG_FILE_NAME_TXT);
         }
-        if (filepath == 2) {
-            return new File(CUR_DIR + System.getProperty("file.separator") + LOG_FILE_NAME_CSV);
+        if (logType == 2) {
+            return new File(properties.getDir() + System.getProperty("file.separator") + LOG_FILE_NAME_CSV);
         }
-        if (filepath == 3) {
-            return new File(CUR_DIR + System.getProperty("file.separator") + LOG_FILE_NAME_YAML);
+        if (logType == 3) {
+            return new File(properties.getDir() + System.getProperty("file.separator") + LOG_FILE_NAME_YAML);
         }
-        if (filepath == 4) {
-            return new File(CUR_DIR + System.getProperty("file.separator") + LOG_FILE_NAME_ERR);
+        if (logType == 4) {
+            return new File(properties.getDir() + System.getProperty("file.separator") + LOG_FILE_NAME_ERR);
         } else {
-            return new File(CUR_DIR + System.getProperty("file.separator") + LOG_FILE_NAME_LOG);
+            return new File(properties.getDir() + System.getProperty("file.separator") + LOG_FILE_NAME_LOG);
         }
     }
 
@@ -703,7 +701,7 @@ public class SAGU extends Frame implements ActionListener {
         if (e.getSource() == saveFileMnu) {
             FileDialog fd = new FileDialog(new Frame(), "Save...", FileDialog.SAVE);
             fd.setFile("Glacier.txt");
-            fd.setDirectory(CUR_DIR);
+            fd.setDirectory(appProperties.getDir());
             fd.setLocation(50, 50);
             fd.setVisible(true);
             String filePath = "" + fd.getDirectory() + System.getProperty("file.separator") + fd.getFile();
@@ -713,7 +711,7 @@ public class SAGU extends Frame implements ActionListener {
             if (!outFile.equals("") && !outFile.equals("null")) {
 
                 try {
-                    FileReader fr = new FileReader(getLogFilenamePath(0));
+                    FileReader fr = new FileReader(getLogFilenamePath(0, appProperties));
                     BufferedReader br = new BufferedReader(fr);
 
                     FileWriter saveFile = new FileWriter(outFile.toString());
@@ -773,7 +771,7 @@ public class SAGU extends Frame implements ActionListener {
         }
 
         if (e.getSource() == viewLog || e.getSource() == logButton) {
-            File f = SAGU.getLogFilenamePath(logTypes.getSelectedIndex());
+            File f = SAGU.getLogFilenamePath(logTypes.getSelectedIndex(), appProperties);
             if (f.exists()) {
                 JHyperlinkLabel.OpenURI("" + f.toURI());
             } else {
@@ -925,22 +923,14 @@ public class SAGU extends Frame implements ActionListener {
                                                 .calculateTreeHash(uploadFileBatch[i]);
 
                                         try {
-                                            plainOutputLog = new BufferedWriter(
-                                                    new FileWriter(
-                                                            getLogFilenamePath(0),
-                                                            true));
-                                            plainOutputTxt = new BufferedWriter(
-                                                    new FileWriter(
-                                                            getLogFilenamePath(1),
-                                                            true));
-                                            plainOutputCsv = new BufferedWriter(
-                                                    new FileWriter(
-                                                            getLogFilenamePath(2),
-                                                            true));
-                                            plainOutputYaml = new BufferedWriter(
-                                                    new FileWriter(
-                                                            getLogFilenamePath(3),
-                                                            true));
+                                            plainOutputLog = new BufferedWriter(new FileWriter(
+                                                    getLogFilenamePath(0, appProperties), true));
+                                            plainOutputTxt = new BufferedWriter(new FileWriter(
+                                                    getLogFilenamePath(1, appProperties), true));
+                                            plainOutputCsv = new BufferedWriter(new FileWriter(
+                                                    getLogFilenamePath(2, appProperties), true));
+                                            plainOutputYaml = new BufferedWriter(new FileWriter(
+                                                    getLogFilenamePath(3, appProperties), true));
 
                                         } catch (IOException ex) {
                                             JOptionPane.showMessageDialog(null,
@@ -1087,7 +1077,7 @@ public class SAGU extends Frame implements ActionListener {
                         Writer errorOutputLog = null;
                         try {
                             errorOutputLog = new BufferedWriter(new FileWriter(
-                                    getLogFilenamePath(4), true));
+                                    getLogFilenamePath(4, appProperties), true));
                         } catch (Exception badLogCreate) {
                             JOptionPane.showMessageDialog(null,
                                     LOG_CREATION_ERROR, "IO Error",
