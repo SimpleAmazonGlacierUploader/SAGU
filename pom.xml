@@ -7,6 +7,7 @@
     <version>0.75.0-SNAPSHOT</version>
     <name>SAGU</name>
     <description>Simple Amazon Glacier Uploader</description>
+    <url>http://simpleglacieruploader.brianmcmichael.com</url>
 
     <licenses>
         <license>
@@ -71,7 +72,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>com.brianmcmichael.sagu.SimpleGlacierUploader</mainClass>
+                            <mainClass>com.brianmcmichael.sagu.SAGU</mainClass>
                         </manifest>
                     </archive>
                     <descriptorRefs>

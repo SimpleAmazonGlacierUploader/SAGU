@@ -61,7 +61,7 @@ import java.util.Date;
 import static java.awt.Color.WHITE;
 import static java.lang.String.format;
 
-public class SimpleGlacierUploader extends Frame implements ActionListener {
+public class SAGU extends Frame implements ActionListener {
 
 	private static final long serialVersionUID = 1L;
 
@@ -249,12 +249,12 @@ public class SimpleGlacierUploader extends Frame implements ActionListener {
 
     private LogTypes logTypes;
 
-    private SimpleGlacierUploader() {
+    private SAGU() {
         appProperties = new AppProperties();
         initializeUI();
     }
 
-    public SimpleGlacierUploader(final String propertiesDir) {
+    public SAGU(final String propertiesDir) {
         appProperties = new AppProperties(propertiesDir);
         initializeUI();
     }
@@ -773,7 +773,7 @@ public class SimpleGlacierUploader extends Frame implements ActionListener {
         }
 
         if (e.getSource() == viewLog || e.getSource() == logButton) {
-            File f = SimpleGlacierUploader.getLogFilenamePath(logTypes.getSelectedIndex());
+            File f = SAGU.getLogFilenamePath(logTypes.getSelectedIndex());
             if (f.exists()) {
                 JHyperlinkLabel.OpenURI("" + f.toURI());
             } else {
@@ -822,7 +822,7 @@ public class SimpleGlacierUploader extends Frame implements ActionListener {
         }
 
         if (e.getSource() == selectFileButton) {
-            int returnVal = fc.showOpenDialog(SimpleGlacierUploader.this);
+            int returnVal = fc.showOpenDialog(SAGU.this);
 
             if (returnVal == JFileChooser.APPROVE_OPTION) {
                 if (fc.getSelectedFile().isFile()) {
@@ -1118,13 +1118,13 @@ public class SimpleGlacierUploader extends Frame implements ActionListener {
         return appProperties;
     }
 
-    static SimpleGlacierUploader sagu;
+    static SAGU sagu;
 
     public static void main(String[] args) throws Exception {
         if (args != null && args.length == 2 && "--properties-dir".equals(args[0])) {
-            sagu = new SimpleGlacierUploader(args[1]);
+            sagu = new SAGU(args[1]);
         } else {
-            sagu = new SimpleGlacierUploader();
+            sagu = new SAGU();
         }
         sagu.setBounds(300, 300, 650, 475);
         sagu.setTitle(TITLE + " " + sagu.getVersionNumber());

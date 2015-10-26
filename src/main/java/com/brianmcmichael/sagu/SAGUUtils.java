@@ -12,9 +12,13 @@ public class SAGUUtils {
     private SAGUUtils() {
     }
 
+    /**
+     * Load version number string from `version.properties` resource file updated automatically by Maven.
+     * @return version number string
+     */
     static String loadVersionNumber() {
         final Properties properties = new Properties();
-        final InputStream resourceIS = SimpleGlacierUploader.class.getResourceAsStream("/version.properties");
+        final InputStream resourceIS = SAGU.class.getResourceAsStream("/version.properties");
         try {
             properties.load(resourceIS);
         } catch (IOException e) {

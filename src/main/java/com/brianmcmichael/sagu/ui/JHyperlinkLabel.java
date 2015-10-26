@@ -19,12 +19,12 @@
 
 package com.brianmcmichael.sagu.ui;
 
-import com.brianmcmichael.sagu.SimpleGlacierUploader;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+
+import static com.brianmcmichael.sagu.SAGU.ACCESS_LABEL;
 
 public class JHyperlinkLabel extends JLabel {
 
@@ -59,7 +59,7 @@ public class JHyperlinkLabel extends JLabel {
         @Override
         public void mouseClicked(MouseEvent e) {
 
-            if (getText().equals(SimpleGlacierUploader.ACCESS_LABEL)) {
+            if (getText().equals(ACCESS_LABEL)) {
                 OpenURI("https://portal.aws.amazon.com/gp/aws/securityCredentials");
             } else if (getText().equals("Vault Name: ")) {
                 OpenURI("https://console.aws.amazon.com/glacier/home");
