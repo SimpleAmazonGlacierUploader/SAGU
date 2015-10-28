@@ -105,13 +105,13 @@ public class LogWriter {
         plainOutputTxt.write(lineSeparator);
         plainOutputTxt.close();
 
-        plainOutputCsv.write("" + archiveId + ",");
-        plainOutputCsv.write("" + filePath + ",");
-        plainOutputCsv.write("" + fileLength + ",");
-        plainOutputCsv.write("" + vaultName + ",");
-        plainOutputCsv.write("" + region + ",");
-        plainOutputCsv.write("" + currentDate.toString() + ",");
-        plainOutputCsv.write("" + treeHash + ",");
+        plainOutputCsv.write("\"" + csvEscaping(archiveId) + "\",");
+        plainOutputCsv.write("\"" + csvEscaping(filePath) + "\",");
+        plainOutputCsv.write("\"" + csvEscaping(fileLength) + "\",");
+        plainOutputCsv.write("\"" + csvEscaping(vaultName) + "\",");
+        plainOutputCsv.write("\"" + csvEscaping(region) + "\",");
+        plainOutputCsv.write("\"" + csvEscaping(currentDate.toString()) + "\",");
+        plainOutputCsv.write("\"" + csvEscaping(treeHash) + "\",");
         plainOutputCsv.write(lineSeparator);
         plainOutputCsv.close();
 
@@ -128,5 +128,9 @@ public class LogWriter {
 
     private String yamlEscaping(final String value) {
         return value.replaceAll("\"", "\\\\\"");
+    }
+
+    private String csvEscaping(final String value) {
+        return value.replaceAll("\"", "\"\"");
     }
 }
