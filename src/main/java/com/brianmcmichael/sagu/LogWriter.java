@@ -111,7 +111,7 @@ public class LogWriter {
         plainOutputCsv.write("\"" + csvEscaping(vaultName) + "\",");
         plainOutputCsv.write("\"" + csvEscaping(region) + "\",");
         plainOutputCsv.write("\"" + csvEscaping(currentDate.toString()) + "\",");
-        plainOutputCsv.write("\"" + csvEscaping(treeHash) + "\",");
+        plainOutputCsv.write("\"" + csvEscaping(treeHash) + "\"");
         plainOutputCsv.write(lineSeparator);
         plainOutputCsv.close();
 

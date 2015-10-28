@@ -63,7 +63,7 @@ public class LogWriterTest {
         final List<String> csvLines = Files.readAllLines(getLogFile(2, properties).toPath());
         assertThat(csvLines.size(), is(1));
         assertThat(csvLines.get(0).matches(
-                "\"test_id\",\"test_file\",\"test_length\",\"test \"\"vault\"\"\",\"test_region\",\".*\",\"test_hash\","),
+                "\"test_id\",\"test_file\",\"test_length\",\"test \"\"vault\"\"\",\"test_region\",\".*\",\"test_hash\""),
                 is(true));
 
         final List<String> yamlLines = Files.readAllLines(getLogFile(3, properties).toPath());
