@@ -58,18 +58,13 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
 
+import static com.brianmcmichael.sagu.LogWriter.getLogFile;
 import static java.awt.Color.WHITE;
 import static java.lang.String.format;
 
 public class SAGU extends Frame implements ActionListener {
 
 	private static final long serialVersionUID = 1L;
-
-	private static final String LOG_FILE_NAME_LOG = "Glacier.log";
-    private static final String LOG_FILE_NAME_TXT = "Glacier.txt";
-    private static final String LOG_FILE_NAME_CSV = "Glacier.csv";
-    private static final String LOG_FILE_NAME_YAML = "Glacier.yaml";
-    private static final String LOG_FILE_NAME_ERR = "GlacierErrors.txt";
 
     // Error messages
     private static final String NO_DIRECTORIES_ERROR = "Directories, folders, and packages are not supported. \nPlease compress this into a single archive (such as a .zip) and try uploading again.";
@@ -457,26 +452,6 @@ public class SAGU extends Frame implements ActionListener {
         return versionNumber;
     }
 
-    public static File getLogFilenamePath(final int logType, final AppProperties properties) {
-        if (logType == 0) {
-            return new File(properties.getDir() + System.getProperty("file.separator") + LOG_FILE_NAME_LOG);
-        }
-        if (logType == 1) {
-            return new File(properties.getDir() + System.getProperty("file.separator") + LOG_FILE_NAME_TXT);
-        }
-        if (logType == 2) {
-            return new File(properties.getDir() + System.getProperty("file.separator") + LOG_FILE_NAME_CSV);
-        }
-        if (logType == 3) {
-            return new File(properties.getDir() + System.getProperty("file.separator") + LOG_FILE_NAME_YAML);
-        }
-        if (logType == 4) {
-            return new File(properties.getDir() + System.getProperty("file.separator") + LOG_FILE_NAME_ERR);
-        } else {
-            return new File(properties.getDir() + System.getProperty("file.separator") + LOG_FILE_NAME_LOG);
-        }
-    }
-
     public boolean checkAWSFields() {
         boolean passBool = false;
 
@@ -711,7 +686,7 @@ public class SAGU extends Frame implements ActionListener {
             if (!outFile.equals("") && !outFile.equals("null")) {
 
                 try {
-                    FileReader fr = new FileReader(getLogFilenamePath(0, appProperties));
+                    FileReader fr = new FileReader(getLogFile(0, appProperties));
                     BufferedReader br = new BufferedReader(fr);
 
                     FileWriter saveFile = new FileWriter(outFile.toString());
@@ -771,7 +746,7 @@ public class SAGU extends Frame implements ActionListener {
         }
 
         if (e.getSource() == viewLog || e.getSource() == logButton) {
-            File f = SAGU.getLogFilenamePath(logTypes.getSelectedIndex(), appProperties);
+            File f = getLogFile(logTypes.getSelectedIndex(), appProperties);
             if (f.exists()) {
                 JHyperlinkLabel.OpenURI("" + f.toURI());
             } else {
@@ -872,10 +847,9 @@ public class SAGU extends Frame implements ActionListener {
                             ArrayList<String> uploadList = new ArrayList<String>();
 
                             for (int i = 0; i < uploadFileBatch.length; i++) {
-                                // Save Current Settings to properties
 
                                 try {
-                                    Thread.sleep(100L);
+                                    Thread.sleep(100L); // why?
                                 } catch (InterruptedException e1) {
                                     e1.printStackTrace();
                                 }
@@ -912,25 +886,34 @@ public class SAGU extends Frame implements ActionListener {
 
                                     uw.updateProgress(percentage);
 
-                                    Writer plainOutputLog = null;
-                                    Writer plainOutputTxt = null;
-                                    Writer plainOutputCsv = null;
-                                    Writer plainOutputYaml = null;
+                                    final LogWriter logWriter;
 
                                     // write to file
                                     if (logCheckMenuItem.isSelected()) {
-                                        String treeHash = TreeHashGenerator
-                                                .calculateTreeHash(uploadFileBatch[i]);
+                                        String treeHash = TreeHashGenerator.calculateTreeHash(uploadFileBatch[i]);
 
                                         try {
-                                            plainOutputLog = new BufferedWriter(new FileWriter(
-                                                    getLogFilenamePath(0, appProperties), true));
-                                            plainOutputTxt = new BufferedWriter(new FileWriter(
-                                                    getLogFilenamePath(1, appProperties), true));
-                                            plainOutputCsv = new BufferedWriter(new FileWriter(
-                                                    getLogFilenamePath(2, appProperties), true));
-                                            plainOutputYaml = new BufferedWriter(new FileWriter(
-                                                    getLogFilenamePath(3, appProperties), true));
+                                            logWriter = new LogWriter(appProperties);
+
+                                            try {
+                                                String thisResult = result.getArchiveId();
+
+                                                logWriter.logUploadedFile(vaultName, locationUpped, thisFile,
+                                                        fileLength, treeHash, thisResult);
+
+                                                uploadList.add("Successfully uploaded " + thisFile
+                                                        + " to vault " + vaultName
+                                                        + " at " + locationUpped
+                                                        + ". Bytes: " + fileLength
+                                                        + ". ArchiveID Logged.\n");
+                                            } catch (IOException c) {
+                                                JOptionPane.showMessageDialog(null,
+                                                        LOG_WRITE_ERROR,
+                                                        "IO Error",
+                                                        JOptionPane.ERROR_MESSAGE);
+                                                uw.dispose();
+                                                System.exit(1);
+                                            }
 
                                         } catch (IOException ex) {
                                             JOptionPane.showMessageDialog(null,
@@ -940,81 +923,6 @@ public class SAGU extends Frame implements ActionListener {
                                             uw.dispose();
                                             System.exit(1);
                                         }
-
-                                        try {
-
-                                            Date d = new Date();
-
-                                            String thisResult = result.getArchiveId();
-
-                                            plainOutputLog.write(System.getProperty("line.separator"));
-                                            plainOutputLog.write(" | ArchiveID: " + thisResult + " ");
-                                            plainOutputLog.write(System.getProperty("line.separator"));
-                                            plainOutputLog.write(" | File: " + thisFile + " ");
-                                            plainOutputLog.write(" | Bytes: " + fileLength + " ");
-                                            plainOutputLog.write(" | Vault: " + vaultName + " ");
-                                            plainOutputLog.write(" | Location: " + locationUpped + " ");
-                                            plainOutputLog.write(" | Date: " + d.toString() + " ");
-                                            plainOutputLog.write(" | Hash: " + treeHash + " ");
-                                            plainOutputLog.write(System.getProperty("line.separator"));
-                                            plainOutputLog.close();
-
-                                            plainOutputTxt.write(System.getProperty("line.separator"));
-                                            plainOutputTxt.write(" | ArchiveID: " + thisResult + " ");
-                                            plainOutputTxt.write(System.getProperty("line.separator"));
-                                            plainOutputTxt.write(" | File: " + thisFile + " ");
-                                            plainOutputTxt.write(" | Bytes: " + fileLength + " ");
-                                            plainOutputTxt.write(" | Vault: " + vaultName + " ");
-                                            plainOutputTxt.write(" | Location: " + locationUpped + " ");
-                                            plainOutputTxt.write(" | Date: " + d.toString() + " ");
-                                            plainOutputTxt.write(" | Hash: " + treeHash + " ");
-                                            plainOutputTxt.write(System.getProperty("line.separator"));
-                                            plainOutputTxt.close();
-
-                                            plainOutputCsv.write("" + thisResult + ",");
-                                            plainOutputCsv.write("" + thisFile + ",");
-                                            plainOutputCsv.write("" + fileLength + ",");
-                                            plainOutputCsv.write("" + vaultName + ",");
-                                            plainOutputCsv.write("" + locationUpped + ",");
-                                            plainOutputCsv.write("" + d.toString() + ",");
-                                            plainOutputCsv.write("" + treeHash + ",");
-                                            plainOutputCsv.write(System.getProperty("line.separator"));
-                                            plainOutputCsv.close();
-
-                                            plainOutputYaml.write(System.getProperty("line.separator"));
-                                            plainOutputYaml.write("-  ArchiveID: \"" + thisResult + "\"" + System
-                                                    .getProperty("line.separator"));
-                                            plainOutputYaml.write("   File:      \"" + thisFile + "\"" + System
-                                                    .getProperty("line.separator"));
-                                            plainOutputYaml.write("   Bytes:     \"" + fileLength + "\"" + System
-                                                    .getProperty("line.separator"));
-                                            plainOutputYaml.write("   Vault:     \"" + vaultName + "\"" + System
-                                                    .getProperty("line.separator"));
-                                            plainOutputYaml.write("   Location:  \"" + locationUpped + "\"" + System
-                                                    .getProperty("line.separator"));
-                                            plainOutputYaml.write("   Date:      \"" + d.toString() + "\"" + System
-                                                    .getProperty("line.separator"));
-                                            plainOutputYaml.write("   Hash:      \"" + treeHash + "\"" + System
-                                                    .getProperty("line.separator"));
-                                            plainOutputYaml.close();
-
-                                            uploadList
-                                                    .add("Successfully uploaded " + thisFile
-                                                            + " to vault " + vaultName
-                                                            + " at " + locationUpped
-                                                            + ". Bytes: " + fileLength
-                                                            + ". ArchiveID Logged.\n");
-                                        }
-
-                                        catch (IOException c) {
-                                            JOptionPane.showMessageDialog(null,
-                                                    LOG_WRITE_ERROR,
-                                                    "IO Error",
-                                                    JOptionPane.ERROR_MESSAGE);
-                                            uw.dispose();
-                                            System.exit(1);
-                                        }
-
                                     } else {
                                         JOptionPane.showMessageDialog(
                                                 null,
@@ -1076,8 +984,7 @@ public class SAGU extends Frame implements ActionListener {
 
                         Writer errorOutputLog = null;
                         try {
-                            errorOutputLog = new BufferedWriter(new FileWriter(
-                                    getLogFilenamePath(4, appProperties), true));
+                            errorOutputLog = new BufferedWriter(new FileWriter(getLogFile(4, appProperties), true));
                         } catch (Exception badLogCreate) {
                             JOptionPane.showMessageDialog(null,
                                     LOG_CREATION_ERROR, "IO Error",

@@ -8,13 +8,9 @@ package com.brianmcmichael.sagu;
 import org.testng.annotations.Test;
 
 import java.nio.file.Files;
-import java.nio.file.Path;
 
-import static com.brianmcmichael.sagu.SAGU.getLogFilenamePath;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 public class SAGUTest {
 
@@ -32,18 +28,4 @@ public class SAGUTest {
         assertThat(SAGU.sagu.getAppProperties().getDir(), is(tempDir));
     }
 
-    @Test
-    public void getLogFilenamePathShouldConstructCorrectPath() throws Exception {
-        final AppProperties properties = mock(AppProperties.class);
-        final Path tempDir = Files.createTempDirectory("sagu");
-        final String separator = System.getProperty("file.separator");
-        when(properties.getDir()).thenReturn(tempDir.toString());
-
-        assertThat(getLogFilenamePath(0, properties).getPath(), is(tempDir.toString() + separator + "Glacier.log"));
-        assertThat(getLogFilenamePath(1, properties).getPath(), is(tempDir.toString() + separator + "Glacier.txt"));
-        assertThat(getLogFilenamePath(2, properties).getPath(), is(tempDir.toString() + separator + "Glacier.csv"));
-        assertThat(getLogFilenamePath(3, properties).getPath(), is(tempDir.toString() + separator + "Glacier.yaml"));
-        assertThat(getLogFilenamePath(4, properties).getPath(), is(tempDir.toString() + separator + "GlacierErrors.txt"));
-        assertThat(getLogFilenamePath(5, properties).getPath(), is(tempDir.toString() + separator + "Glacier.log"));
-    }
 }
