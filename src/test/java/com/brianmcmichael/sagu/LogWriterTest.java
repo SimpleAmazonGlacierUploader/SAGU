@@ -71,7 +71,7 @@ public class LogWriterTest {
         assertThat(yamlLines.get(1), is("-  ArchiveID: \"test_id\""));
         assertThat(yamlLines.get(2), is("   File:      \"test_file\""));
         assertThat(yamlLines.get(3), is("   Bytes:     \"test_length\""));
-        assertThat(yamlLines.get(4), is("   Vault:     \"test \"vault\"\""));
+        assertThat(yamlLines.get(4), is("   Vault:     \"test \\\"vault\\\"\""));
         assertThat(yamlLines.get(5), is("   Location:  \"test_region\""));
         assertThat(yamlLines.get(6).matches("   Date:      \".*\""), is(true));
         assertThat(yamlLines.get(7), is("   Hash:      \"test_hash\""));

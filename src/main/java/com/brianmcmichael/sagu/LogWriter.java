@@ -79,29 +79,30 @@ public class LogWriter {
                                 final String fileLength, final String treeHash,
                                 final String archiveId) throws IOException {
         final Date currentDate = new Date();
+        final String lineSeparator = System.getProperty("line.separator");
 
-        plainOutputLog.write(System.getProperty("line.separator"));
+        plainOutputLog.write(lineSeparator);
         plainOutputLog.write(" | ArchiveID: " + archiveId + " ");
-        plainOutputLog.write(System.getProperty("line.separator"));
+        plainOutputLog.write(lineSeparator);
         plainOutputLog.write(" | File: " + filePath + " ");
         plainOutputLog.write(" | Bytes: " + fileLength + " ");
         plainOutputLog.write(" | Vault: " + vaultName + " ");
         plainOutputLog.write(" | Location: " + region + " ");
         plainOutputLog.write(" | Date: " + currentDate.toString() + " ");
         plainOutputLog.write(" | Hash: " + treeHash + " ");
-        plainOutputLog.write(System.getProperty("line.separator"));
+        plainOutputLog.write(lineSeparator);
         plainOutputLog.close();
 
-        plainOutputTxt.write(System.getProperty("line.separator"));
+        plainOutputTxt.write(lineSeparator);
         plainOutputTxt.write(" | ArchiveID: " + archiveId + " ");
-        plainOutputTxt.write(System.getProperty("line.separator"));
+        plainOutputTxt.write(lineSeparator);
         plainOutputTxt.write(" | File: " + filePath + " ");
         plainOutputTxt.write(" | Bytes: " + fileLength + " ");
         plainOutputTxt.write(" | Vault: " + vaultName + " ");
         plainOutputTxt.write(" | Location: " + region + " ");
         plainOutputTxt.write(" | Date: " + currentDate.toString() + " ");
         plainOutputTxt.write(" | Hash: " + treeHash + " ");
-        plainOutputTxt.write(System.getProperty("line.separator"));
+        plainOutputTxt.write(lineSeparator);
         plainOutputTxt.close();
 
         plainOutputCsv.write("" + archiveId + ",");
@@ -111,19 +112,21 @@ public class LogWriter {
         plainOutputCsv.write("" + region + ",");
         plainOutputCsv.write("" + currentDate.toString() + ",");
         plainOutputCsv.write("" + treeHash + ",");
-        plainOutputCsv.write(System.getProperty("line.separator"));
+        plainOutputCsv.write(lineSeparator);
         plainOutputCsv.close();
 
-        plainOutputYaml.write(System.getProperty("line.separator"));
-        plainOutputYaml.write("-  ArchiveID: \"" + archiveId + "\"" + System.getProperty("line.separator"));
-        plainOutputYaml.write("   File:      \"" + filePath + "\"" + System.getProperty("line.separator"));
-        plainOutputYaml.write("   Bytes:     \"" + fileLength + "\"" + System.getProperty("line.separator"));
-        plainOutputYaml.write("   Vault:     \"" + vaultName + "\"" + System.getProperty("line.separator"));
-        plainOutputYaml.write("   Location:  \"" + region + "\"" + System.getProperty("line.separator"));
-        plainOutputYaml
-                .write("   Date:      \"" + currentDate.toString() + "\"" + System.getProperty("line.separator"));
-        plainOutputYaml.write("   Hash:      \"" + treeHash + "\"" + System.getProperty("line.separator"));
+        plainOutputYaml.write(lineSeparator);
+        plainOutputYaml.write("-  ArchiveID: \"" + yamlEscaping(archiveId) + "\"" + lineSeparator);
+        plainOutputYaml.write("   File:      \"" + yamlEscaping(filePath) + "\"" + lineSeparator);
+        plainOutputYaml.write("   Bytes:     \"" + yamlEscaping(fileLength) + "\"" + lineSeparator);
+        plainOutputYaml.write("   Vault:     \"" + yamlEscaping(vaultName) + "\"" + lineSeparator);
+        plainOutputYaml.write("   Location:  \"" + yamlEscaping(region) + "\"" + lineSeparator);
+        plainOutputYaml.write("   Date:      \"" + yamlEscaping(currentDate.toString()) + "\"" + lineSeparator);
+        plainOutputYaml.write("   Hash:      \"" + yamlEscaping(treeHash) + "\"" + lineSeparator);
         plainOutputYaml.close();
     }
 
+    private String yamlEscaping(final String value) {
+        return value.replaceAll("\"", "\\\\\"");
+    }
 }
