@@ -1,6 +1,9 @@
 /*
- * Simple Amazon Glacier Uploader - GUI upload and log for Amazon Glacier
- * Copyright (C) 2012 Brian L. McMichael <brian@brianmcmichael.com>
+ * Simple Amazon Glacier Uploader - GUI client for Amazon Glacier
+ * Copyright (C) 2012-2015 Brian L. McMichael, Libor Rysavy and other contributors
+ *
+ * This program is free software licensed under GNU General Public License
+ * found in the LICENSE file in the root directory of this source tree.
  */
 
 package com.brianmcmichael.sagu.ui;
