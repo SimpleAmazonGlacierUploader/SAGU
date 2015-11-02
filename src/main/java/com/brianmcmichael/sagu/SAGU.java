@@ -212,7 +212,7 @@ public class SAGU extends JFrame implements ActionListener {
         initializeUI();
     }
 
-    public SAGU(final String propertiesDir) {
+    private SAGU(final String propertiesDir) {
         appProperties = new AppProperties(propertiesDir);
         initializeUI();
     }
@@ -413,11 +413,11 @@ public class SAGU extends JFrame implements ActionListener {
         centerOnScreen(width, height);
     }
 
-    public String getVersionNumber() {
+    private String getVersionNumber() {
         return versionNumber;
     }
 
-    public boolean checkAWSFields() {
+    private boolean checkAWSFields() {
         boolean passBool = false;
 
         if ((accessField.getText().trim().equals(""))
@@ -453,7 +453,7 @@ public class SAGU extends JFrame implements ActionListener {
         return passBool;
     }
 
-    public boolean checkAllFields() {
+    private boolean checkAllFields() {
         boolean passBool = false;
 
         if ((accessField.getText().trim().equals(""))
@@ -491,7 +491,7 @@ public class SAGU extends JFrame implements ActionListener {
         return passBool;
     }
 
-    public boolean checkForFile() {
+    private boolean checkForFile() {
         boolean passBool;
 
         if (multiFiles == null) {
@@ -504,11 +504,11 @@ public class SAGU extends JFrame implements ActionListener {
         return passBool;
     }
 
-    public String getVaultField() {
+    private String getVaultField() {
         return vaultField.getText().trim();
     }
 
-    public String getAccessField() {
+    private String getAccessField() {
         return accessField.getText().trim();
     }
 
@@ -516,16 +516,16 @@ public class SAGU extends JFrame implements ActionListener {
         return secretField.getPassword().toString().trim();
     }
 
-    public int getServerRegion() {
+    private int getServerRegion() {
         return locationChoice.getSelectedIndex();
     }
 
-    public void clearFile() {
+    private void clearFile() {
         uploadButton.setText("Upload File(s)");
         ddText.setText("");
     }
 
-    public void repopulateVaults(String accessString, String secretString) {
+    private void repopulateVaults(String accessString, String secretString) {
 
         int newLoc = getServerRegion();
 
@@ -552,7 +552,7 @@ public class SAGU extends JFrame implements ActionListener {
         }
     }
 
-    public void centerOnScreen(int width, int height) {
+    private void centerOnScreen(int width, int height) {
         int top, left, x, y;
 
         // Get the screen dimension
@@ -567,7 +567,7 @@ public class SAGU extends JFrame implements ActionListener {
         this.setBounds(left, top, width, height);
     }
 
-    public File[] removeNullFile(File[] a) {
+    private File[] removeNullFile(File[] a) {
         ArrayList<File> removed = new ArrayList<File>();
         for (File fle : a)
             if (fle != null)
@@ -575,7 +575,7 @@ public class SAGU extends JFrame implements ActionListener {
         return removed.toArray(new File[removed.size()]);
     }
 
-    public File[] concatFileArray(File[] A, File[] B) {
+    private File[] concatFileArray(File[] A, File[] B) {
         File[] C = new File[A.length + B.length];
         System.arraycopy(A, 0, C, 0, A.length);
         System.arraycopy(B, 0, C, A.length, B.length);
@@ -583,15 +583,14 @@ public class SAGU extends JFrame implements ActionListener {
         return C;
     }
 
-    public AmazonGlacierClient makeClient(String accessorString,
-                                          String secretiveString, int regionIndex) {
+    private AmazonGlacierClient makeClient(String accessorString, String secretiveString, int regionIndex) {
         BasicAWSCredentials credentials = new BasicAWSCredentials(accessorString, secretiveString);
         client = new AmazonGlacierClient(credentials);
         client.setEndpoint(Endpoint.getByIndex(regionIndex).getGlacierEndpoint());
         return client;
     }
 
-    public static String regexClean(String statement) {
+    private static String regexClean(String statement) {
         String stmt = statement;
         String regex = "[^a-zA-Z0-9_\\-\\.]";
         String out = stmt.replaceAll(regex, "");
