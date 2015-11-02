@@ -52,7 +52,7 @@ import static com.brianmcmichael.sagu.LogWriter.getLogFile;
 import static java.awt.Color.WHITE;
 import static java.lang.String.format;
 
-public class SAGU extends Frame implements ActionListener {
+public class SAGU extends JFrame implements ActionListener {
 
 	private static final long serialVersionUID = 1L;
 
@@ -448,11 +448,9 @@ public class SAGU extends Frame implements ActionListener {
         if ((accessField.getText().trim().equals(""))
                 || (secretField.getPassword().toString().trim().equals(""))) {
             if ((accessField.getText().trim().equals(""))) {
-                accessField.setFocusable(true);
-                accessField.requestFocus();
+                accessField.requestFocusInWindow();
             } else if ((secretField.getPassword().toString().trim().equals(""))) {
-                secretField.setFocusable(true);
-                secretField.requestFocus();
+                secretField.requestFocusInWindow();
             }
 
             JOptionPane.showMessageDialog(null,
@@ -462,15 +460,13 @@ public class SAGU extends Frame implements ActionListener {
         } else if ((accessField.getText().trim().length() != 20)
                 || (secretField.getPassword().toString().trim().length() != 40)) {
             if (accessField.getText().trim().length() != 20) {
-                accessField.setFocusable(true);
-                accessField.requestFocus();
+                accessField.requestFocusInWindow();
                 JOptionPane.showMessageDialog(null,
                         "Your AWS Access Key does not appear to be valid.",
                         "Error", JOptionPane.ERROR_MESSAGE);
                 passBool = false;
             } else if (secretField.getPassword().toString().trim().length() != 40) {
-                secretField.setFocusable(true);
-                secretField.requestFocus();
+                secretField.requestFocusInWindow();
                 JOptionPane.showMessageDialog(null,
                         "Your AWS Secret Key does not appear to be valid.",
                         "Error", JOptionPane.ERROR_MESSAGE);
@@ -489,14 +485,11 @@ public class SAGU extends Frame implements ActionListener {
                 || vaultField.getText().trim().equals("")
                 || (secretField.getPassword().toString().trim().equals(""))) {
             if ((accessField.getText().trim().equals(""))) {
-                accessField.setFocusable(true);
-                accessField.requestFocus();
+                accessField.requestFocusInWindow();
             } else if ((secretField.getPassword().toString().trim().equals(""))) {
-                secretField.setFocusable(true);
-                secretField.requestFocus();
+                secretField.requestFocusInWindow();
             } else if ((vaultField.getText().trim().equals(""))) {
-                vaultField.setFocusable(true);
-                vaultField.requestFocus();
+                vaultField.requestFocusInWindow();
             }
             JOptionPane.showMessageDialog(null,
                     "You must complete all fields.", "Error",
@@ -505,15 +498,13 @@ public class SAGU extends Frame implements ActionListener {
         } else if ((accessField.getText().trim().length() != 20)
                 || (secretField.getPassword().toString().trim().length() != 40)) {
             if (accessField.getText().trim().length() != 20) {
-                accessField.setFocusable(true);
-                accessField.requestFocus();
+                accessField.requestFocusInWindow();
                 JOptionPane.showMessageDialog(null,
                         "Your AWS Access Key does not appear to be valid.",
                         "Error", JOptionPane.ERROR_MESSAGE);
                 passBool = false;
             } else if (secretField.getPassword().toString().trim().length() != 40) {
-                secretField.setFocusable(true);
-                secretField.requestFocus();
+                secretField.requestFocusInWindow();
                 JOptionPane.showMessageDialog(null,
                         "Your AWS Secret Key does not appear to be valid.",
                         "Error", JOptionPane.ERROR_MESSAGE);
