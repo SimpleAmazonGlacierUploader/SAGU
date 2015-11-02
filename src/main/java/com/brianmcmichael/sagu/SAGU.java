@@ -17,33 +17,12 @@ import com.amazonaws.services.glacier.model.ListVaultsRequest;
 import com.amazonaws.services.glacier.model.ListVaultsResult;
 import com.amazonaws.services.glacier.transfer.ArchiveTransferManager;
 import com.amazonaws.services.glacier.transfer.UploadResult;
-import com.brianmcmichael.sagu.ui.AddVaultFrame;
-import com.brianmcmichael.sagu.ui.AmazonDownloadRequest;
-import com.brianmcmichael.sagu.ui.ContextMenuMouseListener;
-import com.brianmcmichael.sagu.ui.DeleteArchiveFrame;
-import com.brianmcmichael.sagu.ui.FileDrop;
-import com.brianmcmichael.sagu.ui.InventoryRequest;
-import com.brianmcmichael.sagu.ui.JHyperlinkLabel;
-import com.brianmcmichael.sagu.ui.LogTypeListener;
-import com.brianmcmichael.sagu.ui.LogTypes;
-import com.brianmcmichael.sagu.ui.PropertiesFocusListener;
-import com.brianmcmichael.sagu.ui.UploadWindow;
+import com.brianmcmichael.sagu.ui.*;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.FocusListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.Writer;
+import java.awt.event.*;
+import java.io.*;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
@@ -181,18 +160,23 @@ public class SAGU extends JFrame implements ActionListener {
     private JPanel fileDropPanel = new JPanel();
     private JTextArea ddText = new JTextArea();
     private JScrollPane ddScroll = new JScrollPane(ddText);
+    private JButton uploadButton = new JButton("Upload");
+
+    private JPanel copyrightPanel = new JPanel();
+
+    private JFileChooser fc = new JFileChooser();
+
+    private LogTypes logTypes;
+
     {
-
-    new FileDrop(ddText, new FileDrop.Listener() {
-
-        public void filesDropped(java.io.File[] files) {
+        new FileDrop(ddText, files -> {
             ddText.setEditable(false);
             {
                 for (int i = 0; i < files.length; i++) {
                     if (files[i].isDirectory()) {
                         try {
                             ddText.append("Unable to upload: " + files[i].getCanonicalPath() + "\n");
-                        } catch (java.io.IOException e) {
+                        } catch (IOException e) {
                         }
                         JOptionPane.showMessageDialog(null,
                                 NO_DIRECTORIES_ERROR, "Error",
@@ -201,7 +185,7 @@ public class SAGU extends JFrame implements ActionListener {
                     } else {
                         try {
                             ddText.append(files[i].getCanonicalPath() + "\n");
-                        } catch (java.io.IOException e) {
+                        } catch (IOException e) {
                         }
                     }
                 } // end for: through each dropped file
@@ -220,17 +204,8 @@ public class SAGU extends JFrame implements ActionListener {
             } else if (multiFiles.length > 1) {
                 uploadButton.setText("Upload Files");
             }
-        }
-    });
+        });
     }
-
-    private JButton uploadButton = new JButton("Upload");
-
-    private JPanel copyrightPanel = new JPanel();
-
-    private JFileChooser fc = new JFileChooser();
-
-    private LogTypes logTypes;
 
     private SAGU() {
         appProperties = new AppProperties();
