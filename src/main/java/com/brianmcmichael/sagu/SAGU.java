@@ -190,9 +190,9 @@ public class SAGU extends JFrame implements ActionListener {
                     }
                 } // end for: through each dropped file
             }
-            files = removeNullFile(files);
+            files = SAGUUtils.removeNullFiles(files);
             if (multiFiles != null) {
-                multiFiles = concatFileArray(multiFiles, files);
+                multiFiles = SAGUUtils.concatFileArrays(multiFiles, files);
             } else {
                 multiFiles = files;
             }
@@ -567,34 +567,11 @@ public class SAGU extends JFrame implements ActionListener {
         this.setBounds(left, top, width, height);
     }
 
-    private File[] removeNullFile(File[] a) {
-        ArrayList<File> removed = new ArrayList<File>();
-        for (File fle : a)
-            if (fle != null)
-                removed.add(fle);
-        return removed.toArray(new File[removed.size()]);
-    }
-
-    private File[] concatFileArray(File[] A, File[] B) {
-        File[] C = new File[A.length + B.length];
-        System.arraycopy(A, 0, C, 0, A.length);
-        System.arraycopy(B, 0, C, A.length, B.length);
-
-        return C;
-    }
-
     private AmazonGlacierClient makeClient(String accessorString, String secretiveString, int regionIndex) {
         BasicAWSCredentials credentials = new BasicAWSCredentials(accessorString, secretiveString);
         client = new AmazonGlacierClient(credentials);
         client.setEndpoint(Endpoint.getByIndex(regionIndex).getGlacierEndpoint());
         return client;
-    }
-
-    private static String regexClean(String statement) {
-        String stmt = statement;
-        String regex = "[^a-zA-Z0-9_\\-\\.]";
-        String out = stmt.replaceAll(regex, "");
-        return out;
     }
 
     @Override
@@ -761,7 +738,7 @@ public class SAGU extends JFrame implements ActionListener {
                     } catch (java.io.IOException f) {
                     }
                     if (multiFiles != null) {
-                        multiFiles = concatFileArray(multiFiles, thisFile);
+                        multiFiles = SAGUUtils.concatFileArrays(multiFiles, thisFile);
                     } else {
                         multiFiles = thisFile;
                     }
@@ -819,7 +796,7 @@ public class SAGU extends JFrame implements ActionListener {
                                 client.setEndpoint(endpoint.getGlacierEndpoint());
                                 String locationUpped = endpoint.name();
                                 String thisFile = uploadFileBatch[i].getCanonicalPath();
-                                String cleanFile = regexClean(thisFile);
+                                final String description = SAGUUtils.pathToDescription(thisFile);
 
                                 try {
 
@@ -831,7 +808,7 @@ public class SAGU extends JFrame implements ActionListener {
                                             + uploadFileBatch.length + ")"
                                             + " Uploading: " + thisFile);
 
-                                    UploadResult result = atm.upload(vaultName, cleanFile, uploadFileBatch[i]);
+                                    UploadResult result = atm.upload(vaultName, description, uploadFileBatch[i]);
 
                                     uw.addToLog("Done: " + thisFile + "\n");
 
