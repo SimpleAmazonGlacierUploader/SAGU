@@ -38,4 +38,18 @@ public class SAGUTest {
         assertThat(SAGU.sagu.getSecretKey(), is("SEC"));
     }
 
+    @Test
+    public void getAccessKeyShouldReturnTrimmedString() throws Exception {
+        SAGU.main(null);
+        SAGU.sagu.accessField.setText(" ACC ");
+        assertThat(SAGU.sagu.getAccessKey(), is("ACC"));
+    }
+
+    @Test
+    public void getVaultNameShouldReturnTrimmedString() throws Exception {
+        SAGU.main(null);
+        SAGU.sagu.vaultField.setText(" VAU ");
+        assertThat(SAGU.sagu.getVaultName(), is("VAU"));
+    }
+
 }
