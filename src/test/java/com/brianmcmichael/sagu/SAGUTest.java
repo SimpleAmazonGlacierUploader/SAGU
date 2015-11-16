@@ -31,4 +31,11 @@ public class SAGUTest {
         assertThat(SAGU.sagu.getAppProperties().getDir(), is(tempDir));
     }
 
+    @Test
+    public void getSecretKeyShouldReturnTrimmedString() throws Exception {
+        SAGU.main(null);
+        SAGU.sagu.secretField.setText(" SEC ");
+        assertThat(SAGU.sagu.getSecretKey(), is("SEC"));
+    }
+
 }

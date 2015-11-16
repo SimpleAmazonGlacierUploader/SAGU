@@ -134,7 +134,7 @@ public class SAGU extends JFrame implements ActionListener {
     private JHyperlinkLabel accessLabel = new JHyperlinkLabel(ACCESS_LABEL); // v0.3
     private JTextField accessField = new JTextField(21);
     private JLabel secretLabel = new JLabel("Secret Key: ");
-    private JPasswordField secretField = new JPasswordField(41);
+    JPasswordField secretField = new JPasswordField(41);
 
     private JPanel locationPanel = new JPanel();
     private JComboBox<String> locationChoice = new JComboBox<String>();
@@ -421,10 +421,10 @@ public class SAGU extends JFrame implements ActionListener {
         boolean passBool = false;
 
         if ((accessField.getText().trim().equals(""))
-                || (secretField.getPassword().toString().trim().equals(""))) {
+                || (getSecretKey().equals(""))) {
             if ((accessField.getText().trim().equals(""))) {
                 accessField.requestFocusInWindow();
-            } else if ((secretField.getPassword().toString().trim().equals(""))) {
+            } else if ((getSecretKey().equals(""))) {
                 secretField.requestFocusInWindow();
             }
 
@@ -433,14 +433,14 @@ public class SAGU extends JFrame implements ActionListener {
                     JOptionPane.ERROR_MESSAGE);
             passBool = false;
         } else if ((accessField.getText().trim().length() != 20)
-                || (secretField.getPassword().toString().trim().length() != 40)) {
+                || (getSecretKey().length() != 40)) {
             if (accessField.getText().trim().length() != 20) {
                 accessField.requestFocusInWindow();
                 JOptionPane.showMessageDialog(null,
                         "Your AWS Access Key does not appear to be valid.",
                         "Error", JOptionPane.ERROR_MESSAGE);
                 passBool = false;
-            } else if (secretField.getPassword().toString().trim().length() != 40) {
+            } else if (getSecretKey().length() != 40) {
                 secretField.requestFocusInWindow();
                 JOptionPane.showMessageDialog(null,
                         "Your AWS Secret Key does not appear to be valid.",
@@ -458,10 +458,10 @@ public class SAGU extends JFrame implements ActionListener {
 
         if ((accessField.getText().trim().equals(""))
                 || vaultField.getText().trim().equals("")
-                || (secretField.getPassword().toString().trim().equals(""))) {
+                || (getSecretKey().equals(""))) {
             if ((accessField.getText().trim().equals(""))) {
                 accessField.requestFocusInWindow();
-            } else if ((secretField.getPassword().toString().trim().equals(""))) {
+            } else if ((getSecretKey().equals(""))) {
                 secretField.requestFocusInWindow();
             } else if ((vaultField.getText().trim().equals(""))) {
                 vaultField.requestFocusInWindow();
@@ -471,14 +471,14 @@ public class SAGU extends JFrame implements ActionListener {
                     JOptionPane.ERROR_MESSAGE);
             passBool = false;
         } else if ((accessField.getText().trim().length() != 20)
-                || (secretField.getPassword().toString().trim().length() != 40)) {
+                || (getSecretKey().length() != 40)) {
             if (accessField.getText().trim().length() != 20) {
                 accessField.requestFocusInWindow();
                 JOptionPane.showMessageDialog(null,
                         "Your AWS Access Key does not appear to be valid.",
                         "Error", JOptionPane.ERROR_MESSAGE);
                 passBool = false;
-            } else if (secretField.getPassword().toString().trim().length() != 40) {
+            } else if (getSecretKey().length() != 40) {
                 secretField.requestFocusInWindow();
                 JOptionPane.showMessageDialog(null,
                         "Your AWS Secret Key does not appear to be valid.",
@@ -512,8 +512,8 @@ public class SAGU extends JFrame implements ActionListener {
         return accessField.getText().trim();
     }
 
-    private String getSecretField() {
-        return secretField.getPassword().toString().trim();
+    String getSecretKey() {
+        return String.valueOf(secretField.getPassword()).trim();
     }
 
     private int getServerRegion() {
@@ -529,7 +529,7 @@ public class SAGU extends JFrame implements ActionListener {
 
         int newLoc = getServerRegion();
 
-        if (!(accessField.getText().trim().equals("") || secretField.getPassword().toString().trim().equals(""))) {
+        if (!(accessField.getText().trim().equals("") || getSecretKey().equals(""))) {
             AmazonGlacierClient newVaultCheckClient = makeClient(accessString, secretString, newLoc);
 
             String marker = null;
@@ -578,7 +578,7 @@ public class SAGU extends JFrame implements ActionListener {
     public void actionPerformed(ActionEvent e) {
 
         String accessString = getAccessField();
-        String secretString = getSecretField();
+        String secretString = getSecretKey();
         String vaultString = getVaultField();
         int regionInt = getServerRegion();
 
@@ -757,7 +757,7 @@ public class SAGU extends JFrame implements ActionListener {
                     @Override
                     protected Object doInBackground() throws Exception {
                         String accessString = getAccessField();
-                        String secretString = getSecretField();
+                        String secretString = getSecretKey();
                         String vaultName = getVaultField();
                         File[] uploadFileBatch = multiFiles;
 
