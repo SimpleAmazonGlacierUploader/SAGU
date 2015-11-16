@@ -22,7 +22,6 @@ public class UploadWindow extends JFrame {
     public UploadWindow() {
         setTitle("Uploading");
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        oneFileProgressBar.setIndeterminate(true);
         add(oneFileProgressBar, BorderLayout.NORTH);
         add(new JScrollPane(uploadText), BorderLayout.CENTER);
         add(allFilesProgressBar, BorderLayout.SOUTH);
