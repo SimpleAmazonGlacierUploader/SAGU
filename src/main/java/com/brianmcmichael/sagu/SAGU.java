@@ -811,7 +811,7 @@ public class SAGU extends JFrame implements ActionListener {
 
                                     int percentage = (int) (((double) uploadedSize / totalSize) * 100);
 
-                                    uw.updateProgress(percentage);
+                                    uw.updateAllFilesProgress(percentage);
 
                                     final LogWriter logWriter;
 

@@ -15,19 +15,17 @@ public class UploadWindow extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 
-	private JTextArea uploadText = new JTextArea();
-
-    private JScrollPane uploadScroll = new JScrollPane(uploadText);
-    private JProgressBar totalProgressBar = new JProgressBar(0, 100);
+	private final JTextArea uploadText = new JTextArea();
+    private final JProgressBar allFilesProgressBar = new JProgressBar(0, 100);
+    private final JProgressBar oneFileProgressBar = new JProgressBar(0, 100);
 
     public UploadWindow() {
         setTitle("Uploading");
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        final JProgressBar dumJProgressBar = new JProgressBar(JProgressBar.HORIZONTAL);
-        dumJProgressBar.setIndeterminate(true);
-        add(dumJProgressBar, BorderLayout.NORTH);
-        add(uploadScroll, BorderLayout.CENTER);
-        add(totalProgressBar, BorderLayout.SOUTH);
+        oneFileProgressBar.setIndeterminate(true);
+        add(oneFileProgressBar, BorderLayout.NORTH);
+        add(new JScrollPane(uploadText), BorderLayout.CENTER);
+        add(allFilesProgressBar, BorderLayout.SOUTH);
         setSize(500, 400);
         uploadText.setEditable(false);
         setLocationRelativeTo(null);
@@ -38,13 +36,11 @@ public class UploadWindow extends JFrame {
         uploadText.append(text);
     }
 
-    public void updateProgress(final int percentage) {
-        SwingUtilities.invokeLater(new Runnable() {
+    public void updateAllFilesProgress(final int percentage) {
+        SwingUtilities.invokeLater(() -> allFilesProgressBar.setValue(percentage));
+    }
 
-            @Override
-            public void run() {
-                totalProgressBar.setValue(percentage);
-            }
-        });
+    public void updateOneFileProgress(final int percentage) {
+        SwingUtilities.invokeLater(() -> oneFileProgressBar.setValue(percentage));
     }
 }
