@@ -6,13 +6,12 @@
   ~ found in the LICENSE file in the root directory of this source tree.
   -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
     <groupId>GlacierUploader</groupId>
     <artifactId>GlacierUploader</artifactId>
-    <version>0.75.0-SNAPSHOT</version>
+    <version>0.75.0</version>
     <name>SAGU</name>
     <description>Simple Amazon Glacier Uploader</description>
     <url>http://simpleglacieruploader.brianmcmichael.com</url>
@@ -28,7 +27,8 @@
         <url>scm:git:https://github.com/brianmcmichael/SAGU.git</url>
         <developerConnection>scm:git:git@github.com:brianmcmichael/SAGU.git</developerConnection>
         <connection>scm:git:git@github.com:brianmcmichael/SAGU.git</connection>
-    </scm>
+      <tag>GlacierUploader-0.75.0</tag>
+  </scm>
 
     <developers>
         <developer>
