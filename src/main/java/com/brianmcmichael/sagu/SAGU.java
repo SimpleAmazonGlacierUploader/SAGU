@@ -803,15 +803,16 @@ public class SAGU extends JFrame implements ActionListener {
                                             + uploadFileBatch.length + ")"
                                             + " Uploading: " + thisFile);
 
-                                    UploadResult result = atm.upload(vaultName, description, uploadFileBatch[i]);
+                                    UploadResult result = atm.upload(null, vaultName, description, uploadFileBatch[i],
+                                            new OneFileProgressListener(uw, uploadFileBatch[i].length()));
 
-                                    uw.addToLog("Done: " + thisFile + "\n");
+                                    uw.addToFinishedFiles(thisFile + "\n");
 
                                     uploadedSize += uploadFileBatch[i].length();
 
                                     int percentage = (int) (((double) uploadedSize / totalSize) * 100);
 
-                                    uw.updateProgress(percentage);
+                                    uw.updateAllFilesProgress(percentage);
 
                                     final LogWriter logWriter;
 
