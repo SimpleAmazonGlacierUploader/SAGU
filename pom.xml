@@ -25,7 +25,9 @@
     </licenses>
 
     <scm>
-        <url>git@github.com:brianmcmichael/SAGU.git</url>
+        <url>scm:git:https://github.com/brianmcmichael/SAGU.git</url>
+        <developerConnection>scm:git:git@github.com:brianmcmichael/SAGU.git</developerConnection>
+        <connection>scm:git:git@github.com:brianmcmichael/SAGU.git</connection>
     </scm>
 
     <developers>
@@ -87,6 +89,11 @@
                         <descriptorRef>jar-with-dependencies</descriptorRef>
                     </descriptorRefs>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-release-plugin</artifactId>
+                <version>2.5.3</version>
             </plugin>
         </plugins>
         <resources>

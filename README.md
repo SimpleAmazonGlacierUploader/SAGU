@@ -38,3 +38,13 @@ mvn clean package assembly:single
 ```
 
 Resulting archive: `target/GlacierUploader-*-jar-with-dependencies.jar`
+
+##### Perform release in SCM (GIT)
+```
+mvn release:prepare
+```
+
+This will do some checks, change the version in the POM to a new version (you will be prompted for the versions to use),
+commit POM, tag the code in the SCM, bump the version in the POM and commit this POM.
+
+One can first simulate the release (no commits) using parameter `-DdryRun=true`.
