@@ -29,8 +29,7 @@ public class SAGUUtils {
      */
     static String loadVersionNumber() {
         final Properties properties = new Properties();
-        final InputStream resourceIS = SAGU.class.getResourceAsStream("/version.properties");
-        try {
+        try(final InputStream resourceIS = SAGU.class.getResourceAsStream("/version.properties")) {
             properties.load(resourceIS);
         } catch (IOException e) {
             e.printStackTrace();
