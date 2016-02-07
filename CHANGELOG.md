@@ -1,8 +1,16 @@
 # Simple Amazon Glacier Uploader Changelog
 
-### Version 0.75.0
+### 2016/02/07 - Version 0.75.0
 
-- Upgrade to Java version 8
+- Upgrade to Java version 8 (i.e. Java 8 is required).
+- Redesign upload window. Add progress bar of current file.
+- If properties not present in working dir, use '.sagu' dir in user's home.
+- Add --properties-dir command line argument.
+- Add escaping to YAML logs.
+- Add enclosing of values to CSV log. Values in CSV log are now enclosed in double quotes. Double quotes in values
+are being escaped by second double quote.
+- Remove trailing comma from CSV logs. It's forbidden in CSV specification. See RFC 4180.
+- One can now easily traverse between input fields and buttons using tab key.
 
 ### 2015/10/13 - Version 0.74.7
 
