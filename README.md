@@ -1,8 +1,3 @@
-*Nota Bene:* As of 10/13/2015 this app is in maintenance mode.
-I'm pulling in useful commits from the community but make no guarantees about long-term support of this project.
-The unlimited storage plan with [Amazon's Cloud Drive](https://www.amazon.com/clouddrive/) has solved my need for cheap
-large-scale file storage.
-
 # Simple Amazon Glacier Uploader
 
 Multiplatform (Win/Mac/Linux) GUI Client for _Amazon Glacier_.
@@ -14,7 +9,7 @@ SAGU is a single `.jar` file Glacier interface written in Java for cross-platfor
 The use of Java assures that you will have access to your files regardless of your operating system when it is time
 to retrieve your data.
 
-For latest binary download see [project's web page](http://simpleglacieruploader.brianmcmichael.com).
+##### Download latest binary: [GlacierUploader-0.75.0.jar](https://www.dropbox.com/s/4o98qd0irrhujos/GlacierUploader-0.75.0.jar?dl=1)
 
 ### Contributors:
 
@@ -24,6 +19,11 @@ For latest binary download see [project's web page](http://simpleglacieruploader
 	https://github.com/Fensterbank
 	https://github.com/richardneish
 	https://github.com/philosophicles
+
+*Note from Brian L. McMichael:* As of 10/13/2015 this app is in maintenance mode.
+I'm pulling in useful commits from the community but make no guarantees about long-term support of this project.
+The unlimited storage plan with [Amazon's Cloud Drive](https://www.amazon.com/clouddrive/) has solved my need for cheap
+large-scale file storage.
 
 ### License
 GNU General Public License Version 3. See [LICENSE](LICENSE)
