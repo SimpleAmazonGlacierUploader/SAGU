@@ -1,5 +1,9 @@
 # Simple Amazon Glacier Uploader Changelog
 
+### TBD - Version 0.76.0
+
+- Add new regions
+
 ### 2016/02/07 - Version 0.75.0
 
 - Upgrade to Java version 8 (i.e. Java 8 is required).
