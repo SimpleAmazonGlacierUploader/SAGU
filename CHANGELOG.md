@@ -1,8 +1,10 @@
 # Simple Amazon Glacier Uploader Changelog
 
-### TBD - Version 0.76.0
+### 2018/12/09 - Version 0.76.0
 
-- Add new regions
+- Add new regions: EU (Frankfurt, EU (London), EU (Paris), Asia Pacific (Seoul), Asia Pacific (Osaka-Local),
+Asia Pacific (Mumbai), Asia Pacific (Singapore), China (Beijing), China (Ningxia), Canada (Central), US East (Ohio),
+AWS GovCloud (US)
 
 ### 2016/02/07 - Version 0.75.0
 
