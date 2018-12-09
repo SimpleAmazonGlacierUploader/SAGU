@@ -11,7 +11,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>GlacierUploader</groupId>
     <artifactId>GlacierUploader</artifactId>
-    <version>0.75.1-SNAPSHOT</version>
+    <version>0.76.0</version>
     <name>SAGU</name>
     <description>Simple Amazon Glacier Uploader</description>
     <url>http://simpleglacieruploader.brianmcmichael.com</url>
@@ -27,7 +27,7 @@
         <url>scm:git:https://github.com/brianmcmichael/SAGU.git</url>
         <developerConnection>scm:git:git@github.com:brianmcmichael/SAGU.git</developerConnection>
         <connection>scm:git:git@github.com:brianmcmichael/SAGU.git</connection>
-      <tag>HEAD</tag>
+      <tag>GlacierUploader-0.76.0</tag>
   </scm>
 
     <developers>
