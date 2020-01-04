@@ -9,9 +9,9 @@ SAGU is a single `.jar` file Glacier interface written in Java for cross-platfor
 The use of Java assures that you will have access to your files regardless of your operating system when it is time
 to retrieve your data.
 
-##### Download latest binary: [GlacierUploader-0.75.0.jar](https://www.dropbox.com/s/4o98qd0irrhujos/GlacierUploader-0.75.0.jar?dl=1)
+##### Download latest binary: [GlacierUploader-0.76.0.jar](https://github.com/SimpleAmazonGlacierUploader/SAGU/releases/download/GlacierUploader-0.76.0/GlacierUploader-0.76.0.jar)
 
-### Contributors:
+## Contributors:
 
 	https://github.com/brianmcmichael
 	https://github.com/liry
@@ -25,21 +25,21 @@ I'm pulling in useful commits from the community but make no guarantees about lo
 The unlimited storage plan with [Amazon's Cloud Drive](https://www.amazon.com/clouddrive/) has solved my need for cheap
 large-scale file storage.
 
-### License
+## License
 GNU General Public License Version 3. See [LICENSE](LICENSE)
 
 ### Additional License Information
 Contains images from Silk Icon Set v.1.3 (http://www.famfamfam.com/lab/icons/silk/)
 
-### How-tos
-##### Build runnable JAR including all dependencies
+## Development
+#### Build runnable JAR including all dependencies
 ```
 mvn clean package assembly:single
 ```
 
 Resulting archive: `target/GlacierUploader-*-jar-with-dependencies.jar`
 
-##### Perform release in SCM (GIT)
+#### Perform release in SCM (GIT)
 ```
 mvn release:prepare
 ```
