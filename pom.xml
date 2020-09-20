@@ -24,9 +24,9 @@
     </licenses>
 
     <scm>
-        <url>scm:git:https://github.com/brianmcmichael/SAGU.git</url>
-        <developerConnection>scm:git:git@github.com:brianmcmichael/SAGU.git</developerConnection>
-        <connection>scm:git:git@github.com:brianmcmichael/SAGU.git</connection>
+        <url>scm:git:https://github.com/egozcl/SAGU.git</url>
+        <developerConnection>scm:git:git@github.com:egozcl/SAGU.git</developerConnection>
+        <connection>scm:git:git@github.com:egozcl/SAGU.git</connection>
       <tag>HEAD</tag>
   </scm>
 
