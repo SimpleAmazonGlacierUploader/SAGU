@@ -35,7 +35,6 @@ public enum Endpoint {
     US_EAST_OHIO("us-east-2", "US East (Ohio)"),
     US_GOV_WEST("us-gov-west-1", "AWS GovCloud (US)"),
     SA_SAO_PAULO("sa-east-1","South America (São Paulo)");
-    US_GOV_WEST("us-gov-west-1", "AWS GovCloud (US)");
 
     private final String id;
     private final String title;
