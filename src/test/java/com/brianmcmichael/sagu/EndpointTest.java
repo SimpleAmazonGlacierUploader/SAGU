@@ -38,6 +38,7 @@ public class EndpointTest {
         assertThat(Endpoint.getByIndex(15), is(CA_CENTRAL));
         assertThat(Endpoint.getByIndex(16), is(US_EAST_OHIO));
         assertThat(Endpoint.getByIndex(17), is(US_GOV_WEST));
+		assertThat(Endpoint.getByIndex(18), is(SA_SAO_PAULO));
     }
 
     @Test
@@ -60,6 +61,7 @@ public class EndpointTest {
         assertThat(getTitleByIndex(15), is("Canada (Central)"));
         assertThat(getTitleByIndex(16), is("US East (Ohio)"));
         assertThat(getTitleByIndex(17), is("AWS GovCloud (US)"));
+		assertThat(getTitleByIndex(18), is("South America (São Paulo)"));
     }
 
     @Test
@@ -68,7 +70,7 @@ public class EndpointTest {
         assertThat(comboBox.getItemCount(), is(0));
 
         Endpoint.populateComboBox(comboBox);
-        assertThat(comboBox.getItemCount(), is(18));
+        assertThat(comboBox.getItemCount(), is(19));
         assertThat(comboBox.getItemAt(0), is("US East (Northern Virginia)"));
         assertThat(comboBox.getItemAt(1), is("US West (Oregon)"));
         assertThat(comboBox.getItemAt(2), is("US West (Northern California)"));
@@ -87,6 +89,7 @@ public class EndpointTest {
         assertThat(comboBox.getItemAt(15), is("Canada (Central)"));
         assertThat(comboBox.getItemAt(16), is("US East (Ohio)"));
         assertThat(comboBox.getItemAt(17), is("AWS GovCloud (US)"));
+		assertThat(comboBox.getItemAt(18), is("South America (São Paulo)"));
     }
 
     @Test
@@ -109,6 +112,7 @@ public class EndpointTest {
         assertThat(CA_CENTRAL.getGlacierEndpoint(), is("https://glacier.ca-central-1.amazonaws.com/"));
         assertThat(US_EAST_OHIO.getGlacierEndpoint(), is("https://glacier.us-east-2.amazonaws.com/"));
         assertThat(US_GOV_WEST.getGlacierEndpoint(), is("https://glacier.us-gov-west-1.amazonaws.com/"));
+		assertThat(SA_SAO_PAULO.getGlacierEndpoint(), is("https://glacier.sa-east-1.amazonaws.com/"));
     }
 
     @Test
@@ -131,6 +135,7 @@ public class EndpointTest {
         assertThat(CA_CENTRAL.getSQSEndpoint(), is("https://sqs.ca-central-1.amazonaws.com/"));
         assertThat(US_EAST_OHIO.getSQSEndpoint(), is("https://sqs.us-east-2.amazonaws.com/"));
         assertThat(US_GOV_WEST.getSQSEndpoint(), is("https://sqs.us-gov-west-1.amazonaws.com/"));
+		assertThat(SA_SAO_PAULO.getSQSEndpoint(), is("https://sqs.sa-east-1.amazonaws.com/"));
     }
 
     @Test
@@ -153,5 +158,6 @@ public class EndpointTest {
         assertThat(CA_CENTRAL.getSNSEndpoint(), is("https://sns.ca-central-1.amazonaws.com/"));
         assertThat(US_EAST_OHIO.getSNSEndpoint(), is("https://sns.us-east-2.amazonaws.com/"));
         assertThat(US_GOV_WEST.getSNSEndpoint(), is("https://sns.us-gov-west-1.amazonaws.com/"));
+		assertThat(SA_SAO_PAULO.getSNSEndpoint(), is("https://sns.sa-east-1.amazonaws.com/"));
     }
 }
