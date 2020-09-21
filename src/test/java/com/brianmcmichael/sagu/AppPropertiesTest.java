@@ -27,11 +27,14 @@ public class AppPropertiesTest {
 
     private String propertiesResourcePath;
     private String resourceDir;
-
+    private static final boolean IS_WINDOWS = System.getProperty( "os.name" ).contains( "indow" );
+	
     @BeforeClass
     public void setUpClass() throws Exception {
         propertiesResourcePath = AppPropertiesTest.class.getResource("/SAGU.properties").getPath();
+        propertiesResourcePath = IS_WINDOWS ? propertiesResourcePath.replace("/C:/","C:\\").replace("/","\\") : propertiesResourcePath;
         resourceDir = Paths.get(propertiesResourcePath).getParent().toString();
+        resourceDir = IS_WINDOWS ? resourceDir.replace("/C:/","C:\\") : resourceDir;
     }
 
     @Test

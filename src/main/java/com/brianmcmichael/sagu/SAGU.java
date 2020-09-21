@@ -54,7 +54,7 @@ public class SAGU extends JFrame implements ActionListener {
             TITLE + " is free software.\n" +
             "Your feedback is appreciated.\n" +
             "This program is not any way affiliated with Amazon Web Services or Amazon.com.";
-    private static final String URL_STRING = "http://simpleglacieruploader.brianmcmichael.com/";
+    private static final String URL_STRING = "https://simpleamazonglacieruploader.github.io/";
     private static final String AWS_SITE_STRING = "Get AWS Credentials";
 
     public static final String ACCESS_LABEL = "Access Key: ";

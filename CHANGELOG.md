@@ -1,5 +1,11 @@
 # Simple Amazon Glacier Uploader Changelog
 
+### 2020/09/20 - Version 0.76.1
+
+- Add new region: South America (São Paulo), Brasil.
+- Fix class test for Windows.
+- Update URL website to https://simpleamazonglacieruploader.github.io
+
 ### 2018/12/09 - Version 0.76.0
 
 - Add new regions: EU (Frankfurt, EU (London), EU (Paris), Asia Pacific (Seoul), Asia Pacific (Osaka-Local),
