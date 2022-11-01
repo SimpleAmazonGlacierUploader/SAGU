@@ -32,6 +32,10 @@ GNU General Public License Version 3. See [LICENSE](LICENSE)
 Contains images from Silk Icon Set v.1.3 (http://www.famfamfam.com/lab/icons/silk/)
 
 ## Development
+
+One needs JDK 11+ for building (requirement of some dependencies). Target release is still set to Java 8 (so resulting
+jar should be runnable under JRE 8).
+
 #### Build runnable JAR including all dependencies
 ```
 mvn clean package assembly:single

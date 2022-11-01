@@ -10,8 +10,6 @@ package com.brianmcmichael.sagu.ui;
 
 import org.testng.annotations.Test;
 
-import static org.testng.Assert.*;
-
 public class UploadWindowTest {
 
     // just for manual UI testing
