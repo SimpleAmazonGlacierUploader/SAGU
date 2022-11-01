@@ -43,18 +43,26 @@ mvn clean package assembly:single
 
 Resulting archive: `target/GlacierUploader-*-jar-with-dependencies.jar`
 
-#### Perform release in SCM (GIT)
+#### Perform release of new version
+Double check you are in the master branch with the latest changes pulled. Also check that `CHANGELOG.md` contains info
+about the release to be done.
+
+This will do some checks, change the version in the POM to a new version (you will be prompted for the versions to use),
+commit POM, tag the code in the SCM, bump the version in the POM and commit+push this POM.
+One can first simulate the release (with no changes in SCM) using parameter `-DdryRun=true`.
 ```
 mvn release:prepare
 ```
 
-This will do some checks, change the version in the POM to a new version (you will be prompted for the versions to use),
-commit POM, tag the code in the SCM, bump the version in the POM and commit this POM.
+Then, switch to just created release tag
+```
+git checkout GlacierUploader-X.Y.Z
+```
+and build the runnable JAR (see above) from there, to be attached to the release in the GitHub.
 
-One can first simulate the release (with no changes in SCM) using parameter `-DdryRun=true`.
-
-Also do not forget to update `CHANGELOG.md`, add [release](https://github.com/SimpleAmazonGlacierUploader/SAGU/releases)
-and [update website](https://github.com/SimpleAmazonGlacierUploader/SimpleAmazonGlacierUploader.github.io).
+Also do not forget to create [GitHub Release](https://github.com/SimpleAmazonGlacierUploader/SAGU/releases) with
+runnable JAR in assets and [update website](
+https://github.com/SimpleAmazonGlacierUploader/SimpleAmazonGlacierUploader.github.io).
 
 #### Bulk bump of dependency versions
 ```
