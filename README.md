@@ -58,10 +58,12 @@ Then, switch to just created release tag
 ```
 git checkout GlacierUploader-X.Y.Z
 ```
-and build the runnable JAR (see above) from there, to be attached to the release in the GitHub.
+and build the runnable JAR (see above) from there. Create [the GitHub Release](
+https://github.com/SimpleAmazonGlacierUploader/SAGU/releases) and attach given JAR.
+Then, edit [the "next" Milestone](https://github.com/SimpleAmazonGlacierUploader/SAGU/milestones?state=open) to have
+the released version in the Title and close it. Next create the new "next" Milestone.
 
-Also do not forget to create [GitHub Release](https://github.com/SimpleAmazonGlacierUploader/SAGU/releases) with
-runnable JAR in assets and [update website](
+Also do not forget to update [the Website](
 https://github.com/SimpleAmazonGlacierUploader/SimpleAmazonGlacierUploader.github.io).
 
 #### Bulk bump of dependency versions
