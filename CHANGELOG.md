@@ -1,5 +1,11 @@
 # Simple Amazon Glacier Uploader Changelog
 
+### 2022/11/01 - Version 0.77.1
+
+- Bump dependency versions
+  - [AWS SDK for Java version numbers from 1.9.5 to 1.10.31 are incompatible with TLS 1.3.](
+    https://aws.amazon.com/blogs/developer/tls-1-3-incompatibility-with-aws-sdk-for-java-versions-1-9-5-to-1-10-31/)
+
 ### 2020/09/21 - Version 0.77.0
 
 - Add new region: South America (São Paulo), Brasil.

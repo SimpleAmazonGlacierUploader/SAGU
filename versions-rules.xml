@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Simple Amazon Glacier Uploader - GUI client for Amazon Glacier
+  ~ Copyright (C) 2012-2022 Brian L. McMichael, Libor Rysavy and other contributors
+  ~
+  ~ This program is free software licensed under GNU General Public License
+  ~ found in the LICENSE file in the root directory of this source tree.
+  -->
+
+<ruleset xmlns="http://mojo.codehaus.org/versions-maven-plugin/rule/2.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" comparisonMethod="maven" xsi:schemaLocation="http://mojo.codehaus.org/versions-maven-plugin/rule/2.0.0 https://mojo.codehaus.org/versions-maven-plugin/xsd/rule-2.0.0.xsd">
+    <ignoreVersions>
+        <ignoreVersion type="regex">.*[aA]lpha.*</ignoreVersion>
+        <ignoreVersion type="regex">.*[bB]eta.*</ignoreVersion>
+        <ignoreVersion type="regex">.*withdebug.*</ignoreVersion>
+    </ignoreVersions>
+    <rules>
+        <rule groupId="commons-codec">
+            <ignoreVersions>
+                <ignoreVersion type="regex">200.*</ignoreVersion>
+            </ignoreVersions>
+        </rule>
+        <rule groupId="com.fasterxml.jackson.core">
+            <ignoreVersions>
+                <ignoreVersion type="regex">.*-rc\d+</ignoreVersion>
+            </ignoreVersions>
+        </rule>
+    </rules>
+</ruleset>

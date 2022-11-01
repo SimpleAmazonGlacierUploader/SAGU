@@ -55,3 +55,8 @@ One can first simulate the release (with no changes in SCM) using parameter `-Dd
 
 Also do not forget to update `CHANGELOG.md`, add [release](https://github.com/SimpleAmazonGlacierUploader/SAGU/releases)
 and [update website](https://github.com/SimpleAmazonGlacierUploader/SimpleAmazonGlacierUploader.github.io).
+
+#### Bulk bump of dependency versions
+```
+mvn versions:use-latest-versions
+```
