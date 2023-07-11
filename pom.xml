@@ -27,8 +27,8 @@
         <url>scm:git:https://github.com/brianmcmichael/SAGU.git</url>
         <developerConnection>scm:git:git@github.com:brianmcmichael/SAGU.git</developerConnection>
         <connection>scm:git:git@github.com:brianmcmichael/SAGU.git</connection>
-      <tag>HEAD</tag>
-  </scm>
+        <tag>HEAD</tag>
+    </scm>
 
     <developers>
         <developer>
@@ -36,7 +36,7 @@
             <url>https://github.com/brianmcmichael</url>
         </developer>
         <developer>
-            <name>Libor Rysavy</name>
+            <name>Libor Ryšavý</name>
             <url>https://github.com/liry</url>
         </developer>
     </developers>
@@ -118,12 +118,12 @@
         <dependency>
             <groupId>com.amazonaws</groupId>
             <artifactId>aws-java-sdk-glacier</artifactId>
-            <version>1.12.470</version>
+            <version>1.12.505</version>
         </dependency>
         <dependency>
             <groupId>commons-codec</groupId>
             <artifactId>commons-codec</artifactId>
-            <version>1.15</version>
+            <version>1.16.0</version>
         </dependency>
         <dependency>
             <groupId>commons-logging</groupId>
@@ -143,12 +143,12 @@
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-core</artifactId>
-            <version>2.15.1</version>
+            <version>2.15.2</version>
         </dependency>
         <dependency>
             <groupId>org.testng</groupId>
             <artifactId>testng</artifactId>
-            <version>7.7.1</version>
+            <version>7.8.0</version>
             <scope>test</scope>
             <exclusions>
                 <exclusion>
