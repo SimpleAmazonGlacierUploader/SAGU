@@ -9,7 +9,7 @@ SAGU is a single `.jar` file Glacier interface written in Java for cross-platfor
 The use of Java assures that you will have access to your files regardless of your operating system when it is time
 to retrieve your data.
 
-##### Download latest binary: [GlacierUploader-0.76.0.jar](https://github.com/SimpleAmazonGlacierUploader/SAGU/releases/download/GlacierUploader-0.76.0/GlacierUploader-0.76.0.jar)
+##### Download latest binary: [SAGU releases](https://github.com/SimpleAmazonGlacierUploader/SAGU/releases)
 
 ## Contributors:
 
