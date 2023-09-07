@@ -118,7 +118,7 @@
         <dependency>
             <groupId>com.amazonaws</groupId>
             <artifactId>aws-java-sdk-glacier</artifactId>
-            <version>1.12.505</version>
+            <version>1.12.545</version>
         </dependency>
         <dependency>
             <groupId>commons-codec</groupId>
